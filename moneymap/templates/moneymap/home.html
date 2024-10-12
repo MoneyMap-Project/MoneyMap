@@ -1,2 +1,102 @@
-<script src="https://cdn.tailwindcss.com"></script>
-<h1> Home </h1>
+{% extends 'moneymap/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Main Content Section -->
+<main class="pt-2">
+    <div class="w-full relative flex flex-col md:flex-row md:justify-between items-center">
+        <div class="flex flex-col justify-center items-start w-full ml-[14%]">
+            <div class="flex items-center mb-4">
+                <span class="text-[#1b283f] text-4xl md:text-5xl lg:text-8xl font-semibold font-poppins leading-tight mr-4">Better</span>
+                <span class="text-[#05a99d] text-5xl md:text-6xl lg:text-9xl font-normal leading-[100px]" style="font-family: 'Gochi Hand', cursive;">Plan</span>
+            </div>
+            <div class="self-stretch text-[#1b283f] text-4xl md:text-6xl lg:text-8xl font-semibold font-poppins leading-tight">
+                with MoneyMap.
+            </div>
+        </div>
+
+        <!-- Coin Image -->
+        <div class="flex justify-center items-center w-full md:w-1/3 lg:w-4/5">
+            <img src="{% static 'home/coin.png' %}" alt="Coin" class="h-32 md:h-80 w-auto object-contain mr-[14%]" />
+        </div>
+    </div>
+</main>
+
+<!-- Features Section -->
+<section class="w-full bg-[#f2f2f2] py-12">
+    <div class="container mx-auto px-4">
+        <!-- Grid Container -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+            <!-- Card 1: 3x5 (Width: 5 columns) -->
+            <div class="md:col-span-5">
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between h-full transform transition-transform duration-300 hover:scale-105">
+                    <div>
+                        <div class="px-4 py-1 rounded-full border border-[#1b283f] inline-block mb-4">
+                            <span class="text-black text-lg md:text-xl font-normal capitalize">Goals</span>
+                        </div>
+                        <h3 class="text-[#1b283f] text-2xl md:text-3xl lg:text-4xl font-semibold capitalize mb-2">
+                            Setup your<br class="hidden md:block" /> <span class="font-bold">GOALS</span>
+                        </h3>
+                        <p class="text-[#555555] text-base md:text-lg">
+                            Define and track your financial goals effortlessly with MoneyMap.
+                        </p>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <div class="w-16 h-16 md:w-20 md:h-20 border border-[#1b283f] rounded-full flex items-center justify-center">
+                            <img src="{% static 'home/icon1.png' %}" alt="Icon1" class="w-8 h-8 md:w-10 md:h-10 object-contain" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: 4x4 (Width: 4 columns) -->
+            <div class="md:col-span-4">
+                <div class="bg-[#05a99d] rounded-lg shadow-lg p-6 flex flex-col justify-between h-full transform transition-transform duration-300 hover:scale-105">
+                    <div>
+                        <div class="px-4 py-1 rounded-full border border-[#f2f2f2] inline-block mb-4">
+                            <span class="text-[#f2f2f2] text-lg md:text-xl font-normal capitalize">Income and Expenses</span>
+                        </div>
+                        <h3 class="text-[#f2f2f2] text-2xl md:text-3xl lg:text-4xl font-semibold capitalize mb-2">
+                            Jot down your<br class="hidden md:block" /> <span class="font-bold">INCOME AND EXPENSES</span>
+                        </h3>
+                        <p class="text-[#e0f8f7] text-base md:text-lg">
+                            Keep track of every penny with detailed income and expense logging.
+                        </p>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <div class="w-16 h-16 md:w-20 md:h-20 border border-[#f2f2f2] rounded-full flex items-center justify-center transform rotate-0 md:rotate-90">
+                            <img src="{% static 'home/icon2.png' %}" alt="Icon2" class="w-8 h-8 md:w-10 md:h-10 object-contain" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: 2x5 (Width: 3 columns) -->
+            <div class="md:col-span-3">
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between h-full border-2 border-[#1b283f] transform transition-transform duration-300 hover:scale-105">
+                    <div>
+                        <div class="px-4 py-1 rounded-full border border-[#1b283f] inline-block mb-4">
+                            <span class="text-[#1b283f] text-lg md:text-xl font-normal capitalize">Financial History</span>
+                        </div>
+                        <h3 class="text-[#1b283f] text-2xl md:text-3xl lg:text-4xl font-semibold capitalize mb-2">
+                            See back through<br class="hidden md:block" /> your <span class="font-bold">FINANCIAL</span>
+                        </h3>
+                        <p class="text-[#555555] text-base md:text-lg">
+                            Review your past financial activities and make informed decisions.
+                        </p>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <div class="w-16 h-16 md:w-20 md:h-20 border border-[#1b283f] rounded-full flex items-center justify-center">
+                            <img src="{% static 'home/icon3.png' %}" alt="Icon3" class="w-8 h-8 md:w-10 md:h-10 object-contain" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
