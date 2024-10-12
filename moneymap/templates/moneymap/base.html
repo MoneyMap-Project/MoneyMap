@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
+
+    <title>MoneyMap</title>
+    {% load static %}
+
+</head>
+<body>
+    <header class="w-full bg-white fixed top-0 left-0 right-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="h-24 flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center h-full">
+                    <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-12 object-contain" />
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex gap-4">
+                    <div class="px-5 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center justify-center hover:border-[#90acaa] transition-all ease-out duration-300">
+                        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Income and Expenses</div>
+                    </div>
+                    <div class="px-5 py-2.5 bg-white rounded-full border-2 border-[#aec2c0] flex items-center justify-center hover:border-[#90acaa] transition-all ease-out duration-300">
+                        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Goals</div>
+                    </div>
+                </div>
+
+                <!-- Logout Button and Profile Image -->
+                <div class="h-[70px] p-2.5 rounded-[60px] border-2 border-[#aec2c0] justify-end items-center gap-[19px] inline-flex">
+                    <div class="flex items-center gap-4">
+                        <div class="px-4 py-2 bg-[#05a99d] rounded-full flex items-center justify-center">
+                            <div class="text-white text-lg font-normal font-['Poppins'] capitalize">Logout</div>
+                        </div>
+                        <img src="{% static 'base/profile.png' %}" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Block -->
+    <main class="mt-24">
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>
+
+
