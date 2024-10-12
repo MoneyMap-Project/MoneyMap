@@ -1,6 +1,5 @@
 {% extends 'moneymap/base.html' %}
 {% load static %}
-<script src="https://cdn.tailwindcss.com"></script>
 
 {% block content %}
 
@@ -24,53 +23,80 @@
     </div>
 </main>
 
-<div class="w-full bg-[#f2f2f2] flex justify-center">
-    <div class="w-[72%] flex justify-between flex-wrap">
-        <div class="section w-[30%] flex justify-center items-end">
-            <!-- Card 1 -->
-            <div class="w-full h-[309px] relative">
-                <div class="w-[437px] h-[309px] left-0 top-0 absolute justify-center items-center inline-flex">
-                    <div class="grow shrink basis-0 self-stretch p-[30px] bg-[#ffffff] rounded-[10px] justify-between items-start inline-flex">
-                        <div class="w-[173px] flex-col justify-start items-start gap-[11px] inline-flex">
-                            <div class="px-6 py-0.5 rounded-[30px] border border-[#1b283f] justify-center items-center gap-2.5 inline-flex">
-                                <div class="text-black text-xl font-normal font-['Poppins'] capitalize">goals</div>
-                            </div>
-                            <div class="self-stretch"><span style="text-[#1b283f] text-[32px] font-normal font-['Poppins'] capitalize">setup your<br/></span><span style="text-[#1b283f] text-[32px] font-bold font-['Poppins'] capitalize">GOALS</span></div>
-                        </div>
-                        <div class="w-[61px] h-[61px] px-3 py-[13px] rounded-[30.50px] border border-[#1b283f] justify-start items-center gap-2.5 flex"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Features Section -->
+<section class="w-full bg-[#f2f2f2] py-12">
+    <div class="container mx-auto px-4">
+        <!-- Grid Container -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
 
-        <div class="section w-[30%] flex justify-center items-end">
-            <!-- Card 2 -->
-            <div class="w-full h-96 relative">
-                <div class="w-full h-96 p-[30px] left-0 top-0 absolute bg-[#05a99d] rounded-[10px] justify-between items-start inline-flex">
-                    <div class="w-[173px] flex-col justify-start items-start gap-[11px] inline-flex">
-                        <div class="px-6 py-0.5 rounded-[30px] border border-[#f2f2f2] justify-center items-center gap-2.5 inline-flex">
-                            <div class="text-[#f2f2f2] text-xl font-normal font-['Poppins'] capitalize">income and expenses</div>
+            <!-- Card 1: 3x5 (Width: 5 columns) -->
+            <div class="md:col-span-5">
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between h-full transform transition-transform duration-300 hover:scale-105">
+                    <div>
+                        <div class="px-4 py-1 rounded-full border border-[#1b283f] inline-block mb-4">
+                            <span class="text-black text-lg md:text-xl font-normal capitalize">Goals</span>
                         </div>
-                        <div class="w-64"><span style="text-[#f2f2f2] text-[32px] font-normal font-['Poppins'] capitalize">jot down your<br/></span><span style="text-[#f2f2f2] text-[32px] font-bold font-['Poppins'] capitalize">INCOME AND<br/>EXPENSES</span></div>
+                        <h3 class="text-[#1b283f] text-2xl md:text-3xl lg:text-4xl font-semibold capitalize mb-2">
+                            Setup your<br class="hidden md:block" /> <span class="font-bold">GOALS</span>
+                        </h3>
+                        <p class="text-[#555555] text-base md:text-lg">
+                            Define and track your financial goals effortlessly with MoneyMap.
+                        </p>
                     </div>
-                    <div class="w-[61px] h-[61px] px-3 py-[13px] origin-top-left rotate-90 rounded-[30.50px] border border-[#f2f2f2] justify-start items-start gap-2.5 flex"></div>
+                    <div class="mt-4 flex justify-end">
+                        <div class="w-16 h-16 md:w-20 md:h-20 border border-[#1b283f] rounded-full flex items-center justify-center">
+                            <img src="{% static 'home/icon1.png' %}" alt="Icon1" class="w-8 h-8 md:w-10 md:h-10 object-contain" />
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="section w-[30%] flex justify-center items-end">
-            <!-- Card 3 -->
-            <div class="w-full h-[199px] p-[30px] bg-white rounded-[10px] border-2 border-[#1b283f] justify-between items-start inline-flex">
-                <div class="w-[173px] flex-col justify-start items-start gap-[11px] inline-flex">
-                    <div class="px-6 py-0.5 rounded-[30px] border border-[#1b283f] justify-center items-center gap-2.5 inline-flex">
-                        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">financial history</div>
+            <!-- Card 2: 4x4 (Width: 4 columns) -->
+            <div class="md:col-span-4">
+                <div class="bg-[#05a99d] rounded-lg shadow-lg p-6 flex flex-col justify-between h-full transform transition-transform duration-300 hover:scale-105">
+                    <div>
+                        <div class="px-4 py-1 rounded-full border border-[#f2f2f2] inline-block mb-4">
+                            <span class="text-[#f2f2f2] text-lg md:text-xl font-normal capitalize">Income and Expenses</span>
+                        </div>
+                        <h3 class="text-[#f2f2f2] text-2xl md:text-3xl lg:text-4xl font-semibold capitalize mb-2">
+                            Jot down your<br class="hidden md:block" /> <span class="font-bold">INCOME AND EXPENSES</span>
+                        </h3>
+                        <p class="text-[#e0f8f7] text-base md:text-lg">
+                            Keep track of every penny with detailed income and expense logging.
+                        </p>
                     </div>
-                    <div class="w-[305px]"><span style="text-[#1b283f] text-[32px] font-normal font-['Poppins'] capitalize">see back through<br/>your </span><span style="text-[#1b283f] text-[32px] font-bold font-['Poppins'] capitalize">FINANCIAL</span></div>
+                    <div class="mt-4 flex justify-end">
+                        <div class="w-16 h-16 md:w-20 md:h-20 border border-[#f2f2f2] rounded-full flex items-center justify-center transform rotate-0 md:rotate-90">
+                            <img src="{% static 'home/icon2.png' %}" alt="Icon2" class="w-8 h-8 md:w-10 md:h-10 object-contain" />
+                        </div>
+                    </div>
                 </div>
-                <div class="w-[61px] h-[61px] px-3 py-[13px] rounded-[30.50px] border border-[#1b283f] justify-start items-start gap-2.5 flex"></div>
             </div>
+
+            <!-- Card 3: 2x5 (Width: 3 columns) -->
+            <div class="md:col-span-3">
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between h-full border-2 border-[#1b283f] transform transition-transform duration-300 hover:scale-105">
+                    <div>
+                        <div class="px-4 py-1 rounded-full border border-[#1b283f] inline-block mb-4">
+                            <span class="text-[#1b283f] text-lg md:text-xl font-normal capitalize">Financial History</span>
+                        </div>
+                        <h3 class="text-[#1b283f] text-2xl md:text-3xl lg:text-4xl font-semibold capitalize mb-2">
+                            See back through<br class="hidden md:block" /> your <span class="font-bold">FINANCIAL</span>
+                        </h3>
+                        <p class="text-[#555555] text-base md:text-lg">
+                            Review your past financial activities and make informed decisions.
+                        </p>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <div class="w-16 h-16 md:w-20 md:h-20 border border-[#1b283f] rounded-full flex items-center justify-center">
+                            <img src="{% static 'home/icon3.png' %}" alt="Icon3" class="w-8 h-8 md:w-10 md:h-10 object-contain" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+</section>
 
 {% endblock %}
