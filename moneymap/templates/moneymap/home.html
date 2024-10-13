@@ -23,7 +23,7 @@
                 with MoneyMap.
             </div>
         </div>
-        <div class="absolute inset-0 bg-white bg-opacity-10"></div>
+        <div class="absolute inset-0 bg-white bg-opacity-2"></div>
     </div>
 </main>
 
@@ -121,14 +121,21 @@
 <div class="w-full h-[405px] p-2.5 flex flex-col justify-center items-center gap-2.5">
     <div class="max-w-[1354px] w-full flex flex-col md:flex-row justify-start">
         <!-- Heading -->
-        <div class="flex-1 min-w-[250px]">
+        <div class="flex-1 min-w-[250px] relative">
             <div class="text-[#1b283f] text-5xl font-semibold font-poppins capitalize leading-[72.07px]">
                 Why choose
             </div>
-            <div class="self-stretch">
-                <span class="text-[#05a99d] text-5xl md:text-6xl lg:text-7xl xl:text-[5rem] font-normal" style="font-family: 'Gochi Hand', cursive;">
-                    MoneyMap
-                </span>
+            <div class="self-stretch relative">
+                <div class="inline-block">
+                    <div class="absolute -left-10 -top-16 lg:-left-12 lg:-top-18 xl:-left-14 xl:-top-20 w-36 h-36 md:w-48 md:h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80">
+                        <img src="{% static 'home/circle.png' %}" alt="Background Circle" class="w-full h-full object-contain opacity-70" />
+                    </div>
+                    <!-- 'Money' Text -->
+                    <span class="text-[#05a99d] text-5xl md:text-6xl lg:text-7xl xl:text-[5rem] font-normal relative z-10" style="font-family: 'Gochi Hand', cursive;">
+                        MoneyMap
+                    </span>
+                </div>
+                <!-- 'Question Mark' Text -->
                 <span class="text-[#ffbb56] text-5xl md:text-6xl lg:text-7xl xl:text-[5rem] font-normal" style="font-family: 'Gochi Hand', cursive;">
                     ?
                 </span>
@@ -156,5 +163,18 @@
         </div>
     </div>
 </div>
+
+<!-- Footer Section -->
+<footer class="w-full bg-[#05a99d] text-white py-4">
+    <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-12">
+        <div class="text-lg md:text-xl font-semibold font-poppins">
+            2024 MoneyMap. All rights reserved. Licensed under MIT.
+        </div>
+        <a href="https://github.com/MoneyMap-Project/MoneyMap" target="_blank" class="flex items-center mt-4 md:mt-0">
+            <img src="{% static 'home/github.png' %}" alt="GitHub" class="w-8 h-8 mr-2">
+            <span class="text-lg font-medium">GitHub</span>
+        </a>
+    </div>
+</footer>
 
 {% endblock %}
