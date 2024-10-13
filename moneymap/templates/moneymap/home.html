@@ -143,7 +143,9 @@
 
         <!-- Feature 1 -->
         <div class="flex-1 min-w-[250px] mb-4">
-            <div class="self-stretch h-[172px] p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-white shadow-md">
+            <div class="self-stretch h-[172px] p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-transparent hover:translate-y-[-10px] transition-transform duration-300">
+                <!-- Pointer Image -->
+                <img src="{% static 'home/pointer.png' %}" alt="Pointer" class="mb-2 w-[15%]" />
                 <div class="text-center text-[#1b283f] text-2xl font-bold font-poppins capitalize">Goal-Focused Savings</div>
                 <div class="text-center text-[#1b283f] text-xl font-normal font-poppins">
                     Helps users save for specific goals with deadlines, adjusting daily targets to keep them on track.
@@ -153,7 +155,9 @@
 
         <!-- Feature 2 -->
         <div class="flex-1 min-w-[250px]">
-            <div class="self-stretch h-[172px] p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-white shadow-md">
+            <div class="self-stretch h-[172px] p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-transparent hover:translate-y-[-10px] transition-transform duration-300">
+                <!-- Pointer Image -->
+                <img src="{% static 'home/pointer.png' %}" alt="Pointer" class="mb-2 w-[15%]" />
                 <div class="text-center text-[#1b283f] text-2xl font-bold font-poppins capitalize">Real-Time Progress</div>
                 <div class="text-center text-[#1b283f] text-xl font-normal font-poppins">
                     Dynamic tracking and adjusts savings plans if users fall behind, ensuring goals are met.
@@ -171,7 +175,7 @@
         </div>
         <a href="https://github.com/MoneyMap-Project/MoneyMap" target="_blank" class="flex items-center mt-4 md:mt-0">
             <img src="{% static 'home/github.png' %}" alt="GitHub" class="w-8 h-8 mr-2">
-            <span class="text-lg font-medium">GitHub</span>
+            <span class="text-lg font-medium">MoneyMap GitHub</span>
         </a>
     </div>
 </footer>
