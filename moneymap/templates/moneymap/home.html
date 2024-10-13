@@ -34,7 +34,7 @@
 
             <!-- Card 1 -->
             <div class="md:col-span-4 flex flex-col h-full">
-                <div class="flex-grow flex justify-end items-end relative">
+                <a href="{% url 'moneymap:goals' %}" class="flex-grow flex justify-end items-end relative">
                     <div class="bg-white rounded-lg p-10 flex flex-col justify-between transform transition-transform duration-300 hover:scale-105 group relative overflow-hidden">
                         <!-- Background Image -->
                         <img src="{% static 'home/vector.png' %}" alt="Background Vector" class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none transform transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110 z-0" />
@@ -57,12 +57,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- Card 2 -->
             <div class="md:col-span-4 flex flex-col h-full">
-                <div class="flex-grow flex justify-end items-end group">
+                <a href="{% url 'moneymap:income-expenses' %}" class="flex-grow flex justify-end items-end group">
                     <div class="bg-[#05a99d] rounded-lg p-6 flex flex-col justify-between h-full transform transition-transform duration-300 hover:scale-105 relative overflow-hidden group">
                         <!-- Background Image -->
                         <img src="{% static 'home/pen.png' %}" alt="Pen" class="absolute bottom-0 right-0 w-1/2 opacity-30 transform transition-transform duration-300 group-hover:-translate-y-8 z-0" />
@@ -84,12 +84,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- Card 3 -->
             <div class="md:col-span-4 flex flex-col h-full">
-                <div class="flex-grow flex justify-end items-end group">
+                <a href="{% url 'moneymap:history' %}" class="flex-grow flex justify-end items-end group">
                     <div class="bg-white rounded-lg p-4 flex flex-row justify-between items-center h-50 border-2 border-[#1b283f] transform transition-transform duration-300 hover:scale-105">
                         <div class="flex-grow">
                             <div class="px-4 py-1 rounded-full border border-[#1b283f] inline-block mb-2">
@@ -109,7 +109,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
         </div>
