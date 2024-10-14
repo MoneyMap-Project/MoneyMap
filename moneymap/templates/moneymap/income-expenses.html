@@ -10,7 +10,7 @@
     <span class="text-black text-8xl font-semibold font-['Poppins'] capitalize leading-[1.2] ml-5"> </span>
     <span class="text-[#05a99d] text-7xl md:text-8xl lg:text-8xl xl:text-[8rem] font-normal leading-[1.2]"
           style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
-      Admin
+      Admin <!-- change name later when get variable name -->
     </span>
     <span class="text-[#ffbb56] text-8xl font-normal leading-[1.2]"
           style="font-family: 'Gochi Hand', cursive; vertical-align: bottom;"> </span>
@@ -34,21 +34,49 @@
   </div>
 </div>
 
+<div class="flex justify-center mt-10">
+<div class="w-full max-w-[1353px] flex flex-col border border-[#bbe6e3] rounded-[10px] mt-5">
+  <!-- Header Row -->
+  <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
+    <div class="flex-1 py-2.5 flex justify-center items-center">
+      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">#</div>
+    </div>
+    <div class="flex-1 py-2.5 flex justify-center items-center">
+      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Description</div>
+    </div>
+    <div class="flex-1 py-2.5 flex justify-center items-center">
+      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Amount</div>
+    </div>
+    <div class="flex-1 py-2.5 flex justify-center items-center">
+      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Today's Balance</div>
+    </div>
+  </div>
 
+  {% for row in "012" %}  <!-- change loop later when get variable name -->
+  <!-- Data Row -->
+  <div class="flex bg-[#f9f9f9]">
+    <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">{{ forloop.counter }}</div>
+    </div>
+    <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Pocket Money</div>
+    </div>
+    <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">2000</div>
+    </div>
+    <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+      <div>
+        <span class="text-[#05a99d] text-xl font-normal font-['Poppins'] capitalize">+</span>
+        <span class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize"> 2000</span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+  <!-- Bottom Border -->
+  <div class="h-2.5 rounded-b-[10px] bg-[#bbe6e3]"></div>
+</div>
+</div>
 
 
 
