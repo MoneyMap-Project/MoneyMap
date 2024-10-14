@@ -1,4 +1,7 @@
 {% extends 'moneymap/base.html' %}
+{% load static %}
+
+
 {% block content %}
 
 <div class="flex flex-col items-center justify-center text-center">
@@ -19,6 +22,32 @@
     What did you spend your money on today?
   </span>
 </div>
+
+<div class="flex items-center justify-center mt-10">
+  <div class="flex w-auto min-w-[300px] h-[53px] pl-3 pr-5 py-2.5 bg-white rounded-[40px] border-2 border-[#ffbb56] items-center gap-[15px] shadow-[0_2px_10px_rgba(255,187,86,0.5)] transition-all duration-300 group hover:text-white">
+    <div class="w-[33px] h-[33px] flex-shrink-0 transition-transform duration-300 group-hover:translate-x-2">
+      <img src="{% static 'income-expenses/plus.png' %}" alt="Plus Icon" class="w-full h-full object-contain transition-transform duration-300 group-hover:rotate-90" />
+    </div>
+    <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize transition-transform duration-300 group-hover:translate-x-2">
+      Add your money flow of the day
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
