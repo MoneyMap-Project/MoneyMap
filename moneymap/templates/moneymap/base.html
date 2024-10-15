@@ -1,43 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
-
     <title>MoneyMap</title>
     {% load static %}
-
 </head>
+
 <body>
     <header class="w-full bg-white fixed top-0 left-0 right-0 z-50 shadow-sm">
-        <div class="container mx-auto px-4">
-            <div class="h-24 flex items-center justify-between">
-                <!-- Logo -->
-                <div class="flex items-center h-full">
-                    <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-12 object-contain" />
-                </div>
+        <div class="container mx-auto px-4 flex justify-between items-center h-24">
+            <!-- Logo -->
+            <div class="flex items-center h-full">
+                <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-12 object-contain" />
+            </div>
 
-                <!-- Navigation Buttons -->
-                <div class="flex gap-4">
-                    <div class="px-5 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center justify-center hover:border-[#05A99D] transition-all ease-out duration-300">
-                        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Income and Expenses</div>
-                    </div>
-                    <div class="px-5 py-2.5 bg-white rounded-full border-2 border-[#aec2c0] flex items-center justify-center hover:border-[#05A99D] transition-all ease-out duration-300">
-                        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Goals</div>
-                    </div>
+            <!-- Dropdown for small screens -->
+            <div class="relative md:hidden">
+                <button id="dropdownButton" class="flex items-center px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
+                    <img src="{% static 'base/list.png' %}" alt="Menu" class="h-5 w-5 mr-2">
+                    <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Menu</div>
+                </button>
+                <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                    <a href="{% url 'moneymap:income-expenses' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-gray-100">Income and Expenses</a>
+                    <a href="{% url 'moneymap:goals' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-gray-100">Goals</a>
                 </div>
+            </div>
 
-                <!-- Logout Button and Profile Image -->
-                <div class="h-[70px] p-2.5 rounded-[60px] border-2 border-[#aec2c0] justify-end items-center gap-[19px] inline-flex">
-                    <div class="flex items-center gap-4">
-                        <div class="px-4 py-2 bg-[#05a99d] rounded-full flex items-center justify-center">
-                            <div class="text-white text-lg font-normal font-['Poppins'] capitalize">Logout</div>
-                        </div>
-                        <img src="{% static 'base/profile.png' %}" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
-                    </div>
+            <!-- Buttons for larger screens -->
+            <div class="hidden md:flex gap-4">
+                <a href="{% url 'moneymap:income-expenses' %}" class="px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
+                    <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Income and Expenses</div>
+                </a>
+                <a href="{% url 'moneymap:goals' %}" class="px-5 py-2.5 bg-white rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
+                    <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Goals</div>
+                </a>
+            </div>
+
+            <div class="h-[70px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4">
+                <!-- Logout Button -->
+                <div class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center">
+                    <div class="text-white text-base font-normal font-Poppins capitalize">Logout</div>
+                </div>
+                <!-- Profile Image -->
+                <div class="w-12 h-12 rounded-full overflow-hidden">
+                    <img src="{% static 'base/profile.png' %}" alt="Profile" class="w-full h-full object-cover" />
                 </div>
             </div>
         </div>
@@ -48,7 +59,22 @@
         {% block content %}
         {% endblock %}
     </main>
+
+    <script>
+        const dropdownButton = document.getElementById('dropdownButton');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        dropdownButton.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (event) => {
+            if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
+
 </html>
-
-
