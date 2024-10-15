@@ -1,34 +1,33 @@
 {% extends 'moneymap/base.html' %}
 {% load static %}
 
-
 {% block content %}
 
 <div class="flex flex-col items-center justify-center text-center">
   <div class="flex items-end">
-    <span class="text-[#1b283f] text-8xl font-semibold font-['Poppins'] capitalize leading-[1.2]">Hello</span>
-    <span class="text-black text-8xl font-semibold font-['Poppins'] capitalize leading-[1.2] ml-5"> </span>
-    <span class="text-[#05a99d] text-7xl md:text-8xl lg:text-8xl xl:text-[8rem] font-normal leading-[1.2]"
+    <span class="text-[#1b283f] text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2]">Hello</span>
+    <span class="text-black text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2] ml-5"> </span>
+    <span class="text-[#05a99d] text-6xl md:text-7xl lg:text-7xl xl:text-[7rem] font-normal leading-[1.2]"
           style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
       Admin <!-- change name later when get variable name -->
     </span>
-    <span class="text-[#ffbb56] text-8xl font-normal leading-[1.2]"
+    <span class="text-[#ffbb56] text-7xl font-normal leading-[1.2]"
           style="font-family: 'Gochi Hand', cursive; vertical-align: bottom;"> </span>
-    <span class="text-[#1b283f] text-8xl font-semibold font-['Poppins'] capitalize leading-[1.2] ml-4">
+    <span class="text-[#1b283f] text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2] ml-4">
       !
     </span>
   </div>
-  <span class="text-[#1b283f] text-[40px] font-semibold font-['Poppins'] capitalize leading-[60.06px] mt-1">
+  <span class="text-[#1b283f] text-[35px] font-semibold font-['Poppins'] capitalize leading-[60.06px] mt-1">
     What did you spend your money on today?
   </span>
 </div>
 
 <div class="flex items-center justify-center mt-10">
-  <div class="flex w-auto min-w-[300px] h-[53px] pl-3 pr-5 py-2.5 bg-white rounded-[40px] border-2 border-[#ffbb56] items-center gap-[15px] shadow-[0_2px_10px_rgba(255,187,86,0.5)] transition-all duration-300 group hover:text-white">
-    <div class="w-[33px] h-[33px] flex-shrink-0 transition-transform duration-300 group-hover:translate-x-2">
+  <div class="flex w-auto min-w-[300px] h-[50px] pl-3 pr-5 py-2.5 bg-white rounded-[40px] border-2 border-[#ffbb56] items-center gap-[15px] shadow-[0_2px_10px_rgba(255,187,86,0.5)] transition-all duration-300 group hover:text-white">
+    <div class="w-[30px] h-[30px] flex-shrink-0 transition-transform duration-300 group-hover:translate-x-2">
       <img src="{% static 'income-expenses/plus.png' %}" alt="Plus Icon" class="w-full h-full object-contain transition-transform duration-300 group-hover:rotate-90" />
     </div>
-    <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize transition-transform duration-300 group-hover:translate-x-2">
+    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize transition-transform duration-300 group-hover:translate-x-2">
       Add your money flow of the day
     </div>
   </div>
@@ -39,16 +38,16 @@
     <!-- Header Row -->
     <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
       <div class="flex-1 py-2.5 flex justify-center items-center">
-        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">#</div>
+        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">#</div>
       </div>
       <div class="flex-1 py-2.5 flex justify-center items-center">
-        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Description</div>
+        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Description</div>
       </div>
       <div class="flex-1 py-2.5 flex justify-center items-center">
-        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Amount</div>
+        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Amount</div>
       </div>
       <div class="flex-1 py-2.5 flex justify-center items-center">
-        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Today's Balance</div>
+        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Today's Balance</div>
       </div>
     </div>
 
@@ -56,18 +55,18 @@
     <!-- Data Row -->
     <div class="flex {{ forloop.counter|divisibleby:2|yesno:'#f2f2f2,#f9f9f9' }}">
       <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">{{ forloop.counter }}</div>
+        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ forloop.counter }}</div>
       </div>
       <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Pocket Money</div>
+        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Pocket Money</div>
       </div>
       <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">2000</div>
+        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">2000</div>
       </div>
       <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
         <div>
-          <span class="text-[#05a99d] text-xl font-normal font-['Poppins'] capitalize">+</span>
-          <span class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize"> 2000</span>
+          <span class="text-[#05a99d] text-lg font-normal font-['Poppins'] capitalize">+</span>
+          <span class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize"> 2000</span>
         </div>
       </div>
     </div>
@@ -81,13 +80,13 @@
 <div class="w-full max-w-[1354px] h-auto flex flex-col items-center justify-center mx-auto relative mt-10">
     <div class="flex items-center justify-between w-full mb-4">
         <div class="flex items-center">
-            <span class="text-[#1b283f] text-2xl font-bold font-['Poppins'] capitalize">
+            <span class="text-[#1b283f] text-xl font-bold font-['Poppins'] capitalize">
                 Explore Your
             </span>
-            <span class="text-[#ffbb56] text-5xl font-normal capitalize mx-3" style="font-family: 'Gochi Hand', sans-serif;">
+            <span class="text-[#ffbb56] text-4xl font-normal capitalize mx-3" style="font-family: 'Gochi Hand', sans-serif;">
                 7-Day
             </span>
-            <span class="text-[#1b283f] text-2xl font-bold font-['Poppins'] capitalize">
+            <span class="text-[#1b283f] text-xl font-bold font-['Poppins'] capitalize">
                 Financial Journey
             </span>
         </div>
@@ -99,12 +98,12 @@
     <!-- container for cards -->
     <div class="flex flex-nowrap overflow-visible space-x-4 w-full mb-10">
         {% for i in "0123456" %}
-            <div class="flex-grow-0 flex-shrink-0 w-[calc((100%/7)-1rem)] h-[124px] bg-[#f2f2f2] border-2 border-[#f2f2f2] rounded-[10px] flex flex-col transition-transform duration-300 ease-in-out hover:scale-105 hover:relative {% if loop.last %}mr-0{% else %}mr-4{% endif %}">
-                <div class="h-[70px] bg-white rounded-tl-[10px] rounded-tr-[10px] flex items-center justify-center">
-                    <span class="text-[#05a99d] text-4xl font-bold font-['Poppins'] capitalize">+</span>
-                    <span class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">1234</span>
+            <div class="flex-grow-0 flex-shrink-0 w-[calc((100%/7)-1rem)] h-[110px] bg-[#f2f2f2] border-2 border-[#f2f2f2] rounded-[10px] flex flex-col transition-transform duration-300 ease-in-out hover:scale-105 hover:relative {% if loop.last %}mr-0{% else %}mr-4{% endif %}">
+                <div class="h-[60px] bg-white rounded-tl-[10px] rounded-tr-[10px] flex items-center justify-center">
+                    <span class="text-[#05a99d] text-3xl font-bold font-['Poppins'] capitalize">+</span>
+                    <span class="text-[#1b283f] text-3xl font-bold font-['Poppins'] capitalize">1234</span>
                 </div>
-                <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize text-center mt-2">see detail</div>
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize text-center mt-2">see detail</div>
             </div>
         {% endfor %}
     </div>
