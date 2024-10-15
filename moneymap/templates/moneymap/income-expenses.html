@@ -35,50 +35,79 @@
 </div>
 
 <div class="flex justify-center mt-10">
-<div class="w-full max-w-[1353px] flex flex-col border border-[#bbe6e3] rounded-[10px] mt-5">
-  <!-- Header Row -->
-  <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
-    <div class="flex-1 py-2.5 flex justify-center items-center">
-      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">#</div>
-    </div>
-    <div class="flex-1 py-2.5 flex justify-center items-center">
-      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Description</div>
-    </div>
-    <div class="flex-1 py-2.5 flex justify-center items-center">
-      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Amount</div>
-    </div>
-    <div class="flex-1 py-2.5 flex justify-center items-center">
-      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Today's Balance</div>
-    </div>
-  </div>
-
-  {% for row in "012" %}  <!-- change loop later when get variable name -->
-  <!-- Data Row -->
-  <div class="flex bg-[#f9f9f9]">
-    <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">{{ forloop.counter }}</div>
-    </div>
-    <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Pocket Money</div>
-    </div>
-    <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-      <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">2000</div>
-    </div>
-    <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-      <div>
-        <span class="text-[#05a99d] text-xl font-normal font-['Poppins'] capitalize">+</span>
-        <span class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize"> 2000</span>
+  <div class="w-full max-w-[1353px] flex flex-col border border-[#bbe6e3] rounded-[10px]">
+    <!-- Header Row -->
+    <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
+      <div class="flex-1 py-2.5 flex justify-center items-center">
+        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">#</div>
+      </div>
+      <div class="flex-1 py-2.5 flex justify-center items-center">
+        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Description</div>
+      </div>
+      <div class="flex-1 py-2.5 flex justify-center items-center">
+        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Amount</div>
+      </div>
+      <div class="flex-1 py-2.5 flex justify-center items-center">
+        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Today's Balance</div>
       </div>
     </div>
+
+    {% for row in "012" %}  <!-- change loop later when get variable name -->
+    <!-- Data Row -->
+    <div class="flex {{ forloop.counter|divisibleby:2|yesno:'#f2f2f2,#f9f9f9' }}">
+      <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">{{ forloop.counter }}</div>
+      </div>
+      <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Pocket Money</div>
+      </div>
+      <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+        <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">2000</div>
+      </div>
+      <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+        <div>
+          <span class="text-[#05a99d] text-xl font-normal font-['Poppins'] capitalize">+</span>
+          <span class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize"> 2000</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Bottom Border -->
+    <div class="h-2.5 rounded-b-[10px] bg-[#bbe6e3]"></div>
   </div>
-  {% endfor %}
-
-  <!-- Bottom Border -->
-  <div class="h-2.5 rounded-b-[10px] bg-[#bbe6e3]"></div>
-</div>
 </div>
 
+<div class="w-full max-w-[1354px] h-auto flex flex-col items-center justify-center mx-auto relative mt-10">
+    <div class="flex items-center justify-between w-full mb-4">
+        <div class="flex items-center">
+            <span class="text-[#1b283f] text-2xl font-bold font-['Poppins'] capitalize">
+                Explore Your
+            </span>
+            <span class="text-[#ffbb56] text-5xl font-normal capitalize mx-3" style="font-family: 'Gochi Hand', sans-serif;">
+                7-Day
+            </span>
+            <span class="text-[#1b283f] text-2xl font-bold font-['Poppins'] capitalize">
+                Financial Journey
+            </span>
+        </div>
+        <a href="#" class="ml-4 px-4 py-2 bg-[#05a99d] text-white rounded-lg hover:bg-[#048f83] transition duration-300 ease-in-out">
+            See More
+        </a>
+    </div>
 
-
+    <!-- container for cards -->
+    <div class="flex flex-nowrap overflow-visible space-x-4 w-full mb-10">
+        {% for i in "0123456" %}
+            <div class="flex-grow-0 flex-shrink-0 w-[calc((100%/7)-1rem)] h-[124px] bg-[#f2f2f2] border-2 border-[#f2f2f2] rounded-[10px] flex flex-col transition-transform duration-300 ease-in-out hover:scale-105 hover:relative {% if loop.last %}mr-0{% else %}mr-4{% endif %}">
+                <div class="h-[70px] bg-white rounded-tl-[10px] rounded-tr-[10px] flex items-center justify-center">
+                    <span class="text-[#05a99d] text-4xl font-bold font-['Poppins'] capitalize">+</span>
+                    <span class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">1234</span>
+                </div>
+                <div class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize text-center mt-2">see detail</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
 {% endblock %}
