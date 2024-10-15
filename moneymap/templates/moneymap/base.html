@@ -9,16 +9,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
     <title>MoneyMap</title>
     {% load static %}
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1;
+        }
+    </style>
 </head>
 
 <body>
-    <header class="w-full bg-white fixed top-0 left-0 right-0 z-50 shadow-sm">
+    <header class="w-full bg-white top-0 left-0 right-0 z-50 shadow-sm">
         <div class="container mx-auto px-4 flex justify-between items-center h-24">
             <!-- Logo -->
             <div class="flex items-center h-full">
-                <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-12 object-contain" />
+                <a href="{% url 'moneymap:home' %}">
+                    <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-12 object-contain" />
+                </a>
             </div>
-
             <!-- Dropdown for small screens -->
             <div class="relative md:hidden">
                 <button id="dropdownButton" class="flex items-center px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
@@ -41,10 +55,10 @@
                 </a>
             </div>
 
-            <div class="h-[70px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4">
+            <div class="h-[60px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4">
                 <!-- Logout Button -->
-                <div class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center">
-                    <div class="text-white text-base font-normal font-Poppins capitalize">Logout</div>
+                <div class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                    <div class="text-white text-base font-normal font-Poppins capitalize transition-colors duration-300">Logout</div>
                 </div>
                 <!-- Profile Image -->
                 <div class="w-12 h-12 rounded-full overflow-hidden">
@@ -55,7 +69,7 @@
     </header>
 
     <!-- Main Content Block -->
-    <main class="mt-24">
+    <main>
         {% block content %}
         {% endblock %}
     </main>
@@ -75,6 +89,18 @@
             }
         });
     </script>
-</body>
 
+    <!-- Footer Section -->
+    <footer class="w-full bg-[#05a99d] text-white py-4">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-12">
+            <div class="text-lg md:text-xl font-semibold font-poppins">
+                2024 MoneyMap. All rights reserved. Licensed under MIT.
+            </div>
+            <a href="https://github.com/MoneyMap-Project/MoneyMap" target="_blank" class="flex items-center mt-4 md:mt-0">
+                <img src="{% static 'home/github.png' %}" alt="GitHub" class="w-8 h-8 mr-2">
+                <span class="text-lg font-medium">MoneyMap GitHub</span>
+            </a>
+        </div>
+    </footer>
+</body>
 </html>
