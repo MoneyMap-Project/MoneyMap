@@ -53,37 +53,6 @@ class Goal(models.Model):
         """Calculate the progress graph of the goal."""
         pass
 
-    def add_goal(self, name, target_amount, end_date):
-        """
-        Creates and associates a new Goal with the user.
-
-        Parameters:
-            name (str): The name of the goal.
-            target_amount (Decimal): The target amount to save.
-            end_date (date): The deadline for achieving the goal.
-
-        Returns:
-            Goal: The newly created Goal instance.
-        """
-        goal = Goal.objects.create(
-            user=self,
-            name=name,
-            target_amount=target_amount,
-            end_date=end_date
-        )
-        return goal
-
-    def delete_goal(self, user_id, goal_id):
-        """
-        Deletes a goal from the user's goals.
-
-        Parameters:
-            user_id (int): The ID of the user.
-            goal_id (int): The ID of the goal to delete.
-        """
-        Goal.objects.filter(user_id=user_id, goal_id=goal_id).delete()
-
-
 class GoalAllocation(models.Model):
     """Model for the allocation of a goal."""
     # user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
