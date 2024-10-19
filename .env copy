@@ -1,9 +1,0 @@
-SECRET_KEY='django-insecure-gz6j!yfbq=28&#1n)j1u9-mmu&o!bcx5e&5oc@a3i_t%iwu=xu'
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
-TIME_ZONE=Asia/Bangkok
-DB_NAME=moneymap
-DB_USER=postgres
-DB_PASSWORD=1234
-DB_HOST=localhost
-DB_PORT=5432

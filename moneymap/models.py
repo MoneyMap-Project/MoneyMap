@@ -87,7 +87,8 @@ class IncomeExpense(models.Model):
     # currency_id = pass will be added later
 
     def __str__(self):
-        return f"{self.type} of {self.amount} on {self.date}"
+        return self.description
+        # return f"{self.type} of {self.amount} on {self.date}"
 
 
 class SavingEntry(models.Model):
