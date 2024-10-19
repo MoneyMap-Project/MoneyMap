@@ -11,3 +11,4 @@ def goals(request):
 
 def history(request):
     return render(request, 'moneymap/history.html')
+
