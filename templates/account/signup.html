@@ -1,0 +1,17 @@
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <form class='signup-form' method="POST">
+            {% csrf_token %}
+            <h1>Sign up here!</h1>
+
+            <input type="text" placeholder="Username" name="username" required><br>
+            <input type="password" placeholder="Password" name="password1" required><br>
+            <input type="password" placeholder="Repeat password*" name="password2" required>
+            <button type="submit">Sign up</button>
+        </form>
+        <div class="social-container">
+
+            <i class="fa fa-google fa-fw"></i> Signup with Google+
+        </div>
+
+    </div>
