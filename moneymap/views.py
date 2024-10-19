@@ -1,3 +1,5 @@
+from urllib import request
+
 from django.shortcuts import render
 
 def home(request):
@@ -11,3 +13,6 @@ def goals(request):
 
 def history(request):
     return render(request, 'moneymap/history.html')
+
+def money_flow(request):
+    return render(request, 'moneymap/money-flow.html')
