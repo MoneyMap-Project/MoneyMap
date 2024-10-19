@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     #3rd party
     'crispy_forms',
+    "allauth.socialaccount.providers.google",
 
 ]
 
@@ -160,7 +161,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TAILWIND_APP_NAME = 'theme'
 
-LOGIN_REDIRECT_URL = 'home' 
+LOGIN_REDIRECT_URL = '/' 
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
@@ -178,3 +179,16 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'tailwind'
 CRISPY_TEMPLATE_PACK = 'tailwind'
 
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE" : [
+            'profile',
+            'email',
+        ],
+        "AUTH_PARAMS" :{
+            'access_type': 'offline',
+        }        
+    }
+}

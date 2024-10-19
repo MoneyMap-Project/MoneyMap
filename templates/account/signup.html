@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
+    
+{% load socialaccount %}
 <style>
 /* Style for the container of the form */
 .container {
@@ -103,7 +104,9 @@ input:focus {
         <p>Already have an account? <a href="{{ login_url }}">Login</a></p>
 
         <div class="social-container">
-            <i class="fa fa-google fa-fw"></i> Signup with Google+
+            <a href="{% provider_login_url 'google' %}" class="google btn">
+                <i class="fa fa-google fa-fw"></i> Login with Google+
+            </a>
         </div>
     </div>
 </div>
