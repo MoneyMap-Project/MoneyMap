@@ -91,13 +91,10 @@
 
 <div class="container" id="container">
     <div class="form-container sign-up-container">
-        <form class='signup-form' method="POST">
+        <form method="POST" action="{% url 'account_login' %}">
             {% csrf_token %}
-            <h1>Log in </h1>
-
-            <input type="text" placeholder="Username" name="username" required><br>
-            <input type="password" placeholder="Password" name="password1" required><br>
-            <button type="submit">Sign up</button>
+            {{ form.as_p }}
+            <button type="submit">Sign in</button>
         </form>
         <p>Not registered yet? <a href="{{ signup_url }}">Create account</a></p>
 
