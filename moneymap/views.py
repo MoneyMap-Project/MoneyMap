@@ -39,4 +39,27 @@ def income_expense_view(request):
         print(f"Amount: {amount}")
         print(f"Description: {description}")
 
+        try:
+            amount_decimal = float(amount)
+            print(f"Converted amount: {amount_decimal}")
+
+            # Create and save a new IncomeExpense object
+            new_income_expense = IncomeExpense.objects.create(
+                user_id=None,  # Set to None since there's no user
+                type=selected_type,
+                amount=amount_decimal,
+                date=timezone.now(),
+                description=description,
+            )
+            print(f"New IncomeExpense object created: {new_income_expense}")
+
+            messages.success(request, 'Income/Expense recorded successfully!')
+            return redirect('moneymap:money-flow')
+        except ValueError as ve:
+            messages.error(request, 'Invalid amount entered. Please enter a valid number.')
+            print(f"ValueError: {ve}")
+        except Exception as e:
+            messages.error(request, f'An error occurred: {str(e)}')
+            print(f"Exception: {e}")
+
     return render(request, 'moneymap/money-flow.html')
