@@ -4,9 +4,8 @@
 {% block content %}
 <form id="money-flow-form" action="{% url 'moneymap:money-flow' %}" method="POST">
     {% csrf_token %}
-
     <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
-        <div class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">Add new income or expenses</div>
+        <h1 class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">Add new income or expenses</h1>
 
         <div class="w-full flex flex-col lg:flex-row justify-start items-start gap-5">
             <!-- Left Column -->
@@ -18,14 +17,14 @@
                         <input type="text" id="description" name="description" placeholder="Description about your money flow"
                             class="w-full p-2.5 rounded-[10px] border border-[#1b283f] text-[#1b283f] text-lg font-normal font-['Poppins'] focus:outline-none focus:border-[#05a99d]" required />
                     </div>
+
                     <!-- Amount Section -->
                     <div class="w-full flex flex-col gap-3">
                         <label for="amount" class="text-black text-lg font-normal font-['Poppins'] capitalize">Amount</label>
                         <div class="w-full p-2.5 rounded-[10px] border border-[#1b283f] flex justify-between items-center amount-container">
                             <input type="number" id="amount" name="amount" placeholder="Enter amount"
                                 class="w-full focus:outline-none text-[#1b283f] text-lg font-normal font-['Poppins'] amount-input"
-                                oninput="formatBaht()"
-                                onkeydown="return restrictInput(event)"
+                                oninput="formatBaht()" onkeydown="return restrictInput(event)"
                                 min="0" step="any" required />
                             <span id="currency-label" class="ml-2 text-[#1b283f] text-lg font-normal font-['Poppins']">baht</span>
                         </div>
@@ -34,17 +33,20 @@
 
                 <!-- Income and Expenses Section -->
                 <div class="w-full flex flex-col lg:flex-row justify-start items-center gap-5">
+                    <!-- Income Button -->
                     <div class="w-full lg:w-1/2 p-5 rounded-[10px] border border-[#05a99d] flex flex-col justify-start items-start gap-4">
-                        <div class="text-[#1b283f] text-lg font-bold font-['Poppins'] uppercase">Income</div>
-                        <div class="text-[#1b283f] text-sm font-normal font-['Poppins']">Record money earned from salary, bonuses, or any other sources</div>
+                        <h2 class="text-[#1b283f] text-lg font-bold font-['Poppins'] uppercase">Income</h2>
+                        <p class="text-[#1b283f] text-sm font-normal font-['Poppins']">Record money earned from salary, bonuses, or any other sources</p>
                         <div class="w-full px-2.5 py-2 bg-[#05a99d] rounded-[40px] flex justify-center items-center income-button hover:bg-[#009b86] transition-colors duration-200 ease-in-out cursor-pointer" onclick="selectType('income')">
                             <img src="{% static 'money-flow/select.png' %}" alt="Check" class="hidden check-icon mr-2" style="width: 20px; height: 20px;" />
                             <div class="text-white text-lg font-normal font-['Poppins'] uppercase">Select</div>
                         </div>
                     </div>
+
+                    <!-- Expenses Button -->
                     <div class="w-full lg:w-1/2 p-5 rounded-[10px] border border-[#ff5757] flex flex-col justify-start items-start gap-4">
-                        <div class="text-[#1b283f] text-lg font-bold font-['Poppins'] uppercase">Expenses</div>
-                        <div class="text-[#1b283f] text-sm font-normal font-['Poppins']">Track your spending on bills, groceries, and other daily costs.</div>
+                        <h2 class="text-[#1b283f] text-lg font-bold font-['Poppins'] uppercase">Expenses</h2>
+                        <p class="text-[#1b283f] text-sm font-normal font-['Poppins']">Track your spending on bills, groceries, and other daily costs.</p>
                         <div class="w-full px-2.5 py-2 bg-[#05a99d] rounded-[40px] flex justify-center items-center expenses-button hover:bg-[#009b86] transition-colors duration-200 ease-in-out cursor-pointer" onclick="selectType('expenses')">
                             <img src="{% static 'money-flow/select.png' %}" alt="Check" class="hidden check-icon mr-2" style="width: 20px; height: 20px;" />
                             <div class="text-white text-lg font-normal font-['Poppins'] uppercase">Select</div>
@@ -57,7 +59,7 @@
             <div class="w-full lg:w-1/3 flex flex-col gap-4">
                 <!-- Summary Section -->
                 <div class="w-full p-5 rounded-[10px] border border-[#aec2c0] flex flex-col gap-5">
-                    <div class="text-[#1b283f] text-[28px] font-semibold font-['Poppins'] capitalize">Summary</div>
+                    <h2 class="text-[#1b283f] text-[28px] font-semibold font-['Poppins'] capitalize">Summary</h2>
                     <div class="w-[72px] h-[2px] bg-[#90acaa]"></div>
                     <div class="w-full flex flex-col gap-4">
                         <div id="summary-description" class="text-[#1b283f] text-lg font-bold font-['Poppins'] capitalize"></div>
@@ -70,7 +72,7 @@
 
                 <!-- Add New Money Flow Button -->
                 <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
-                    <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add new money Flow</div>
+                    <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add new money flow</div>
                 </button>
             </div>
         </div>
@@ -83,10 +85,7 @@
 <style>
     /* Responsive adjustments */
     @media (max-width: 1024px) {
-        .lg\:w-2\/3 {
-            width: 100%;
-        }
-        .lg\:w-1\/2 {
+        .lg\:w-2\/3, .lg\:w-1\/2 {
             width: 100%;
         }
         .lg\:flex-row {
@@ -119,29 +118,15 @@
 <script>
     function formatBaht() {
         const input = document.getElementById('amount');
-        const value = input.value;
-
-        // Show or hide the currency label based on input value
         const currencyLabel = document.getElementById('currency-label');
-        currencyLabel.style.display = value ? 'inline' : 'none';
+        currencyLabel.style.display = input.value ? 'inline' : 'none';
     }
 
-    // Restrict input
     function restrictInput(event) {
-        const key = event.key;
-
-        // Allow numbers, backspace, delete, arrow keys, etc.
-        if (
-            (key >= 0 && key <= 9) ||
-            key === 'Backspace' ||
-            key === 'Delete' ||
-            key === 'ArrowLeft' ||
-            key === 'ArrowRight' ||
-            key === '.'
-        ) {
+        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', '.'];
+        if (event.key >= 0 && event.key <= 9 || allowedKeys.includes(event.key)) {
             return true;
         }
-
         return false;
     }
 
@@ -151,16 +136,11 @@
     function updateSummary() {
         const description = document.getElementById('description').value.trim();
         const amount = document.getElementById('amount').value.trim();
-        const selectedType = document.getElementById('money-type').value;
+        const selectedType = document.getElementById('money-type').value || "Savings Goal";
 
-        const summaryDescription = document.getElementById('summary-description');
-        summaryDescription.textContent = description.length > 0 ? description : "";
-
-        const summaryAmount = document.getElementById('summary-amount');
-        summaryAmount.textContent = amount.length > 0 ? `${amount} baht` : "";
-
-        const summaryType = document.getElementById('selected-type');
-        summaryType.textContent = selectedType.length > 0 ? selectedType : "Savings Goal";
+        document.getElementById('summary-description').textContent = description || "";
+        document.getElementById('summary-amount').textContent = amount ? `${amount} baht` : "";
+        document.getElementById('selected-type').textContent = selectedType;
     }
 
     function selectType(type) {
@@ -189,9 +169,8 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         selectType('income');
+        updateSummary();
     });
-
-    updateSummary();
 </script>
 
 {% endblock %}
