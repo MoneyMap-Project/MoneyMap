@@ -63,15 +63,21 @@ class GoalAllocation(models.Model):
 class IncomeExpense(models.Model):
     """Model for the income expense."""
     IncomeExpense_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                on_delete=models.CASCADE, related_name='income_expenses')
+    # user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
+    #                             on_delete=models.CASCADE, related_name='income_expenses')
+    user_id = models.ForeignKey(
+        'auth.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     expense_type = (
         ('income', 'Income'),
         ('expense', 'Expense'),
         ('saving', 'Saving'),
     )
     type = models.CharField(
-        max_length=7,
+        max_length=15,
         choices=expense_type
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -81,7 +87,8 @@ class IncomeExpense(models.Model):
     # currency_id = pass will be added later
 
     def __str__(self):
-        return f"{self.type} of {self.amount} on {self.date}"
+        return self.description
+        # return f"{self.type} of {self.amount} on {self.date}"
 
 
 class SavingEntry(models.Model):
