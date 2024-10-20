@@ -34,10 +34,10 @@ def income_expense_view(request):
         amount = request.POST.get('amount')
         description = request.POST.get('description')
 
-        # Print local variables for debugging
-        print(f"Expense Type: {selected_type}")
-        print(f"Amount: {amount}")
-        print(f"Description: {description}")
+        # # Print local variables for debugging
+        # print(f"Expense Type: {selected_type}")
+        # print(f"Amount: {amount}")
+        # print(f"Description: {description}")
 
         try:
             amount_decimal = float(amount)
