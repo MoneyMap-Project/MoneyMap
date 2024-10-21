@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 
     #3rd party
-    'crispy_forms',
     "allauth.socialaccount.providers.google",
 
 ]
