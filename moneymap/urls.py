@@ -5,8 +5,8 @@ from . import views
 app_name = "moneymap"
 urlpatterns = [
     path('', views.home, name='home'),
-    path('income-and-expenses/', views.income_and_expenses, name='income-expenses'),
+    path('income-and-expenses/', views.income_and_expenses_view, name='income-expenses'),
     path('goals/', views.goals, name='goals'),
     path('income-and-expenses/history/', views.history, name='history'),
-    path('income-and-expenses/money-flow/', views.income_expense_view, name='money-flow'),
+    path('income-and-expenses/money-flow/', views.moneyflow_view, name='money-flow'),
 ]

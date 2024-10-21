@@ -1,10 +1,8 @@
-from django.utils import timezone
-from urllib import request
-from decimal import Decimal, InvalidOperation
 from django.shortcuts import render, redirect
 
 from .models import IncomeExpense
 from django.contrib import messages
+from django.utils import timezone
 
 
 def is_admin(user):
@@ -15,8 +13,13 @@ def home(request):
     return render(request, 'moneymap/home.html')
 
 
-def income_and_expenses(request):
-    return render(request, 'moneymap/income-expenses.html')
+def income_and_expenses_view(request):
+    today = timezone.now().date()
+    # Retrieve all IncomeExpense records created today
+    income_expenses = IncomeExpense.objects.all().filter(date=today)
+    # income_expenses = IncomeExpense.objects.filter(user_id=request.user).order_by('-date')  # TODO: implement with user_id
+    return render(request, 'moneymap/income-expenses.html',
+                  {'income_expenses': income_expenses})
 
 
 def goals(request):
@@ -27,17 +30,12 @@ def history(request):
     return render(request, 'moneymap/history.html')
 
 
-def income_expense_view(request):
+def moneyflow_view(request):
     if request.method == 'POST':
         # Get data from the form
         selected_type = request.POST.get('money_type')
         amount = request.POST.get('amount')
         description = request.POST.get('description')
-
-        # # Print local variables for debugging
-        # print(f"Expense Type: {selected_type}")
-        # print(f"Amount: {amount}")
-        # print(f"Description: {description}")
 
         try:
             amount_decimal = float(amount)
