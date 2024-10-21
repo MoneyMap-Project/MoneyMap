@@ -137,13 +137,13 @@
         <form method="POST" action="{% url 'account_login' %}">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Sign in</button>
+            <button type="submit">Log in</button>
         </form>
         <p>Not registered yet? <a href="{{ signup_url }}">Create account</a></p>
 
         <div class="social-container">
             <a href="{% provider_login_url 'google' %}" class="login-with-google-btn">
-                Sign in with Google
+                Log in with Google
             </a>
         </div>
 
