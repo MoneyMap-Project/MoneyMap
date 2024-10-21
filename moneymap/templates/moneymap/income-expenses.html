@@ -52,26 +52,36 @@
       </div>
     </div>
 
-    {% for row in "012" %}  <!-- change loop later when get variable name -->
-    <!-- Data Row -->
-    <div class="flex {{ forloop.counter|divisibleby:2|yesno:'#f2f2f2,#f9f9f9' }}">
-      <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ forloop.counter }}</div>
-      </div>
-      <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Pocket Money</div>
-      </div>
-      <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">2000</div>
-      </div>
-      <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-        <div>
-          <span class="text-[#05a99d] text-lg font-normal font-['Poppins'] capitalize">+</span>
-          <span class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize"> 2000</span>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
+    {% if income_expenses %}
+        {% for item in income_expenses %}
+            <div class="flex {{ forloop.counter|divisibleby:2|yesno:'#f2f2f2,#f9f9f9' }}">
+                <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ forloop.counter }}</div>
+                </div>
+                <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ item.description }}</div>
+                </div>
+                <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ item.amount }}</div>
+                </div>
+                <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                    <div>
+                        <div>
+                                {% if item.type == "Income" %}
+                                    <span class="text-[#05a99d] text-lg font-normal font-['Poppins'] capitalize">+</span>
+                                {% else %}
+                                    <span class="text-[#ff0000] text-lg font-normal font-['Poppins'] capitalize">–</span>
+                                {% endif %}
+                                <span class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize"> {{ item.amount }}</span>
+                            </div>                        
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No income or expenses recorded today.</p>
+    {% endif %}
+
 
     <!-- Bottom Border -->
     <div class="h-2.5 rounded-b-[10px] bg-[#bbe6e3]"></div>

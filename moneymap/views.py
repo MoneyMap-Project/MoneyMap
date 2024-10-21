@@ -20,6 +20,7 @@ def income_and_expenses_view(request):
     # income_expenses = IncomeExpense.objects.filter(user_id=request.user).order_by('-date')  # TODO: implement with user_id
     return render(request, 'moneymap/income-expenses.html',
                   {'income_expenses': income_expenses})
+    # TODO: today's balance, model's default boolean is false ?
 
 
 def goals(request):
