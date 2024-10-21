@@ -1,5 +1,135 @@
 {% extends 'moneymap/base.html' %}
 {% block content %}
-    <h1>Financial History</h1>
-    <p>This is the Financial History page.</p>
+<div class="container mx-auto w-full max-w-6xl p-4 flex flex-col justify-start items-center gap-5">
+    <div class="header w-full flex flex-col gap-5">
+        <!-- Title and Date Range -->
+        <div class="title-date-range w-full flex justify-between items-center">
+            <!-- History Title -->
+            <div class="title text-[#1b283f] text-4xl font-semibold font-poppins leading-[60px]">
+                History
+            </div>
+
+            <!-- Date Range -->
+            <div class="date-range flex items-center gap-2.5">
+                <div class="date-picker rounded-lg border border-[#90acaa] flex items-center">
+                    <input type="date" id="startDate" class="date-input px-2 py-1 text-[#1b283f] text-lg font-normal font-poppins capitalize" />
+                </div>
+                <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">To</div>
+                <div class="date-picker rounded-lg border border-[#90acaa] flex items-center">
+                    <input type="date" id="endDate" class="date-input px-2 py-1 text-[#1b283f] text-lg font-normal font-poppins capitalize" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Header -->
+        <div class="table-header w-full flex flex-col gap-2.5">
+            <div class="header-row w-full h-10 rounded-lg border border-[#90acaa] flex items-center">
+                <div class="header-cell w-[229px] pl-10 flex items-center">
+                    <div class="text-[#1b283f] text-lg font-bold font-poppins capitalize">Date</div>
+                </div>
+                <div class="header-cell w-[310px] pl-10 flex items-center">
+                    <div class="text-[#1b283f] text-lg font-bold font-poppins capitalize">Income</div>
+                </div>
+                <div class="header-cell w-[310px] pl-10 flex items-center">
+                    <div class="text-[#1b283f] text-lg font-bold font-poppins capitalize">Expense</div>
+                </div>
+                <div class="header-cell w-[367px] pl-10 flex items-center">
+                    <div class="text-[#1b283f] text-lg font-bold font-poppins capitalize">Total</div>
+                </div>
+                <div class="header-cell w-[135px] flex justify-center items-center">
+                    <div class="text-[#1b283f] text-lg font-bold font-poppins capitalize">Action</div>
+                </div>
+            </div>
+
+            <!-- Table Rows -->
+            {% for row in '1234' %}
+            <div class="table-row w-full flex flex-col gap-2.5">
+                <!-- Row -->
+                <div class="row-item w-full h-[40px] rounded-lg border border-[#F4F4F4] flex items-center">
+                    <div class="cell w-[229px] pl-10 flex items-center">
+                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">01/01/2024</div>
+                    </div>
+                    <div class="cell w-[310px] pl-10 flex items-center">
+                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">2468 Bath</div>
+                    </div>
+                    <div class="cell w-[310px] pl-10 flex items-center">
+                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">1234 Bath</div>
+                    </div>
+                    <div class="cell w-[367px] pl-10 flex items-center">
+                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">1234 Bath</div>
+                    </div>
+                    <div class="cell w-[135px] flex justify-center items-center">
+                        <button class="action-button w-[100px] bg-[#05a99d] rounded-lg flex justify-center items-center text-white text-base font-normal font-poppins capitalize transition duration-300 hover:bg-[#04897f]">
+                            Detail
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function adjustFontSize() {
+        const baseFontSize = 14;
+        const screenWidth = window.innerWidth;
+
+        if (screenWidth < 640) { // Mobile devices
+            document.documentElement.style.fontSize = `${baseFontSize * 0.875}px`;
+        } else if (screenWidth < 768) { // Tablets
+            document.documentElement.style.fontSize = `${baseFontSize}px`;
+        } else if (screenWidth < 1024) { // Small desktops
+            document.documentElement.style.fontSize = `${baseFontSize * 1.125}px`;
+        } else { // Large desktops
+            document.documentElement.style.fontSize = `${baseFontSize * 1.25}px`;
+        }
+    }
+
+    window.addEventListener('load', adjustFontSize);
+    window.addEventListener('resize', adjustFontSize);
+</script>
+
+<style>
+    @media (max-width: 640px) {
+        .title {
+            font-size: 2rem;
+        }
+        .text-lg {
+            font-size: 1rem;
+        }
+        .action-button {
+            width: 100%;
+        }
+        .date-input {
+            width: 120px;
+            font-size: 0.75rem;
+        }
+    }
+
+    @media (min-width: 641px) and (max-width: 768px) {
+        .title {
+            font-size: 2.5rem;
+        }
+        .date-input {
+            width: 140px;
+        }
+    }
+
+    @media (min-width: 769px) {
+        .title {
+            font-size: 2.5rem;
+        }
+        .date-input {
+            width: 160px;
+        }
+    }
+
+    .date-input {
+        padding: 5px;
+        border: 1px solid #90acaa;
+        border-radius: 4px;
+        font-size: 0.875rem;
+    }
+</style>
 {% endblock %}
