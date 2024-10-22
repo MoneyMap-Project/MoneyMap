@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
+    <title>MoneyMap - Sign Up</title>
+    {% load static %}
+    {% load socialaccount %}
+</head>
+
+<body class="h-full w-full m-0 p-0">
+    <div class="flex h-screen w-screen overflow-hidden">
+        <!-- Left section (Sign Up form) -->
+        <div class="flex flex-col justify-center items-center w-1/2 p-10">
+            <div class="w-[706px] flex flex-col items-start gap-10">
+                <h1 class="text-[#1b283f] text-6xl font-semibold font-['Poppins']">Sign Up</h1>
+
+                <form method="POST" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
+                    <div class="w-full flex flex-col items-start gap-10">
+                        <div class="w-full flex flex-col gap-5">
+                            <!-- Username -->
+                            <div
+                                class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#1b283f] flex items-center">
+                                {{ form.username }}
+                            </div>
+                            <!-- Password -->
+                            <div
+                                class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#1b283f] flex items-center justify-between">
+                                {{ form.password1 }}
+                                <div class="w-8 h-8"></div>
+                            </div>
+                            <!-- Repeat Password -->
+                            <div
+                                class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#1b283f] flex items-center justify-between">
+                                {{ form.password2 }}
+                                <div class="w-8 h-8"></div>
+                            </div>
+                        </div>
+
+                        <!-- Sign Up Button and Already have account Link -->
+                        <div class="w-full flex flex-col items-center gap-5">
+                            <button type="submit"
+                                class="w-[686px] h-14 pl-7 pr-2.5 py-2 bg-[#05a99d] rounded-full flex justify-center items-center">
+                                <span class="text-white text-[24px] font-normal font-['Poppins'] capitalize">Sign
+                                    Up</span>
+                            </button>
+                            <div class="w-[454px] h-8 text-center">
+                                <span class="text-black text-xl font-normal font-['Poppins']">Already have an account?
+                                </span>
+                                <a href="/accounts/login/"
+                                    class="text-[#05a99d] text-xl font-normal font-['Poppins'] underline">Login</a>
+                            </div>
+                        </div>
+
+                        <!-- Or Continue with -->
+                        <div class="w-full relative">
+                            <div
+                                class="absolute left-[257px] text-center text-black text-xl font-normal font-['Poppins']">
+                                or continue with</div>
+                            <div class="w-[150px] absolute border border-black top-2 left-0"></div>
+                            <div class="w-[150px] absolute border border-black top-2 right-0"></div>
+                        </div>
+
+                        <a href="{% provider_login_url 'google' %}"
+                            class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#90acaa] flex justify-center items-center gap-5">
+                            <img src="/static/login/google.png" alt="Google" class="w-8 h-8" />
+                            <span class="text-[#1b283f] text-[24px] font-normal font-['Poppins']">Sign up with
+                                Google</span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right section (Image or content) -->
+        <div class="hidden md:flex w-1/2 bg-[#05a99d] justify-center items-center">
+            <img src="/static/login/logo.png" alt="Logo" class="h-auto max-h-[388.63px]" />
+        </div>
+    </div>
+</body>
+
+</html>
