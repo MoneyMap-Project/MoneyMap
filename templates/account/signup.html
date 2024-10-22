@@ -1,150 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-{% load socialaccount %}
-<style>
-    /* Style for the container of the form */
-    .container {
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f5f5f5;
-    }
 
-    .form-container {
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        padding: 40px;
-        max-width: 400px;
-        width: 100%;
-    }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
+    <title>MoneyMap - Sign Up</title>
+    {% load static %}
+    {% load socialaccount %}
+</head>
 
-    h1 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 28px;
-        color: #333;
-    }
+<body class="h-full w-full m-0 p-0">
+    <div class="flex h-screen w-screen overflow-hidden">
+        <!-- Left section (Sign Up form) -->
+        <div class="flex flex-col justify-center items-center w-1/2 p-10">
+            <div class="w-[706px] flex flex-col items-start gap-10">
+                <h1 class="text-[#1b283f] text-6xl font-semibold font-['Poppins']">Sign Up</h1>
 
-    input[type="text"],
-    input[type="password"] {
-        width: 100%;
-        padding: 12px 15px;
-        margin: 8px 0;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
+                <form method="POST" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
+                    <div class="w-full flex flex-col items-start gap-10">
+                        <div class="w-full flex flex-col gap-5">
+                            <!-- Username -->
+                            <div
+                                class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#1b283f] flex items-center">
+                                {{ form.username }}
+                            </div>
+                            <!-- Password -->
+                            <div
+                                class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#1b283f] flex items-center justify-between">
+                                {{ form.password1 }}
+                                <div class="w-8 h-8"></div>
+                            </div>
+                            <!-- Repeat Password -->
+                            <div
+                                class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#1b283f] flex items-center justify-between">
+                                {{ form.password2 }}
+                                <div class="w-8 h-8"></div>
+                            </div>
+                        </div>
 
-    button {
-        width: 100%;
-        background-color: #36b7b4;
-        color: white;
-        padding: 12px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 10px;
-    }
+                        <!-- Sign Up Button and Already have account Link -->
+                        <div class="w-full flex flex-col items-center gap-5">
+                            <button type="submit"
+                                class="w-[686px] h-14 pl-7 pr-2.5 py-2 bg-[#05a99d] rounded-full flex justify-center items-center">
+                                <span class="text-white text-[24px] font-normal font-['Poppins'] capitalize">Sign
+                                    Up</span>
+                            </button>
+                            <div class="w-[454px] h-8 text-center">
+                                <span class="text-black text-xl font-normal font-['Poppins']">Already have an account?
+                                </span>
+                                <a href="/accounts/login/"
+                                    class="text-[#05a99d] text-xl font-normal font-['Poppins'] underline">Login</a>
+                            </div>
+                        </div>
 
-    button:hover {
-        background-color: #30a4a0;
-    }
+                        <!-- Or Continue with -->
+                        <div class="w-full relative">
+                            <div
+                                class="absolute left-[257px] text-center text-black text-xl font-normal font-['Poppins']">
+                                or continue with</div>
+                            <div class="w-[150px] absolute border border-black top-2 left-0"></div>
+                            <div class="w-[150px] absolute border border-black top-2 right-0"></div>
+                        </div>
 
-    .social-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
+                        <a href="{% provider_login_url 'google' %}"
+                            class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#90acaa] flex justify-center items-center gap-5">
+                            <img src="/static/login/google.png" alt="Google" class="w-8 h-8" />
+                            <span class="text-[#1b283f] text-[24px] font-normal font-['Poppins']">Sign up with
+                                Google</span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-    .social-container i {
-        font-size: 24px;
-        color: #4285F4;
-    }
-
-    .social-container i:hover {
-        color: #0b7dda;
-    }
-
-    .signup-form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    a {
-        color: #36b7b4;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-
-    input:focus {
-        border-color: #36b7b4;
-        outline: none;
-    }
-
-    .login-with-google-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 280px;
-        height: 50px;
-        background-color: white;
-        color: #757575;
-        border: 1px solid #dadce0;
-        border-radius: 25px;
-        font-size: 16px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
-    }
-
-    .google-logo {
-        width: 24px;
-        height: 24px;
-        margin-right: 12px;
-    }
-
-    .login-with-google-btn:hover {
-        background-color: #f8f9fa;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .login-with-google-btn:active {
-        background-color: #f1f3f4;
-        box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
-    }
-
-    .login-with-google-btn i {
-        margin-right: 10px;
-    }
-</style>
-
-<div class="container" id="container">
-    <div class="form-container sign-up-container">
-        <form class='signup-form' method="POST">
-            {% csrf_token %}
-            <h1>Sign up here!</h1>
-
-            <input type="text" placeholder="Username" name="username" required><br>
-            <input type="password" placeholder="Password" name="password1" required><br>
-            <input type="password" placeholder="Repeat password*" name="password2" required>
-            <button type="submit">Sign up</button>
-        </form>
-        <p>Already have an account? <a href="{{ login_url }}">Login</a></p>
-
-        <div class="social-container">
-            <a href="{% provider_login_url 'google' %}" class="login-with-google-btn">
-                Sign up with Google
-            </a>
+        <!-- Right section (Image or content) -->
+        <div class="hidden md:flex w-1/2 bg-[#05a99d] justify-center items-center">
+            <img src="/static/login/logo.png" alt="Logo" class="h-auto max-h-[388.63px]" />
         </div>
     </div>
-</div>
+</body>
 
 </html>
