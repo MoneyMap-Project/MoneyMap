@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
+
 def is_admin(user):
     return user.is_superuser  # Check if the user is a superuser
 
@@ -34,12 +35,12 @@ def income_and_expenses_view(request):
             balance -= item.amount
             check -= item.amount
 
-
         # Add each record along with the updated balance to the list
         income_expense_with_balance.append({
             'description': item.description,
             'amount': item.amount,
             'balance': abs(balance),
+            'type': item.type,
             'check': check,
         })
 
@@ -81,7 +82,8 @@ def moneyflow_view(request):
             messages.success(request, 'Income/Expense recorded successfully!')
             return redirect('moneymap:money-flow')
         except ValueError as ve:
-            messages.error(request, 'Invalid amount entered. Please enter a valid number.')
+            messages.error(request,
+                           'Invalid amount entered. Please enter a valid number.')
             print(f"ValueError: {ve}")
         except Exception as e:
             messages.error(request, f'An error occurred: {str(e)}')
