@@ -65,9 +65,16 @@
 
             <!-- Logout/Login Button -->
                 {% if user.is_authenticated %}
+                <div class="h-[60px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4"></div>
+                    <div
+                        class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                        <div class="text-white text-base font-normal font-Poppins capitalize transition-colors duration-300">
+                            {{user.username}}</div>
+                    </div>
                     <div class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
                         <a href="/accounts/logout/" class="text-white text-base font-normal font-Poppins capitalize">Logout</a>
                     </div>
+                </div>
                 {% else %}
                     <a href="/accounts/login/" class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
                         <div class="text-white text-base font-normal font-Poppins capitalize">Login</div>
