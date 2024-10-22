@@ -11,7 +11,7 @@
                 <span class="text-black text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2] ml-5"> </span>
                 <span class="text-[#05a99d] text-6xl md:text-7xl lg:text-7xl xl:text-[7rem] font-normal leading-[1.2]"
                       style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
-        {{ user.username }}
+        {{ user_id_display }}
       </span>
                 <span class="text-[#ffbb56] text-7xl font-normal leading-[1.2]"
                       style="font-family: 'Gochi Hand', cursive; vertical-align: bottom;"> </span>
@@ -64,46 +64,50 @@
                 </div>
             </div>
 
-            {% if income_expense_with_balance %}
-                {% for item in income_expense_with_balance %}
-                    <div class="flex {{ forloop.counter|divisibleby:2|yesno:'#f2f2f2,#f9f9f9' }}">
-                        <!-- Display row number -->
-                        <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-                            <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ forloop.counter }}</div>
-                        </div>
+            {% if user.is_authenticated%}
+                {% if has_data %}
+                    {% for item in income_expense_with_balance %}
+                        <div class="flex {{ forloop.counter|divisibleby:2|yesno:'#f2f2f2,#f9f9f9' }}">
+                            <!-- Display row number -->
+                            <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ forloop.counter }}</div>
+                            </div>
 
-                        <!-- Display description -->
-                        <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-                            <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ item.description }}</div>
-                        </div>
+                            <!-- Display description -->
+                            <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ item.description }}</div>
+                            </div>
 
-                        <!-- Display amount -->
-                        <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-                            {% if item.type == "Expenses" %}
-                                <span class="text-[#ff0000] text-lg font-normal font-['Poppins'] capitalize">–</span>
-                            {% elif item.type == "Income" %}
-                                <span class="text-[#05a99d] text-lg font-normal font-['Poppins'] capitalize">+</span>
-                            {% endif %}
-                            <span class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize"> {{ item.amount }}</span>
-                        </div>
-
-                        <!-- today's balance -->
-                        <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-                            <div>
-                                {% if item.check > 0 %}
-                                    <span class="text-[#05a99d] text-lg font-normal font-['Poppins'] capitalize">+</span>
-                                {% elif item.check == 0 %}
-                                    <span class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize"></span>
-                                {% else %}
+                            <!-- Display amount -->
+                            <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                                {% if item.type == "Expenses" %}
                                     <span class="text-[#ff0000] text-lg font-normal font-['Poppins'] capitalize">–</span>
+                                {% elif item.type == "Income" %}
+                                    <span class="text-[#05a99d] text-lg font-normal font-['Poppins'] capitalize">+</span>
                                 {% endif %}
-                                <span class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ item.balance }}</span>
+                                <span class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize"> {{ item.amount }}</span>
+                            </div>
+
+                            <!-- today's balance -->
+                            <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                                <div>
+                                    {% if item.check > 0 %}
+                                        <span class="text-[#05a99d] text-lg font-normal font-['Poppins'] capitalize">+</span>
+                                    {% elif item.check == 0 %}
+                                        <span class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize"></span>
+                                    {% else %}
+                                        <span class="text-[#ff0000] text-lg font-normal font-['Poppins'] capitalize">–</span>
+                                    {% endif %}
+                                    <span class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">{{ item.balance }}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <p>No income or expenses recorded today.</p>
+                {% endif %}
             {% else %}
-                <p>No income or expenses recorded today.</p>
+                <p>Login require to add your money flow</p>
             {% endif %}
 
 

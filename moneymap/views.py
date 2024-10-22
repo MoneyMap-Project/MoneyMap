@@ -14,39 +14,52 @@ def home(request):
     return render(request, 'moneymap/home.html')
 
 
-@login_required
 def income_and_expenses_view(request):
-    today = timezone.now().date()
-    # Retrieve all IncomeExpense records created today for the logged-in user
-    income_expenses = IncomeExpense.objects.filter(user_id=request.user,
-                                                   date=today).order_by('date',
-                                                                        'IncomeExpense_id')
+    local_time = timezone.localtime(timezone.now())
+    today = local_time.date()
 
-    balance = 0
-    check = 0
-    income_expense_with_balance = []
+    # Check if user is authenticated
+    if request.user.is_authenticated:
+        # Retrieve all IncomeExpense records for the logged-in user
+        income_expenses = IncomeExpense.objects.filter(user_id=request.user,
+                                                       date=today).order_by(
+            'date')
 
-    for item in income_expenses:
-        # Update balance based on the type of transaction
-        if item.type == 'Income':
-            balance += item.amount
-            check += item.amount
-        else:
-            balance -= item.amount
-            check -= item.amount
+        balance = 0
+        check = 0
+        income_expense_with_balance = []
 
-        # Add each record along with the updated balance to the list
-        income_expense_with_balance.append({
-            'description': item.description,
-            'amount': item.amount,
-            'balance': abs(balance),
-            'type': item.type,
-            'check': check,
+        for item in income_expenses:
+            # Update balance based on the type of transaction
+            if item.type == 'Income':
+                balance += item.amount
+                check += item.amount
+            else:
+                balance -= item.amount
+                check -= item.amount
+
+            # Add each record along with the updated balance to the list
+            income_expense_with_balance.append({
+                'description': item.description,
+                'amount': item.amount,
+                'balance': abs(balance),
+                'type': item.type,
+                'check': check,
+            })
+
+        return render(request, 'moneymap/income-expenses.html', {
+            'income_expense_with_balance': income_expense_with_balance,
+            'has_data': bool(income_expense_with_balance),
+            # Flag to check if there's data
+            'user_id_display': request.user.username
         })
-
-    return render(request, 'moneymap/income-expenses.html', {
-        'income_expense_with_balance': income_expense_with_balance
-    })
+    else:
+        # If user is not authenticated, provide a placeholder for user_id_display
+        return render(request, 'moneymap/income-expenses.html', {
+            'income_expense_with_balance': [],
+            'has_data': False,
+            'user_id_display': 'guest'
+        })
 
 
 def goals(request):
