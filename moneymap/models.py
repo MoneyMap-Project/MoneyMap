@@ -63,14 +63,9 @@ class GoalAllocation(models.Model):
 class IncomeExpense(models.Model):
     """Model for the income expense."""
     IncomeExpense_id = models.AutoField(primary_key=True)
-    # user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
-    #                             on_delete=models.CASCADE, related_name='income_expenses')
-    user_id = models.ForeignKey(
-        'auth.User',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                on_delete=models.CASCADE, related_name='income_expenses')
+
     expense_type = (
         ('income', 'Income'),
         ('expense', 'Expense'),

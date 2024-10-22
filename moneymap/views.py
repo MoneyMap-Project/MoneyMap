@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from .models import IncomeExpense
 from django.contrib import messages
 from django.utils import timezone
-
+from django.contrib.auth.decorators import login_required
 
 def is_admin(user):
     return user.is_superuser  # Check if the user is a superuser
@@ -12,12 +12,11 @@ def is_admin(user):
 def home(request):
     return render(request, 'moneymap/home.html')
 
-
+@login_required
 def income_and_expenses_view(request):
     today = timezone.now().date()
     # Retrieve all IncomeExpense records created today
-    income_expenses = IncomeExpense.objects.all().filter(date=today)
-    # income_expenses = IncomeExpense.objects.filter(user_id=request.user).order_by('-date')  # TODO: implement with user_id
+    income_expenses = IncomeExpense.objects.filter(user_id=request.user).order_by('-date')
     return render(request, 'moneymap/income-expenses.html',
                   {'income_expenses': income_expenses})
     # TODO: today's balance, model's default boolean is false ?
@@ -31,6 +30,7 @@ def history(request):
     return render(request, 'moneymap/history.html')
 
 
+@login_required
 def moneyflow_view(request):
     if request.method == 'POST':
         # Get data from the form
@@ -44,7 +44,7 @@ def moneyflow_view(request):
 
             # Create and save a new IncomeExpense object
             new_income_expense = IncomeExpense.objects.create(
-                user_id=None,  # Set to None since there's no user
+                user_id=request.user,
                 type=selected_type,
                 amount=amount_decimal,
                 date=timezone.now(),
