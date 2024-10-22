@@ -18,14 +18,22 @@
             display: flex;
             flex-direction: column;
         }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+        }
         main {
             flex: 1;
+            padding-top: 6rem;
         }
     </style>
 </head>
 
 <body>
-    <header class="w-full bg-white top-0 left-0 right-0 z-50 shadow-sm">
+    <header class="w-full bg-white shadow-sm">
         <div class="container mx-auto px-4 flex justify-between items-center h-24">
             <!-- Logo -->
             <div class="flex items-center h-full">
@@ -55,18 +63,19 @@
                 </a>
             </div>
 
-            <div class="h-[60px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4">
-                <!-- Logout Button -->
-                <div class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
-                    <div class="text-white text-base font-normal font-Poppins capitalize transition-colors duration-300">Logout</div>
-                </div>
-                <!-- Profile Image -->
-                <div class="w-12 h-12 rounded-full overflow-hidden">
-                    <img src="{% static 'base/profile.png' %}" alt="Profile" class="w-full h-full object-cover" />
-                </div>
+            <!-- Logout/Login Button -->
+                {% if user.is_authenticated %}
+                    <div class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                        <a href="/accounts/logout/" class="text-white text-base font-normal font-Poppins capitalize">Logout</a>
+                    </div>
+                {% else %}
+                    <a href="/accounts/login/" class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                        <div class="text-white text-base font-normal font-Poppins capitalize">Login</div>
+                    </a>
+                {% endif %}
             </div>
-        </div>
     </header>
+
 
     <!-- Main Content Block -->
     <main>
