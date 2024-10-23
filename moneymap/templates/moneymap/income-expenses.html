@@ -35,104 +35,104 @@
         </div>
     </div>
 
-    <!-- Table Section -->
-    <div class="flex justify-center">
-        <div class="w-full max-w-[1353px] flex flex-col rounded-[10px] mb-2 ml-2 mr-2">
-            <!-- Header Row -->
-            <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
-                <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-                </div>
-                <div class="flex-1 flex justify-center items-center py-2.5">
-                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">
-                        #
-                    </div>
-                </div>
-                <div class="flex-1 flex justify-center items-center py-2.5">
-                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">
-                        Description
-                    </div>
-                </div>
-                <div class="flex-1 flex justify-center items-center py-2.5">
-                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">
-                        Amount
-                    </div>
-                </div>
-                <div class="flex-1 flex justify-center items-center py-2.5">
-                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">
-                        Today's Balance
-                    </div>
-                </div>
+<!-- Table Section -->
+<div class="flex justify-center">
+    <div class="w-full max-w-[1353px] flex flex-col rounded-[10px] mb-2 ml-2 mr-2">
+        <!-- Header Row -->
+        <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
+            <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]"></div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">#</div>
             </div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Description</div>
+            </div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Amount</div>
+            </div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Today's Balance</div>
+            </div>
+            <!-- New Delete Column with equal width -->
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Delete</div>
+            </div>
+        </div>
 
-            <!-- Data Rows -->
-            {% if user.is_authenticated %}
-                {% if has_data %}
-                    {% for item in income_expense_with_balance %}
-                        <div class="flex {% if forloop.counter|divisibleby:2 %}bg-[#f9f9f9]{% else %}bg-[#ffffff]{% endif %}">
-                            <!-- Color Box -->
-                            <div class="w-[30px] py-2.5 flex justify-center items-center">
-                                <div class="w-[5px] h-full rounded-full
-                                    {% if item.type == 'Expenses' %}
-                                        bg-[#ff0000]
-                                    {% else %}
-                                        bg-[#05a99d]
-                                    {% endif %}">
-                                </div>
-                            </div>
-
-                            <!-- Row Number -->
-                            <div class="flex-1 py-2.5 flex justify-center items-center">
-                                <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ forloop.counter }}</span>
-                            </div>
-
-                            <!-- Description -->
-                            <div class="flex-1 py-2.5 flex justify-center items-center">
-                                <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ item.description }}</span>
-                            </div>
-
-                            <!-- Amount -->
-                            <div class="flex-1 py-2.5 flex justify-center items-center">
-                                <span class="text-lg font-normal font-['Poppins']">
-                                    <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
-                                        {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
-                                    </span>
-                                    <span class="text-[#1b283f]">
-                                        {{ item.amount }}
-                                    </span>
-                                </span>
-                            </div>
-
-                            <!-- Today's Balance -->
-                            <div class="flex-1 py-2.5 flex justify-center items-center">
-                                <span class="text-lg font-normal font-['Poppins']">
-                                    <span class="{% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
-                                        {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %}
-                                    </span>
-                                    <span class="text-[#1b283f]">
-                                        {{ item.balance }}
-                                    </span>
-                                </span>
+        <!-- Data Rows -->
+        {% if user.is_authenticated %}
+            {% if has_data %}
+                {% for item in income_expense_with_balance %}
+                    <div class="flex {% if forloop.counter|divisibleby:2 %}bg-[#f9f9f9]{% else %}bg-[#ffffff]{% endif %}">
+                        <!-- Color Box -->
+                        <div class="w-[30px] py-2.5 flex justify-center items-center">
+                            <div class="w-[5px] h-full rounded-full
+                                {% if item.type == 'Expenses' %}
+                                    bg-[#ff0000]
+                                {% else %}
+                                    bg-[#05a99d]
+                                {% endif %}">
                             </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="flex justify-center items-center py-10">
-                        <img src="{% static 'income-expenses/no.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
-                        <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">No income or expenses recorded today.</p>
+
+                        <!-- Row Number -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ forloop.counter }}</span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ item.description }}</span>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-lg font-normal font-['Poppins']">
+                                <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
+                                    {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
+                                </span>
+                                <span class="text-[#1b283f]">
+                                    {{ item.amount }}
+                                </span>
+                            </span>
+                        </div>
+
+                        <!-- Today's Balance -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-lg font-normal font-['Poppins']">
+                                <span class="{% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
+                                    {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %}
+                                </span>
+                                <span class="text-[#1b283f]">{{ item.balance }}</span>
+                            </span>
+                        </div>
+
+                        <!-- Delete Icon Column -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <a href="#" class="group">
+                                <img src="{% static 'income-expenses/trash1.png' %}" alt="Delete Icon" class="w-4 h-6 group-hover:hidden" />
+                                <img src="{% static 'income-expenses/trash2.png' %}" alt="Delete Icon Hover" class="w-4 h-6 hidden group-hover:block" />
+                            </a>
+                        </div>
                     </div>
-                {% endif %}
+                {% endfor %}
             {% else %}
                 <div class="flex justify-center items-center py-10">
-                    <img src="{% static 'income-expenses/alert.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
-                    <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">Login required to add your money flow.</p>
+                    <img src="{% static 'income-expenses/no.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+                    <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">No income or expenses recorded today.</p>
                 </div>
             {% endif %}
+        {% else %}
+            <div class="flex justify-center items-center py-10">
+                <img src="{% static 'income-expenses/alert.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+                <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">Login required to add your money flow.</p>
+            </div>
+        {% endif %}
 
-            <!-- Bottom Border -->
-            <div class="h-2.5 rounded-bl-[10px] rounded-br-[10px] border-l-4 border-r-4 border-b-4 border-[#bbe6e3]"></div>
-
-        </div>
+        <!-- Bottom Border -->
+        <div class="h-2.5 rounded-bl-[10px] rounded-br-[10px] border-l-4 border-r-4 border-b-4 border-[#bbe6e3]"></div>
     </div>
+</div>
 
     <!-- History Section -->
     <div class="w-full max-w-[1354px] h-auto flex flex-col items-center justify-center mx-auto mt-10">
