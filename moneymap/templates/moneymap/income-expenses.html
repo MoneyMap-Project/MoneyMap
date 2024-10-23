@@ -149,9 +149,9 @@
         </div>
 
         <!-- Cards Section -->
-        <div class="flex flex-nowrap overflow-visible space-x-4 w-full mb-10">
+        <div class="flex flex-wrap justify-center overflow-visible space-x-4 w-full mb-10">
             {% for i in "0123456" %}
-                <div class="flex-grow-0 flex-shrink-0 w-[calc((100%/7)-1rem)] h-[110px] bg-[#f2f2f2] border-2 border-[#f2f2f2] rounded-[10px] flex flex-col transition-transform duration-300 ease-in-out hover:scale-105 hover:relative {% if loop.last %}mr-0{% else %}mr-4{% endif %}">
+                <div class="flex-grow-0 flex-shrink-0 w-full sm:w-[calc((100%/3)-1rem)] md:w-[calc((100%/4)-1rem)] lg:w-[calc((100%/7)-1rem)] h-[110px] bg-[#f2f2f2] border-2 border-[#f2f2f2] rounded-[10px] flex flex-col transition-transform duration-300 ease-in-out hover:scale-105 hover:relative mb-4">
                     <div class="h-[60px] bg-white rounded-tl-[10px] rounded-tr-[10px] flex items-center justify-center">
                         <span class="text-[#05a99d] text-3xl font-bold font-['Poppins']">+</span>
                         <span class="text-[#1b283f] text-3xl font-bold font-['Poppins']">1234</span>
