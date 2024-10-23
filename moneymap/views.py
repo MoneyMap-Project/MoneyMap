@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
+from .utils import calculate_balance
+
 
 def is_admin(user):
     return user.is_superuser  # Check if the user is a superuser
@@ -25,27 +27,8 @@ def income_and_expenses_view(request):
                                                        date=today).order_by(
             'date')
 
-        balance = 0
-        check = 0
-        income_expense_with_balance = []
-
-        for item in income_expenses:
-            # Update balance based on the type of transaction
-            if item.type == 'Income':
-                balance += item.amount
-                check += item.amount
-            else:
-                balance -= item.amount
-                check -= item.amount
-
-            # Add each record along with the updated balance to the list
-            income_expense_with_balance.append({
-                'description': item.description,
-                'amount': item.amount,
-                'balance': abs(balance),
-                'type': item.type,
-                'check': check,
-            })
+        # Use the extracted method to calculate balance
+        income_expense_with_balance = calculate_balance(income_expenses)
 
         return render(request, 'moneymap/income-expenses.html', {
             'income_expense_with_balance': income_expense_with_balance,
@@ -60,7 +43,6 @@ def income_and_expenses_view(request):
             'has_data': False,
             'user_id_display': 'guest'
         })
-
 
 def goals(request):
     return render(request, 'moneymap/goals.html')
