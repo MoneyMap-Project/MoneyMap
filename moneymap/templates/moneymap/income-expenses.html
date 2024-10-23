@@ -8,7 +8,7 @@
         <div class="flex flex-col items-center justify-center text-center z-10">
             <div class="flex items-end">
                 <span class="text-[#1b283f] text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2]">Hello</span>
-                <span class="text-[#05a99d] text-6xl md:text-7xl lg:text-7xl xl:text-[7rem] font-normal leading-[1.2] ml-5"
+                <span class="text-[#05a99d] text-6xl md:text-7xl lg:text-7xl xl:text-[7rem] font-normal leading-[1.2] ml-5 capitalize"
                       style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
                     {{ user_id_display }}
                 </span>
@@ -35,27 +35,29 @@
         </div>
     </div>
 
-    <!-- table section -->
+    <!-- Table Section -->
     <div class="flex justify-center">
         <div class="w-full max-w-[1353px] flex flex-col border border-[#bbe6e3] rounded-[10px]">
             <!-- Header Row -->
             <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
-                <div class="flex-1 py-2.5 flex justify-center items-center">
+                <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                </div>
+                <div class="flex-1 flex justify-center items-center py-2.5">
                     <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">
                         #
                     </div>
                 </div>
-                <div class="flex-1 py-2.5 flex justify-center items-center">
+                <div class="flex-1 flex justify-center items-center py-2.5">
                     <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">
                         Description
                     </div>
                 </div>
-                <div class="flex-1 py-2.5 flex justify-center items-center">
+                <div class="flex-1 flex justify-center items-center py-2.5">
                     <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">
                         Amount
                     </div>
                 </div>
-                <div class="flex-1 py-2.5 flex justify-center items-center">
+                <div class="flex-1 flex justify-center items-center py-2.5">
                     <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">
                         Today's Balance
                     </div>
@@ -67,6 +69,17 @@
                 {% if has_data %}
                     {% for item in income_expense_with_balance %}
                         <div class="flex {{ forloop.counter|divisibleby:2|yesno:'#f2f2f2,#f9f9f9' }}">
+                            <!-- Color Box -->
+                            <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                                <div class="w-[5px] h-full rounded-full
+                                    {% if item.type == 'Expenses' %}
+                                        bg-[#ff0000]
+                                    {% else %}
+                                        bg-[#05a99d]
+                                    {% endif %}">
+                                </div>
+                            </div>
+
                             <!-- Row Number -->
                             <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
                                 <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ forloop.counter }}</span>
@@ -79,15 +92,25 @@
 
                             <!-- Amount -->
                             <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-                                <span class="text-lg font-normal font-['Poppins'] {% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
-                                    {% if item.type == 'Expenses' %}–{% else %}+{% endif %} {{ item.amount }}
+                                <span class="text-lg font-normal font-['Poppins']">
+                                    <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
+                                        {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
+                                    </span>
+                                    <span class="text-[#1b283f]">
+                                        {{ item.amount }}
+                                    </span>
                                 </span>
                             </div>
 
                             <!-- Today's Balance -->
                             <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
-                                <span class="text-lg font-normal font-['Poppins'] {% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
-                                    {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %} {{ item.balance }}
+                                <span class="text-lg font-normal font-['Poppins']">
+                                    <span class="{% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
+                                        {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %}
+                                    </span>
+                                    <span class="text-[#1b283f]">
+                                        {{ item.balance }}
+                                    </span>
                                 </span>
                             </div>
                         </div>
