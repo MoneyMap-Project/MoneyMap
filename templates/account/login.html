@@ -15,10 +15,13 @@
 <body class="h-full w-full m-0 p-0">
     <div class="flex h-screen w-screen overflow-hidden">
         <!-- Left section (Login form) -->
-        <div class="flex flex-col justify-center items-center w-1/2 p-10">
-            <div
-                class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
-                <a href="/" class="text-white text-base font-normal font-Poppins capitalize">View as guest</a>
+        <div class="relative flex flex-col justify-center items-center w-1/2 p-10">
+            <!-- View as guest button positioned in the top right corner -->
+            <div class="absolute top-4 right-4">
+                <div
+                    class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                    <a href="/" class="text-white text-base font-normal font-Poppins capitalize">View as guest</a>
+                </div>
             </div>
             <div class="w-[706px] flex flex-col items-start gap-10">
                 <h1 class="text-[#1b283f] text-6xl font-semibold font-['Poppins']">Login</h1>
