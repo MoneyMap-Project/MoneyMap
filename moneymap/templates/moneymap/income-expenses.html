@@ -37,7 +37,7 @@
 
     <!-- Table Section -->
     <div class="flex justify-center">
-        <div class="w-full max-w-[1353px] flex flex-col border border-[#bbe6e3] rounded-[10px]">
+        <div class="w-full max-w-[1353px] flex flex-col rounded-[10px] mb-2 ml-2 mr-2">
             <!-- Header Row -->
             <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
                 <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
@@ -68,9 +68,9 @@
             {% if user.is_authenticated %}
                 {% if has_data %}
                     {% for item in income_expense_with_balance %}
-                        <div class="flex {{ forloop.counter|divisibleby:2|yesno:'#f2f2f2,#f9f9f9' }}">
+                        <div class="flex {% if forloop.counter|divisibleby:2 %}bg-[#f9f9f9]{% else %}bg-[#ffffff]{% endif %}">
                             <!-- Color Box -->
-                            <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                            <div class="w-[30px] py-2.5 flex justify-center items-center">
                                 <div class="w-[5px] h-full rounded-full
                                     {% if item.type == 'Expenses' %}
                                         bg-[#ff0000]
@@ -81,17 +81,17 @@
                             </div>
 
                             <!-- Row Number -->
-                            <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                            <div class="flex-1 py-2.5 flex justify-center items-center">
                                 <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ forloop.counter }}</span>
                             </div>
 
                             <!-- Description -->
-                            <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                            <div class="flex-1 py-2.5 flex justify-center items-center">
                                 <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ item.description }}</span>
                             </div>
 
                             <!-- Amount -->
-                            <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                            <div class="flex-1 py-2.5 flex justify-center items-center">
                                 <span class="text-lg font-normal font-['Poppins']">
                                     <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
                                         {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
@@ -103,7 +103,7 @@
                             </div>
 
                             <!-- Today's Balance -->
-                            <div class="flex-1 py-2.5 flex justify-center items-center border-b border-[#bbe6e3]">
+                            <div class="flex-1 py-2.5 flex justify-center items-center">
                                 <span class="text-lg font-normal font-['Poppins']">
                                     <span class="{% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
                                         {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %}
@@ -129,7 +129,8 @@
             {% endif %}
 
             <!-- Bottom Border -->
-            <div class="h-2.5 rounded-b-[10px] bg-[#bbe6e3]"></div>
+            <div class="h-2.5 rounded-bl-[10px] rounded-br-[10px] border-l-4 border-r-4 border-b-4 border-[#bbe6e3]"></div>
+
         </div>
     </div>
 
