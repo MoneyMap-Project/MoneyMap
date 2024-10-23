@@ -41,50 +41,44 @@
                     <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-12 object-contain" />
                 </a>
             </div>
-            <!-- Dropdown for small screens -->
-            <div class="relative md:hidden">
-                <button id="dropdownButton" class="flex items-center px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
-                    <img src="{% static 'base/list.png' %}" alt="Menu" class="h-5 w-5 mr-2">
-                    <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Menu</div>
-                </button>
-                <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                    <a href="{% url 'moneymap:income-expenses' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-gray-100">Income and Expenses</a>
-                    <a href="{% url 'moneymap:goals' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-gray-100">Goals</a>
-                </div>
-            </div>
-
-            <!-- Buttons for larger screens -->
-            <div class="hidden md:flex gap-4">
-                <a href="{% url 'moneymap:income-expenses' %}" class="px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
+    
+            <!-- Buttons for larger screens (centered) -->
+            <div class="hidden md:flex gap-4 ml-auto mr-16">
+                <a href="{% url 'moneymap:income-expenses' %}"
+                    class="px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
                     <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Income and Expenses</div>
                 </a>
-                <a href="{% url 'moneymap:goals' %}" class="px-5 py-2.5 bg-white rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
+                <a href="{% url 'moneymap:goals' %}"
+                    class="px-5 py-2.5 bg-white rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
                     <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Goals</div>
                 </a>
             </div>
-
-            <!-- Logout/Login Button -->
-                {% if user.is_authenticated %}
-                <div class="h-[60px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4"></div>
-                    <div
+    
+            <!-- Logout/Login Button (right-aligned) -->
+                <div class="flex gap-4 ml-auto">
+                    {% if user.is_authenticated %}
+                    <div class="h-[60px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4">
+                        <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">
+                            {{user.username}}
+                        </div>
+                        <a href="/accounts/logout/"
+                            class="text-white bg-[#05a99d] px-4 py-2 rounded-full flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                            Logout
+                        </a>
+                    </div>
+                    {% else %}
+                    <a href="/accounts/login/"
                         class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
-                        <div class="text-white text-base font-normal font-Poppins capitalize transition-colors duration-300">
-                            {{user.username}}</div>
-                    </div>
-                    <div class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
-                        <a href="/accounts/logout/" class="text-white text-base font-normal font-Poppins capitalize">Logout</a>
-                    </div>
-                </div>
-                {% else %}
-                    <a href="/accounts/login/" class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
                         <div class="text-white text-base font-normal font-Poppins capitalize">Login</div>
                     </a>
                     <a href="/accounts/signup/"
                         class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
                         <div class="text-white text-base font-normal font-Poppins capitalize">Signup</div>
                     </a>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
+        </div>
     </header>
 
 
@@ -113,12 +107,12 @@
     <!-- Footer Section -->
     <footer class="w-full bg-[#05a99d] text-white py-4">
         <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-12">
-            <div class="text-lg md:text-xl font-semibold font-poppins">
+            <div class="text-sm md:text-base font-semibold font-poppins">
                 2024 MoneyMap. All rights reserved. Licensed under MIT.
             </div>
             <a href="https://github.com/MoneyMap-Project/MoneyMap" target="_blank" class="flex items-center mt-4 md:mt-0">
                 <img src="{% static 'home/github.png' %}" alt="GitHub" class="w-8 h-8 mr-2">
-                <span class="text-lg font-medium">MoneyMap GitHub</span>
+                <span class="text-sm md:text-base font-medium">MoneyMap GitHub</span>
             </a>
         </div>
     </footer>
