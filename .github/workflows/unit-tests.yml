@@ -6,6 +6,9 @@ name: Run unit tests
 on:
   pull_request:
     branches: [ '**' ]
+    paths-ignore:
+      - "templates/**"
+      - 'moneymap/migrations/**'
 
 permissions:
   contents: read
@@ -62,10 +65,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-          cache: pip
-          cache-dependency-path: |
-            requirements.txt
+          python-version: '3.8'
 
       - name: Install Dependencies
         run: |
