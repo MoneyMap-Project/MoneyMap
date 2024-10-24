@@ -37,7 +37,7 @@
                 <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Amount</div>
             </div>
             <div class="flex-1 flex justify-center items-center py-2.5">
-                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Today's Balance</div>
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Balance</div>
             </div>
         </div>
 
@@ -94,7 +94,7 @@
             {% else %}
                 <div class="flex justify-center items-center py-10">
                     <img src="{% static 'income-expenses/no.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
-                    <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">No income or expenses recorded today.</p>
+                    <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">No income or expenses recorded on this day.</p>
                 </div>
             {% endif %}
         {% else %}
@@ -115,7 +115,7 @@
         <!-- Daily Overview Card -->
         <div class="w-full p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start gap-5 h-auto md:h-[350px]">
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
-                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
                     <span>On this day (</span>
                     <span>01/01/2024</span> <!-- on this day date -->
                     <span>)</span>
@@ -132,7 +132,7 @@
                 <div class="w-full border-2 border-[#90acaa] my-2"></div>
             </div>
             <div class="flex flex-col">
-                <div class="flex items-center gap-2 mb-2">
+                <div class="flex items-center gap-5 mb-2">
                     <div class="w-8 h-8">
                         <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
                     </div>
@@ -146,7 +146,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-5">
                     <div class="w-8 h-8">
                         <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
                     </div>
@@ -166,7 +166,7 @@
         <!-- Monthly Overview Card -->
         <div class="w-full max-w-[1353px] p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start gap-5 h-auto md:h-[350px]">
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
-                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
                     <span>Overall this month (</span>
                     <span>January</span> <!-- on this month month -->
                     <span>)</span>
@@ -183,7 +183,7 @@
                 <div class="w-full border-2 border-[#90acaa] my-2"></div>
             </div>
             <div class="flex flex-col">
-                <div class="flex items-center gap-2 mb-2">
+                <div class="flex items-center gap-5 mb-2">
                     <div class="w-8 h-8">
                         <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
                     </div>
@@ -197,7 +197,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-5">
                     <div class="w-8 h-8">
                         <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
                     </div>
@@ -217,7 +217,7 @@
         <!-- Pie Chart Card -->
         <div class="w-full max-w-[1353px] p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-center gap-5 h-auto md:h-[350px]">
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
-                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
                     <span>Overall this month (</span>
                     <span>January</span> <!-- on this month month -->
                     <span>)</span>
