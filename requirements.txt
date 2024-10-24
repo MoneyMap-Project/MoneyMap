@@ -8,3 +8,4 @@ pyjwt >= 2.8.0
 # decouple
 python-decouple
 python-dotenv
+psycopg
