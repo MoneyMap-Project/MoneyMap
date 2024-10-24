@@ -111,64 +111,122 @@
 
 <!-- Title Section -->
 <div class="flex flex-col items-start gap-2.5 mt-10 mx-auto max-w-[1350px]">
-<div class="h-[342px] justify-start items-center gap-[23px] inline-flex">
-    <div class="p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
-        <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
-            <div class="text-[#05a99d] text-base font-bold font-['Poppins']">On this day (01/01/2024)</div>
-        </div>
-        <div class="h-[78px] flex-col justify-start items-start flex">
-            <div class="self-stretch text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">total amount</div>
-            <div class="self-stretch text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
-            <div class="w-[394px] h-[0px] border-2 border-[#90acaa]"></div>
-        </div>
-        <div class="self-stretch justify-start items-center gap-20 inline-flex">
-            <div class="justify-start items-center gap-[15px] flex">
-                <div class="w-[33px] h-[33px] relative"></div>
-                <div class="w-[124px] flex-col justify-start items-start inline-flex">
-                    <div class="self-stretch text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">income</div>
-                    <div class="self-stretch text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">2000 bath</div>
+    <div class="h-[342px] justify-start items-center gap-[23px] inline-flex">
+        <div class="p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
+            <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
+                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">On this day (01/01/2024)</div>
+            </div>
+            <div class="h-[78px] flex-col justify-start items-start flex">
+                <div class="self-stretch text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">total amount</div>
+                <div class="self-stretch text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
+                <div class="w-[394px] h-[0px] border-2 border-[#90acaa]"></div>
+            </div>
+            <div class="flex gap-20">
+                <div class="flex items-center gap-[15px]">
+                    <div class="w-[33px] h-[33px]">
+                        <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
+                        <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">2000 bath</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-[15px]">
+                <div class="w-[33px] h-[33px]">
+                    <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
+                </div>
+                <div class="flex flex-col">
+                    <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
+                    <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">-1234 bath</div>
                 </div>
             </div>
         </div>
-        <div class="self-stretch justify-start items-center gap-[15px] inline-flex">
-            <div class="flex-col justify-start items-start inline-flex">
-                <div class="self-stretch text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">expense</div>
-                <div class="self-stretch text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">-1234 bath</div>
+        <div class="p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
+            <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
+                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">
+                    Overall on this month (January)
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
-        <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
-            <div class="text-[#05a99d] text-base font-bold font-['Poppins']">Overall on this month (January)</div>
-        </div>
-        <div class="self-stretch h-[78px] flex-col justify-start items-start flex">
-            <div class="self-stretch text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">total amount</div>
-            <div class="self-stretch text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
-            <div class="w-[394px] h-[0px] border-2 border-[#90acaa]"></div>
-        </div>
-        <div class="self-stretch justify-start items-center gap-20 inline-flex">
-            <div class="justify-start items-center gap-[15px] flex">
-                <div class="w-[33px] h-[33px] relative"></div>
-                <div class="w-[124px] flex-col justify-start items-start inline-flex">
-                    <div class="self-stretch text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">income</div>
-                    <div class="self-stretch text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">2000 bath</div>
+            <div class="self-stretch h-[78px] flex-col justify-start items-start flex">
+                <div class="self-stretch text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">total amount</div>
+                <div class="self-stretch text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
+                <div class="w-[394px] h-[0px] border-2 border-[#90acaa]"></div>
+            </div>
+            <div class="flex gap-20">
+                <div class="flex items-center gap-[15px]">
+                    <div class="w-[33px] h-[33px]">
+                        <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
+                        <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">2000 bath</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-[15px]">
+                <div class="w-[33px] h-[33px]">
+                    <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
+                </div>
+                <div class="flex flex-col">
+                    <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">
+                        Expense
+                    </div>
+                    <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
+                        -1234 bath
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="self-stretch justify-start items-center gap-[15px] inline-flex">
-            <div class="flex-col justify-start items-start inline-flex">
-                <div class="self-stretch text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">expense</div>
-                <div class="self-stretch text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">-1234 bath</div>
+        <!-- Title Section -->
+        <div class="w-[437px] h-[342px] p-5 bg-white rounded-[10px] border border-[#90acaa] flex flex-col gap-5">
+            <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] flex justify-center items-center">
+                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">
+                    Overall on this month (January)
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between h-full">
+                <!-- Pie chart with animation -->
+                <div class="relative w-[220px] h-[220px] flex-shrink-0 animate-pie-chart">
+                    <div class="absolute inset-0 rounded-full bg-[conic-gradient(#05a99d_0%_60%,#ff5757_60%_100%)]"></div>
+                    <div class="absolute inset-12 rounded-full bg-white"></div>
+                </div>
+
+                <div class="flex flex-col justify-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-[#05a99d] rounded-full"></div>
+                        <div class="text-[#1b283f] text-lg font-bold">
+                            Income: 60%
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-[#ff5757] rounded-full"></div>
+                        <div class="text-[#1b283f] text-lg font-bold">
+                            Expense: 40%
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="w-[437px] h-[342px] p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
-        <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
-            <div class="text-[#05a99d] text-base font-bold font-['Poppins']">On this day (01/01/2024)</div>
-        </div>
-        <div class="text-black text-base font-bold font-['Poppins'] capitalize">pie graph</div>
-    </div>
 </div>
-</div>
+
+
+<style>
+    /* Animation for the pie chart */
+    @keyframes pie-chart-animation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animate-pie-chart {
+        animation: pie-chart-animation 2s ease-in-out;
+    }
+</style>
 
 {% endblock %}
