@@ -110,20 +110,21 @@
 </div>
 
 <!-- Title Section -->
-<div class="flex flex-col items-start gap-2.5 mt-10 mx-auto max-w-[1350px]">
-    <div class="h-[342px] justify-start items-center gap-[23px] inline-flex">
-        <div class="p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
-            <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
+<div class="flex flex-col items-center gap-5 mt-10 mx-auto max-w-[1350px] px-4 sm:px-0 overflow-hidden mb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Daily Overview Card -->
+        <div class="w-full p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start gap-5 h-auto md:h-[350px]">
+            <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
                 <div class="text-[#05a99d] text-base font-bold font-['Poppins']">On this day (01/01/2024)</div>
             </div>
-            <div class="h-[78px] flex-col justify-start items-start flex">
-                <div class="self-stretch text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">total amount</div>
-                <div class="self-stretch text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
-                <div class="w-[394px] h-[0px] border-2 border-[#90acaa]"></div>
+            <div class="flex flex-col flex-grow">
+                <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
+                <div class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
+                <div class="w-full border-2 border-[#90acaa] my-2"></div>
             </div>
-            <div class="flex gap-20">
-                <div class="flex items-center gap-[15px]">
-                    <div class="w-[33px] h-[33px]">
+            <div class="flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8">
                         <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
                     </div>
                     <div class="flex flex-col">
@@ -131,80 +132,68 @@
                         <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">2000 bath</div>
                     </div>
                 </div>
-            </div>
-            <div class="flex items-center gap-[15px]">
-                <div class="w-[33px] h-[33px]">
-                    <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
-                </div>
-                <div class="flex flex-col">
-                    <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
-                    <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">-1234 bath</div>
-                </div>
-            </div>
-        </div>
-        <div class="p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
-            <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
-                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">
-                    Overall on this month (January)
-                </div>
-            </div>
-            <div class="self-stretch h-[78px] flex-col justify-start items-start flex">
-                <div class="self-stretch text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">total amount</div>
-                <div class="self-stretch text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
-                <div class="w-[394px] h-[0px] border-2 border-[#90acaa]"></div>
-            </div>
-            <div class="flex gap-20">
-                <div class="flex items-center gap-[15px]">
-                    <div class="w-[33px] h-[33px]">
-                        <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8">
+                        <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
                     </div>
                     <div class="flex flex-col">
-                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
-                        <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">2000 bath</div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex items-center gap-[15px]">
-                <div class="w-[33px] h-[33px]">
-                    <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
-                </div>
-                <div class="flex flex-col">
-                    <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">
-                        Expense
-                    </div>
-                    <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
-                        -1234 bath
+                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
+                        <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">-1234 bath</div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Title Section -->
-        <div class="w-[437px] h-[342px] p-5 bg-white rounded-[10px] border border-[#90acaa] flex flex-col gap-5">
-            <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] flex justify-center items-center">
-                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">
-                    Overall on this month (January)
-                </div>
-            </div>
 
-            <div class="flex items-center justify-between h-full">
-                <!-- Pie chart with animation -->
+        <!-- Monthly Overview Card -->
+        <div class="w-full p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start gap-5 h-auto md:h-[350px]">
+            <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
+                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">Overall this month (January)</div>
+            </div>
+            <div class="flex flex-col flex-grow">
+                <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
+                <div class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
+                <div class="w-full border-2 border-[#90acaa] my-2"></div>
+            </div>
+            <div class="flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8">
+                        <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
+                        <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">2000 bath</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8">
+                        <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
+                        <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">-1234 bath</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie Chart Card -->
+        <div class="w-full p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start gap-5 h-auto md:h-[350px]">
+            <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
+                <div class="text-[#05a99d] text-base font-bold font-['Poppins']">Overall this month (January)</div>
+            </div>
+            <div class="flex items-center justify-center h-full">
                 <div class="relative w-[220px] h-[220px] flex-shrink-0 animate-pie-chart">
                     <div class="absolute inset-0 rounded-full bg-[conic-gradient(#05a99d_0%_60%,#ff5757_60%_100%)]"></div>
                     <div class="absolute inset-12 rounded-full bg-white"></div>
                 </div>
-
-                <div class="flex flex-col justify-center gap-3">
+                <div class="flex flex-col justify-center gap-3 ml-7">
                     <div class="flex items-center gap-2">
                         <div class="w-4 h-4 bg-[#05a99d] rounded-full"></div>
-                        <div class="text-[#1b283f] text-lg font-bold">
-                            Income: 60%
-                        </div>
+                        <div class="text-[#1b283f] text-lg font-bold">Income: 60%</div>
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="w-4 h-4 bg-[#ff5757] rounded-full"></div>
-                        <div class="text-[#1b283f] text-lg font-bold">
-                            Expense: 40%
-                        </div>
+                        <div class="text-[#1b283f] text-lg font-bold">Expense: 40%</div>
                     </div>
                 </div>
             </div>
@@ -212,9 +201,7 @@
     </div>
 </div>
 
-
 <style>
-    /* Animation for the pie chart */
     @keyframes pie-chart-animation {
         0% {
             transform: rotate(0deg);
@@ -227,6 +214,23 @@
     .animate-pie-chart {
         animation: pie-chart-animation 2s ease-in-out;
     }
-</style>
 
+    @media (max-width: 640px) {
+        .text-base {
+            font-size: 0.875rem;
+        }
+        .text-2xl {
+            font-size: 1.25rem;
+        }
+        .text-4xl {
+            font-size: 2rem;
+        }
+    }
+
+    @media (min-width: 640px) {
+        .h-auto {
+            height: auto;
+        }
+    }
+</style>
 {% endblock %}
