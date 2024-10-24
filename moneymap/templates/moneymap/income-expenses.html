@@ -109,7 +109,7 @@
 
                         <!-- Delete Icon Column -->
                         <div class="flex-1 py-2.5 flex justify-center items-center">
-                            <a href="#" class="group">
+                            <a href="{% url 'moneymap:delete_income_expense' item.IncomeExpense_id %}" class="group">
                                 <img src="{% static 'income-expenses/trash1.png' %}" alt="Delete Icon" class="w-4 h-6 group-hover:hidden" />
                                 <img src="{% static 'income-expenses/trash2.png' %}" alt="Delete Icon Hover" class="w-4 h-6 hidden group-hover:block" />
                             </a>

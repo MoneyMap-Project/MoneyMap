@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import IncomeExpense
 from django.contrib import messages
@@ -40,6 +40,7 @@ def income_and_expenses_view(request):
 
             # Add each record along with the updated balance to the list
             income_expense_with_balance.append({
+                'IncomeExpense_id': item.IncomeExpense_id,
                 'description': item.description,
                 'amount': item.amount,
                 'balance': abs(balance),
@@ -60,6 +61,20 @@ def income_and_expenses_view(request):
             'has_data': False,
             'user_id_display': 'guest'
         })
+
+@login_required
+def delete_income_expense(request, income_expense_id):
+    # Retrieve the IncomeExpense object or return 404 if not found
+    income_expense = get_object_or_404(IncomeExpense, IncomeExpense_id=income_expense_id, user_id=request.user)
+
+    # Delete the object
+    income_expense.delete()
+
+    # Add a success message
+    messages.success(request, 'Income/Expense record successfully deleted.')
+
+    # Redirect back to the income and expenses view
+    return redirect('moneymap:income-expenses')
 
 
 def goals(request):
@@ -85,6 +100,7 @@ def moneyflow_view(request):
             # Create and save a new IncomeExpense object
             new_income_expense = IncomeExpense.objects.create(
                 user_id=request.user,
+                saved_to_income_expense= True,
                 type=selected_type,
                 amount=amount_decimal,
                 date=timezone.now(),
