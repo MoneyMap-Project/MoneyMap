@@ -33,53 +33,70 @@
 </head>
 
 <body>
-    <header class="w-full bg-white shadow-sm">
-        <div class="container mx-auto px-4 flex justify-between items-center h-24">
-            <!-- Logo -->
-            <div class="flex items-center h-full">
-                <a href="{% url 'moneymap:home' %}">
-                    <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-12 object-contain" />
+<header class="w-full bg-white shadow-sm">
+    <div class="container mx-auto px-4 flex justify-between items-center h-24">
+        <!-- Logo -->
+        <div class="flex items-center h-full">
+            <a href="{% url 'moneymap:home' %}">
+                <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-12 object-contain" />
+            </a>
+        </div>
+
+        <!-- Buttons for larger screens (centered) -->
+        <div class="hidden md:flex gap-4 ml-auto mr-16">
+            <a href="{% url 'moneymap:income-expenses' %}"
+                class="whitespace-nowrap px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
+                <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Income and Expenses</div>
+            </a>
+            <a href="{% url 'moneymap:goals' %}"
+                class="whitespace-nowrap px-5 py-2.5 bg-white rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
+                <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Goals</div>
+            </a>
+        </div>
+
+        <!-- Dropdown for small screens -->
+        <div class="relative md:hidden">
+            <button id="dropdownButton"
+                class="flex items-center whitespace-nowrap px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
+                <img src="{% static 'base/list.png' %}" alt="Menu" class="h-3 w-3 mr-2">
+                <div class="text-[#1b283f] text-[9px] font-normal font-Poppins capitalize">Menu</div>
+            </button>
+
+            <div id="dropdownMenu" class="hidden absolute left-0 mt-2 w-40 bg-white rounded-md shadow-lg z-10">
+                <a href="{% url 'moneymap:income-expenses' %}" class="block px-3 py-2 text-sm text-[#1b283f] hover:bg-gray-100 whitespace-nowrap">
+                Income and Expenses
                 </a>
-            </div>
-    
-            <!-- Buttons for larger screens (centered) -->
-            <div class="hidden md:flex gap-4 ml-auto mr-16">
-                <a href="{% url 'moneymap:income-expenses' %}"
-                    class="px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
-                    <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Income and Expenses</div>
+                <a href="{% url 'moneymap:goals' %}" class="block px-3 py-2 text-sm text-[#1b283f] hover:bg-gray-100 whitespace-nowrap">
+                Goals
                 </a>
-                <a href="{% url 'moneymap:goals' %}"
-                    class="px-5 py-2.5 bg-white rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
-                    <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Goals</div>
-                </a>
-            </div>
-    
-            <!-- Logout/Login Button (right-aligned) -->
-                <div class="flex gap-4 ml-auto">
-                    {% if user.is_authenticated %}
-                    <div class="h-[60px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4">
-                        <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">
-                            {{user.username}}
-                        </div>
-                        <a href="/accounts/logout/"
-                            class="text-white bg-[#05a99d] px-4 py-2 rounded-full flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
-                            Logout
-                        </a>
-                    </div>
-                    {% else %}
-                    <a href="/accounts/login/"
-                        class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
-                        <div class="text-white text-base font-normal font-Poppins capitalize">Login</div>
-                    </a>
-                    <a href="/accounts/signup/"
-                        class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
-                        <div class="text-white text-base font-normal font-Poppins capitalize">Signup</div>
-                    </a>
-                    {% endif %}
-                </div>
             </div>
         </div>
-    </header>
+
+        <!-- Logout/Login Button (right-aligned) -->
+        <div class="flex gap-4 ml-auto">
+            {% if user.is_authenticated %}
+            <div class="h-[60px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4">
+                <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">
+                    {{user.username}}
+                </div>
+                <a href="/accounts/logout/"
+                    class="text-white bg-[#05a99d] px-4 py-2 rounded-full flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                    Logout
+                </a>
+            </div>
+            {% else %}
+            <a href="/accounts/login/"
+                class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                <div class="text-white text-base font-normal font-Poppins capitalize">Login</div>
+            </a>
+            <a href="/accounts/signup/"
+                class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                <div class="text-white text-base font-normal font-Poppins capitalize">Signup</div>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</header>
 
 
     <!-- Main Content Block -->
