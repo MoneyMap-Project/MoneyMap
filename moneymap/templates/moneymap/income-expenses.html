@@ -62,7 +62,7 @@
         <!-- Data Rows -->
         {% if user.is_authenticated %}
             {% if has_data %}
-                {% for item in income_expense_with_balance %}
+                {% for item in income_expense_with_balance_today %}
                     <div class="flex {% if forloop.counter|divisibleby:2 %}bg-[#f9f9f9]{% else %}bg-[#ffffff]{% endif %}">
                         <!-- Color Box -->
                         <div class="w-[30px] py-2.5 flex justify-center items-center">
@@ -150,32 +150,40 @@
 
         <!-- Cards Section -->
         <div class="flex flex-wrap justify-center overflow-visible space-x-4 w-full mb-10">
-            {% for i in "0123456" %}
+            {% for day in income_expense_with_balance_last_7_days %}
                 <div class="flex-grow-0 flex-shrink-0 w-full sm:w-[calc((100%/3)-1rem)] md:w-[calc((100%/4)-1rem)] lg:w-[calc((100%/7)-1rem)] h-[150px] bg-[#ffffff] border-2 border-[#f2f2f2] rounded-[10px] flex flex-col transition-transform duration-300 ease-in-out hover:scale-105 hover:relative mb-4">
 
                     <!-- Enhanced Date Label Section -->
                     <div class="bg-white text-[#91ACAA] text-lg font-bold text-center py-2 rounded-[10px] mb-1">
-                        {% if forloop.counter == 1 %}
+                        {% if forloop.first %}
                             Today
                         {% elif forloop.counter == 2 %}
                             Yesterday
-                        {% elif forloop.counter == 3 %}
-                            06/01/2024
-                        {% elif forloop.counter == 4 %}
-                            05/30/2024
-                        {% elif forloop.counter == 5 %}
-                            05/29/2024
                         {% else %}
-                            05/28/2024
+                            {{ day.date|date:"m/d/Y" }}
                         {% endif %}
                     </div>
 
+                    <!-- Display Balance Section -->
                     <div class="h-[60px] bg-[#f9f9f9] rounded-[10px] flex items-center justify-center">
-                        <span class="text-[#05a99d] text-3xl font-bold font-['Poppins']">+</span>
-                        <span class="text-[#1b283f] text-3xl font-bold font-['Poppins']">1234</span>
+                        {% if day.total_balance > 0 %}
+                            <span class="text-[#05a99d] text-3xl font-bold font-['Poppins']">+</span>
+                        {% elif day.total_balance == 0 %}
+                            <span class="text-[#05a99d] text-3xl font-bold font-['Poppins']"></span>
+                        {% else %}
+                            <span class="text-[#ea3d53] text-3xl font-bold font-['Poppins']">-</span>
+                        {% endif %}
+                        <span class="text-[#1b283f] text-3xl font-bold font-['Poppins']">
+                            {{ day.total_balance_amount }}
+                        </span>
                     </div>
 
-                    <div class="text-[#1b283f] bg-white text-lg font-normal font-['Poppins'] text-center mt-1">See Detail</div>
+                    <!-- "See Detail" Section -->
+                    <div class="text-[#1b283f] bg-white text-lg font-normal font-['Poppins'] text-center mt-1">
+                        <a href="{% url 'moneymap:income-expense-detail' day.date %}">
+                            See Detail
+                        </a>
+                    </div>
                 </div>
             {% endfor %}
         </div>
