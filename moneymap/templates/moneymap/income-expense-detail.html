@@ -2,5 +2,284 @@
 {% load static %}
 
 {% block content %}
-<h1>Income-Expense-Detail</h1>
+
+<!-- Title Section -->
+<div class="flex flex-col items-start gap-2.5 mt-10 mx-auto max-w-[1350px]">
+    <div class="h-[72px] w-full">
+        <div class="text-[#1b283f] text-5xl font-semibold leading-[72.07px]">
+            Income and Expense Report
+        </div>
+    </div>
+    <div class="pb-[30px] flex items-center gap-2.5">
+        <div class="w-[29px] h-[29px] relative">
+            <img src="{% static 'income-expense-detail/calendar.png' %}" alt="Calendar Icon" class="w-[29px] h-[29px]" />
+        </div>
+        <div class="text-[#1b283f] text-xl font-bold capitalize">
+            01/01/2024 <!-- date -->
+        </div>
+    </div>
+</div>
+
+
+<!-- Table Section -->
+<div class="flex justify-center">
+    <div class="w-full max-w-[1353px] flex flex-col rounded-[10px] mb-2 ml-2 mr-2">
+        <!-- Header Row -->
+        <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
+            <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]"></div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">#</div>
+            </div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Description</div>
+            </div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Amount</div>
+            </div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Balance</div>
+            </div>
+        </div>
+
+        <!-- Data Rows -->
+        {% if user.is_authenticated %}
+            {% if has_data %}
+                {% for item in income_expense_with_balance %}
+                    <div class="flex {% if forloop.counter|divisibleby:2 %}bg-[#f9f9f9]{% else %}bg-[#ffffff]{% endif %}">
+                        <!-- Color Box -->
+                        <div class="w-[30px] py-2.5 flex justify-center items-center">
+                            <div class="w-[5px] h-full rounded-full
+                                {% if item.type == 'Expenses' %}
+                                    bg-[#ff0000]
+                                {% else %}
+                                    bg-[#05a99d]
+                                {% endif %}">
+                            </div>
+                        </div>
+
+                        <!-- Row Number -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ forloop.counter }}</span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ item.description }}</span>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-lg font-normal font-['Poppins']">
+                                <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
+                                    {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
+                                </span>
+                                <span class="text-[#1b283f]">
+                                    {{ item.amount }}
+                                </span>
+                            </span>
+                        </div>
+
+                        <!-- Today's Balance -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-lg font-normal font-['Poppins']">
+                                <span class="{% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
+                                    {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %}
+                                </span>
+                                <span class="text-[#1b283f]">{{ item.balance }}</span>
+                            </span>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="flex justify-center items-center py-10">
+                    <img src="{% static 'income-expenses/no.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+                    <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">No income or expenses recorded on this day.</p>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="flex justify-center items-center py-10">
+                <img src="{% static 'income-expenses/alert.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+                <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">Login required to add your money flow.</p>
+            </div>
+        {% endif %}
+
+        <!-- Bottom Border -->
+        <div class="h-2.5 rounded-bl-[10px] rounded-br-[10px] border-l-4 border-r-4 border-b-4 border-[#bbe6e3]"></div>
+    </div>
+</div>
+
+<!-- Title Section -->
+<div class="flex flex-col items-center mt-10 mb-10 mx-auto max-w-[1350px]">
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Daily Overview Card -->
+        <div class="w-full p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start gap-5 h-auto md:h-[350px]">
+            <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
+                    <span>On this day (</span>
+                    <span>01/01/2024</span> <!-- on this day date -->
+                    <span>)</span>
+                </div>
+            </div>
+            <div class="flex flex-col flex-grow">
+                <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
+                <div class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">
+                    <span class="mr-2">
+                        334 <!-- on this day amount -->
+                    </span>
+                    <span>bath</span>
+                </div>
+                <div class="w-full border-2 border-[#90acaa] my-2"></div>
+            </div>
+            <div class="flex flex-col">
+                <div class="flex items-center gap-5 mb-2">
+                    <div class="w-8 h-8">
+                        <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
+                        <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">
+                            <span class="mr-2">
+                                3210 <!-- on this day income -->
+                            </span>
+                            <span>bath</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-5">
+                    <div class="w-8 h-8">
+                        <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
+                        <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
+                            <span class="mr-2">
+                                -321 <!-- on this day expense -->
+                            </span>
+                            <span>bath</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Overview Card -->
+        <div class="w-full max-w-[1353px] p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start gap-5 h-auto md:h-[350px]">
+            <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
+                    <span>Overall this month (</span>
+                    <span>January</span> <!-- on this month month -->
+                    <span>)</span>
+                </div>
+            </div>
+            <div class="flex flex-col flex-grow">
+                <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
+                <div class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">
+                    <span class="mr-2">
+                        766 <!-- on this month amount -->
+                    </span>
+                    <span>bath</span>
+                </div>
+                <div class="w-full border-2 border-[#90acaa] my-2"></div>
+            </div>
+            <div class="flex flex-col">
+                <div class="flex items-center gap-5 mb-2">
+                    <div class="w-8 h-8">
+                        <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
+                        <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">
+                            <span class="mr-2">
+                                2000 <!-- on this month income -->
+                            </span>
+                            <span>bath</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-5">
+                    <div class="w-8 h-8">
+                        <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
+                        <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
+                            <span class="mr-2">
+                                -1234 <!-- on this month expense -->
+                            </span>
+                            <span>bath</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie Chart Card -->
+        <div class="w-full max-w-[1353px] p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-center gap-5 h-auto md:h-[350px]">
+            <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
+                    <span>Overall this month (</span>
+                    <span>January</span> <!-- on this month month -->
+                    <span>)</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-center h-full w-full">
+                <div class="relative w-[220px] h-[220px] flex-shrink-0 animate-pie-chart">
+                    <div class="absolute inset-0 rounded-full bg-[conic-gradient(#05a99d_0%_60%,#ff5757_60%_100%)]"></div> <!--can input like #05a99d_0%_{{ incomepercent }} naja -->
+                    <div class="absolute inset-12 rounded-full bg-white"></div>
+                </div>
+                <div class="flex flex-col justify-center gap-3 ml-5">
+                    <div class="flex flex-col items-start gap-1">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-4 h-4 bg-[#05a99d] rounded-full"></div>
+                            <div class="text-[#1b283f] text-lg font-bold">Income</div>
+                        </div>
+                        <div class="text-[#1b283f] text-lg">60%</div>
+                    </div>
+                    <div class="flex flex-col items-start gap-1">
+                        <div class="flex items-center gap-2">
+                            <div class="w-4 h-4 bg-[#ff5757] rounded-full"></div>
+                            <div class="text-[#1b283f] text-lg font-bold">Expense</div>
+                        </div>
+                        <div class="text-[#1b283f] text-lg">40%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    @keyframes pie-chart-animation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animate-pie-chart {
+        animation: pie-chart-animation 2s ease-in-out;
+    }
+
+    @media (max-width: 640px) {
+        .text-base {
+            font-size: 0.875rem;
+        }
+        .text-2xl {
+            font-size: 1.25rem;
+        }
+        .text-4xl {
+            font-size: 2rem;
+        }
+    }
+
+    @media (min-width: 640px) {
+        .h-auto {
+            height: auto;
+        }
+    }
+</style>
 {% endblock %}
