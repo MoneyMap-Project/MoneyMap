@@ -1,0 +1,174 @@
+{% extends 'moneymap/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Title Section -->
+<div class="flex flex-col items-start gap-2.5 mt-10 mx-auto max-w-[1350px]">
+    <div class="h-[72px] w-full">
+        <div class="text-[#1b283f] text-5xl font-semibold leading-[72.07px]">
+            Income and Expense Report
+        </div>
+    </div>
+    <div class="pb-[30px] flex items-center gap-2.5">
+        <div class="w-[29px] h-[29px] relative">
+            <img src="{% static 'income-expense-detail/calendar.png' %}" alt="Calendar Icon" class="w-[29px] h-[29px]" />
+        </div>
+        <div class="text-[#1b283f] text-xl font-bold capitalize">
+            01/01/2024 <!-- date -->
+        </div>
+    </div>
+</div>
+
+
+<!-- Table Section -->
+<div class="flex justify-center">
+    <div class="w-full max-w-[1353px] flex flex-col rounded-[10px] mb-2 ml-2 mr-2">
+        <!-- Header Row -->
+        <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
+            <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]"></div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">#</div>
+            </div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Description</div>
+            </div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Amount</div>
+            </div>
+            <div class="flex-1 flex justify-center items-center py-2.5">
+                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Today's Balance</div>
+            </div>
+        </div>
+
+        <!-- Data Rows -->
+        {% if user.is_authenticated %}
+            {% if has_data %}
+                {% for item in income_expense_with_balance %}
+                    <div class="flex {% if forloop.counter|divisibleby:2 %}bg-[#f9f9f9]{% else %}bg-[#ffffff]{% endif %}">
+                        <!-- Color Box -->
+                        <div class="w-[30px] py-2.5 flex justify-center items-center">
+                            <div class="w-[5px] h-full rounded-full
+                                {% if item.type == 'Expenses' %}
+                                    bg-[#ff0000]
+                                {% else %}
+                                    bg-[#05a99d]
+                                {% endif %}">
+                            </div>
+                        </div>
+
+                        <!-- Row Number -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ forloop.counter }}</span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ item.description }}</span>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-lg font-normal font-['Poppins']">
+                                <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
+                                    {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
+                                </span>
+                                <span class="text-[#1b283f]">
+                                    {{ item.amount }}
+                                </span>
+                            </span>
+                        </div>
+
+                        <!-- Today's Balance -->
+                        <div class="flex-1 py-2.5 flex justify-center items-center">
+                            <span class="text-lg font-normal font-['Poppins']">
+                                <span class="{% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
+                                    {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %}
+                                </span>
+                                <span class="text-[#1b283f]">{{ item.balance }}</span>
+                            </span>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="flex justify-center items-center py-10">
+                    <img src="{% static 'income-expenses/no.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+                    <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">No income or expenses recorded today.</p>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="flex justify-center items-center py-10">
+                <img src="{% static 'income-expenses/alert.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+                <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">Login required to add your money flow.</p>
+            </div>
+        {% endif %}
+
+        <!-- Bottom Border -->
+        <div class="h-2.5 rounded-bl-[10px] rounded-br-[10px] border-l-4 border-r-4 border-b-4 border-[#bbe6e3]"></div>
+    </div>
+</div>
+
+<!-- Title Section -->
+<div class="flex flex-col items-start gap-2.5 mt-10 mx-auto max-w-[1350px]">
+<div class="h-[342px] justify-start items-center gap-[23px] inline-flex">
+    <div class="p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
+        <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
+            <div class="text-[#05a99d] text-base font-bold font-['Poppins']">On this day (01/01/2024)</div>
+        </div>
+        <div class="h-[78px] flex-col justify-start items-start flex">
+            <div class="self-stretch text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">total amount</div>
+            <div class="self-stretch text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
+            <div class="w-[394px] h-[0px] border-2 border-[#90acaa]"></div>
+        </div>
+        <div class="self-stretch justify-start items-center gap-20 inline-flex">
+            <div class="justify-start items-center gap-[15px] flex">
+                <div class="w-[33px] h-[33px] relative"></div>
+                <div class="w-[124px] flex-col justify-start items-start inline-flex">
+                    <div class="self-stretch text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">income</div>
+                    <div class="self-stretch text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">2000 bath</div>
+                </div>
+            </div>
+        </div>
+        <div class="self-stretch justify-start items-center gap-[15px] inline-flex">
+            <div class="flex-col justify-start items-start inline-flex">
+                <div class="self-stretch text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">expense</div>
+                <div class="self-stretch text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">-1234 bath</div>
+            </div>
+        </div>
+    </div>
+    <div class="p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
+        <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
+            <div class="text-[#05a99d] text-base font-bold font-['Poppins']">Overall on this month (January)</div>
+        </div>
+        <div class="self-stretch h-[78px] flex-col justify-start items-start flex">
+            <div class="self-stretch text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">total amount</div>
+            <div class="self-stretch text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">766 bath</div>
+            <div class="w-[394px] h-[0px] border-2 border-[#90acaa]"></div>
+        </div>
+        <div class="self-stretch justify-start items-center gap-20 inline-flex">
+            <div class="justify-start items-center gap-[15px] flex">
+                <div class="w-[33px] h-[33px] relative"></div>
+                <div class="w-[124px] flex-col justify-start items-start inline-flex">
+                    <div class="self-stretch text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">income</div>
+                    <div class="self-stretch text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">2000 bath</div>
+                </div>
+            </div>
+        </div>
+        <div class="self-stretch justify-start items-center gap-[15px] inline-flex">
+            <div class="flex-col justify-start items-start inline-flex">
+                <div class="self-stretch text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">expense</div>
+                <div class="self-stretch text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">-1234 bath</div>
+            </div>
+        </div>
+    </div>
+    <div class="w-[437px] h-[342px] p-5 bg-white rounded-[10px] border border-[#90acaa] flex-col justify-start items-start gap-5 inline-flex">
+        <div class="p-2.5 bg-[#bbe6e3] rounded-[10px] justify-center items-center gap-2.5 inline-flex">
+            <div class="text-[#05a99d] text-base font-bold font-['Poppins']">On this day (01/01/2024)</div>
+        </div>
+        <div class="text-black text-base font-bold font-['Poppins'] capitalize">pie graph</div>
+    </div>
+</div>
+</div>
+
+{% endblock %}

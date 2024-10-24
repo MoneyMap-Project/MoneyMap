@@ -103,3 +103,7 @@ def moneyflow_view(request):
             print(f"Exception: {e}")
 
     return render(request, 'moneymap/money-flow.html')
+
+
+def detail(request):
+    return render(request, 'moneymap/income-expense-detail.html')
