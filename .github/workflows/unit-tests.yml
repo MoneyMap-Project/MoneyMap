@@ -6,13 +6,7 @@ name: Run unit tests
 on:
   push:
     branches: ["**"]
-#    [ "iteration3" ]
-  paths-ignore:
-    - "README.md"
-#    - photos/**
   pull_request:
-    types:
-      - "opened"
     branches: [ '**' ]
 
 permissions:
