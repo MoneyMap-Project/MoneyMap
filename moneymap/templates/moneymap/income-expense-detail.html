@@ -129,7 +129,7 @@
                     <span class="mr-2">
                         {{ latest_balance }} <!-- on this day amount -->
                     </span>
-                    <span>bath</span>
+                    <span>baht</span>
                 </div>
                 <div class="w-full border-2 border-[#90acaa] my-2"></div>
             </div>
@@ -144,7 +144,7 @@
                             <span class="mr-2">
                                 {{ day_income }} <!-- on this day income -->
                             </span>
-                            <span>bath</span>
+                            <span>baht</span>
                         </div>
                     </div>
                 </div>
@@ -158,7 +158,7 @@
                             <span class="mr-2">
                                 {{ day_expense }} <!-- on this day expense -->
                             </span>
-                            <span>bath</span>
+                            <span>baht</span>
                         </div>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
                     <span class="mr-2">
                         {{ month_balance }} <!-- on this month amount -->
                     </span>
-                    <span>bath</span>
+                    <span>baht</span>
                 </div>
                 <div class="w-full border-2 border-[#90acaa] my-2"></div>
             </div>
@@ -195,7 +195,7 @@
                             <span class="mr-2">
                                 {{ month_expense }} <!-- on this month income -->
                             </span>
-                            <span>bath</span>
+                            <span>baht</span>
                         </div>
                     </div>
                 </div>
@@ -209,7 +209,7 @@
                             <span class="mr-2">
                                 {{ month_income }} <!-- on this month expense -->
                             </span>
-                            <span>bath</span>
+                            <span>baht</span>
                         </div>
                     </div>
                 </div>
@@ -221,7 +221,7 @@
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
                 <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
                     <span>Overall this month (</span>
-                    <span>January</span> <!-- on this month month -->
+                    <span>{{ selected_date|date:"F Y" }}</span> <!-- on this month -->
                     <span>)</span>
                 </div>
             </div>
