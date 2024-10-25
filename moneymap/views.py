@@ -154,18 +154,23 @@ def income_and_expenses_detail_view(request, date):
 
         month_balance = month_income - month_expense
 
+        percentages = calculate_income_expense_percentage(month_income,
+                                                          month_expense)
+
         has_data = True
     else:
         income_expense_with_balance = None
-        latest_balance = None
+        latest_balance = 0
 
-        day_income = None
-        day_expense = None
+        day_income = 0
+        day_expense = 0
 
-        month_income = None
-        month_expense = None
+        month_income = 0
+        month_expense = 0
 
-        month_balance = None
+        month_balance = 0
+
+        percentages = {'income_percent': 0, 'expense_percent': 0}
 
         has_data = False
 
@@ -180,5 +185,7 @@ def income_and_expenses_detail_view(request, date):
         'month_income': month_income,
         'month_expense': month_expense,
         'month_balance': month_balance,
+        'income_percent': percentages['income_percent'],
+        'expense_percent': percentages['expense_percent'],
         'has_data': has_data,
     })

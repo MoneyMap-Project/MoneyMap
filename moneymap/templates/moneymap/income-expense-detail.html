@@ -227,7 +227,7 @@
             </div>
             <div class="flex items-center justify-center h-full w-full">
                 <div class="relative w-[220px] h-[220px] flex-shrink-0 animate-pie-chart">
-                    <div class="absolute inset-0 rounded-full bg-[conic-gradient(#05a99d_0%_60%,#ff5757_60%_100%)]"></div> <!--can input like #05a99d_0%_{{ incomepercent }} naja -->
+                    <div class="absolute inset-0 rounded-full bg-[conic-gradient(#05a99d_0%_60%,#ff5757_60%_100%)]"></div> <!--can input like #05a99d_0%_{{ income_percent }} }} naja -->
                     <div class="absolute inset-12 rounded-full bg-white"></div>
                 </div>
                 <div class="flex flex-col justify-center gap-3 ml-5">
@@ -236,14 +236,14 @@
                             <div class="w-4 h-4 bg-[#05a99d] rounded-full"></div>
                             <div class="text-[#1b283f] text-lg font-bold">Income</div>
                         </div>
-                        <div class="text-[#1b283f] text-lg">60%</div>
+                        <div class="text-[#1b283f] text-lg">{{ income_percent }} %</div>
                     </div>
                     <div class="flex flex-col items-start gap-1">
                         <div class="flex items-center gap-2">
                             <div class="w-4 h-4 bg-[#ff5757] rounded-full"></div>
                             <div class="text-[#1b283f] text-lg font-bold">Expense</div>
                         </div>
-                        <div class="text-[#1b283f] text-lg">40%</div>
+                        <div class="text-[#1b283f] text-lg">{{ expense_percent }} %</div>
                     </div>
                 </div>
             </div>

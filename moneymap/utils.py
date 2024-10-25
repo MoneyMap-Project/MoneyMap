@@ -82,14 +82,6 @@ def calculate_balance_last_7_days(user, today):
 
     return balance_last_7_days
 
-# def balance_by_month(user, month):
-#     """Get balance for a specific month"""
-#     income_expenses = IncomeExpense.objects.filter(user_id=user,
-#                                                    date__month=month).order_by(
-#         'date')
-#     return calculate_balance(income_expenses)
-
-
 def sum_income(user, date):
     """Get summation of type is `income` for specific day"""
     income = IncomeExpense.objects.filter(user_id=user, date=date,
@@ -112,6 +104,22 @@ def sum_income_by_month(user, month):
 
 
 def sum_expense_by_month(user, month):
+    """Get summation of type 'Expense' for a specific month"""
     expenses = IncomeExpense.objects.filter(user_id=user, date__month=month,
                                             type='Expenses')
     return sum([item.amount for item in expenses])
+
+
+def calculate_income_expense_percentage(month_income, month_expense):
+    """Calculate income and expense percentages based on monthly totals."""
+    total = month_income + month_expense
+    if total == 0:
+        return {'income_percent': 0, 'expense_percent': 0}
+
+    income_percent = (month_income / total) * 100
+    expense_percent = (month_expense / total) * 100
+
+    return {
+        'income_percent': round(income_percent, 2),
+        'expense_percent': round(expense_percent, 2)
+    }
