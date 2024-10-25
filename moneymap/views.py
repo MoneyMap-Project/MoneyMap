@@ -165,12 +165,13 @@ def income_and_expenses_detail_view(request, date):
         day_income = 0
         day_expense = 0
 
-        month_income = 0
-        month_expense = 0
+        month_income = sum_income_by_month(request.user, selected_date.month)
+        month_expense = sum_expense_by_month(request.user, selected_date.month)
 
-        month_balance = 0
+        month_balance = month_income - month_expense
 
-        percentages = {'income_percent': 0, 'expense_percent': 0}
+        percentages = calculate_income_expense_percentage(month_income,
+                                                          month_expense)
 
         has_data = False
 
