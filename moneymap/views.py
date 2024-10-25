@@ -150,6 +150,7 @@ def income_and_expenses_detail_view(request, date):
         # logger.debug(f"Total income: {day_expense}")  # 117
 
         month_income = sum_income_by_month(request.user, selected_date.month)
+        # logger.debug(f"Total income: {month_income}")  # 5,020
         month_expense = sum_expense_by_month(request.user, selected_date.month)
 
         month_balance = month_income - month_expense
