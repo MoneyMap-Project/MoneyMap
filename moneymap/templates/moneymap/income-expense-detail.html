@@ -15,7 +15,7 @@
             <img src="{% static 'income-expense-detail/calendar.png' %}" alt="Calendar Icon" class="w-[29px] h-[29px]" />
         </div>
         <div class="text-[#1b283f] text-xl font-bold capitalize">
-            01/01/2024 <!-- date -->
+            <span>{{ selected_date|date:"d/m/Y" }}</span> <!-- date -->
         </div>
     </div>
 </div>
@@ -117,7 +117,9 @@
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
                 <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
                     <span>On this day (</span>
-                    <span>01/01/2024</span> <!-- on this day date -->
+{#                    <span>01/01/2024</span> <!-- on this day date -->#}
+                    <span>{{ selected_date|date:"d/m/Y" }}</span> <!-- on this day date -->
+
                     <span>)</span>
                 </div>
             </div>
@@ -125,7 +127,7 @@
                 <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
                 <div class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">
                     <span class="mr-2">
-                        334 <!-- on this day amount -->
+                        {{ latest_balance }} <!-- on this day amount -->
                     </span>
                     <span>bath</span>
                 </div>
@@ -140,7 +142,7 @@
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
                         <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">
                             <span class="mr-2">
-                                3210 <!-- on this day income -->
+                                {{ day_income }} <!-- on this day income -->
                             </span>
                             <span>bath</span>
                         </div>
@@ -154,7 +156,7 @@
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
                         <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
                             <span class="mr-2">
-                                -321 <!-- on this day expense -->
+                                {{ day_expense }} <!-- on this day expense -->
                             </span>
                             <span>bath</span>
                         </div>
@@ -168,7 +170,7 @@
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
                 <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
                     <span>Overall this month (</span>
-                    <span>January</span> <!-- on this month month -->
+                    <span>{{ selected_date|date:"F Y" }}</span> <!-- on this month month -->
                     <span>)</span>
                 </div>
             </div>
@@ -176,7 +178,7 @@
                 <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
                 <div class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">
                     <span class="mr-2">
-                        766 <!-- on this month amount -->
+                        {{ month_balance }} <!-- on this month amount -->
                     </span>
                     <span>bath</span>
                 </div>
@@ -191,7 +193,7 @@
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
                         <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">
                             <span class="mr-2">
-                                2000 <!-- on this month income -->
+                                {{ month_expense }} <!-- on this month income -->
                             </span>
                             <span>bath</span>
                         </div>
@@ -205,7 +207,7 @@
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
                         <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
                             <span class="mr-2">
-                                -1234 <!-- on this month expense -->
+                                {{ month_income }} <!-- on this month expense -->
                             </span>
                             <span>bath</span>
                         </div>

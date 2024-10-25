@@ -5,7 +5,14 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
-from .utils import calculate_balance, calculate_balance_last_7_days
+from .utils import *
+
+# logger
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 def is_admin(user):
     return user.is_superuser  # Check if the user is a superuser
@@ -28,10 +35,12 @@ def income_and_expenses_view(request):
         ).order_by('date')
 
         # Use the function to calculate balance for the last 7 days
-        income_expense_with_balance_last_7_days = calculate_balance_last_7_days(request.user, today)
+        income_expense_with_balance_last_7_days = calculate_balance_last_7_days(
+            request.user, today)
 
         # Calculate today's balance separately
-        income_expense_with_balance_today = calculate_balance(income_expenses_today)
+        income_expense_with_balance_today = calculate_balance(
+            income_expenses_today)
 
         return render(request, 'moneymap/income-expenses.html', {
             'income_expense_with_balance_today': income_expense_with_balance_today,
@@ -52,7 +61,9 @@ def income_and_expenses_view(request):
 @login_required
 def delete_income_expense(request, income_expense_id):
     # Retrieve the IncomeExpense object or return 404 if not found
-    income_expense = get_object_or_404(IncomeExpense, IncomeExpense_id=income_expense_id, user_id=request.user)
+    income_expense = get_object_or_404(IncomeExpense,
+                                       IncomeExpense_id=income_expense_id,
+                                       user_id=request.user)
 
     # Delete the object
     income_expense.delete()
@@ -64,33 +75,6 @@ def delete_income_expense(request, income_expense_id):
     return redirect('moneymap:income-expenses')
 
 
-@login_required
-def income_and_expenses_detail_view(request, date):
-    # Convert the date string to a datetime object
-    try:
-        selected_date = timezone.datetime.strptime(date, '%Y-%m-%d').date()
-    except ValueError:
-        return render(request, 'moneymap/error.html',
-                      {'message': 'Invalid date format.'})
-
-    # Check if the user is authenticated
-    if request.user.is_authenticated:
-        # Retrieve IncomeExpense records for the selected date and the logged-in user
-        income_expenses = IncomeExpense.objects.filter(user_id=request.user,
-                                                       date=selected_date).order_by(
-            'date')
-
-        # Use the utility method to calculate the balance for the selected date
-        income_expense_with_balance = calculate_balance(income_expenses)
-
-        return render(request, 'moneymap/income-expense-detail.html', {
-            'income_expense_with_balance': income_expense_with_balance,
-            'selected_date': selected_date
-        })
-    else:
-        return render(request, 'moneymap/error.html',
-                      {'message': 'You need to log in to view the details.'})
-
 def goals(request):
     return render(request, 'moneymap/goals.html')
 
@@ -101,6 +85,10 @@ def history(request):
 
 @login_required
 def moneyflow_view(request):
+    """
+    After clicked the `Income and Expense` button,
+    this view will be called
+    """
     if request.method == 'POST':
         # Get data from the form
         selected_type = request.POST.get('money_type')
@@ -114,7 +102,7 @@ def moneyflow_view(request):
             # Create and save a new IncomeExpense object
             new_income_expense = IncomeExpense.objects.create(
                 user_id=request.user,
-                saved_to_income_expense= True,
+                saved_to_income_expense=True,
                 type=selected_type,
                 amount=amount_decimal,
                 date=timezone.now(),
@@ -135,5 +123,62 @@ def moneyflow_view(request):
     return render(request, 'moneymap/money-flow.html')
 
 
-def detail(request):
-    return render(request, 'moneymap/income-expense-detail.html')
+@login_required
+def income_and_expenses_detail_view(request, date):
+    """Income and Expense Report for a specific date"""
+    # Convert the date string to a datetime object
+    try:
+        selected_date = timezone.datetime.strptime(date, '%Y-%m-%d').date()
+    except ValueError:
+        logger.error("Invalid date format.")
+        return redirect('moneymap:income-expenses')
+
+    # Retrieve IncomeExpense records for the selected date and the logged-in user
+    income_expenses = IncomeExpense.objects.filter(user_id=request.user,
+                                                   date=selected_date).order_by('date')
+
+    # Check if there is data and calculate balance if data exists
+    if income_expenses.exists():
+        income_expense_with_balance = calculate_balance(income_expenses)
+        latest_balance = income_expense_with_balance[-1]['balance']
+        # logger.debug(f"Latest balance: {latest_balance}")
+
+        # Retrieve only income and expenses using utility functions
+        day_income = sum_income(request.user, selected_date)
+        # logger.debug(f"Total income: {day_income}")  # 5,020
+        day_expense = sum_expense(request.user, selected_date)
+        # logger.debug(f"Total income: {day_expense}")  # 117
+
+        month_income = sum_income_by_month(request.user, selected_date.month)
+        month_expense = sum_expense_by_month(request.user, selected_date.month)
+
+        month_balance = month_income - month_expense
+
+        has_data = True
+    else:
+        income_expense_with_balance = None
+        latest_balance = None
+
+        day_income = None
+        day_expense = None
+
+        month_income = None
+        month_expense = None
+
+        month_balance = None
+
+        has_data = False
+
+    # logger.debug(income_expense_with_balance[1]['type'])
+
+    return render(request, 'moneymap/income-expense-detail.html', {
+        'income_expense_with_balance': income_expense_with_balance,
+        'selected_date': selected_date,
+        'latest_balance': latest_balance,
+        'day_income': day_income,
+        'day_expense': day_expense,
+        'month_income': month_income,
+        'month_expense': month_expense,
+        'month_balance': month_balance,
+        'has_data': has_data,
+    })
