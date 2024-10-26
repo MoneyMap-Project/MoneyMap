@@ -5,7 +5,6 @@
 
 <!-- Main Content Section -->
 <main class="pt-2">
-    <!-- Container -->
     <div class="w-full relative flex flex-col md:flex-row items-center text-center bg-none md:bg-cover md:bg-center"
          style="background-image: url('{% static 'home/banner.png' %}');">
 
@@ -29,7 +28,6 @@
 <!-- Features Section -->
 <section class="w-full bg-[#f2f2f2] py-8">
     <div class="container mx-auto px-4">
-        <!-- Grid Container -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
 
             <!-- Card 1 -->
@@ -50,7 +48,6 @@
                                 Define and track your financial goals effortlessly with MoneyMap.
                             </p>
                         </div>
-                        <!-- Icon (Arrow) -->
                         <div class="absolute top-4 right-4 z-10">
                             <div class="w-16 h-16 md:w-20 md:h-20 border border-[#1b283f] rounded-full flex items-center justify-center">
                                 <img src="{% static 'home/icon1.png' %}" alt="Icon1" class="w-6 h-6 md:w-8 md:h-8 object-contain transform transition-transform duration-300 group-hover:rotate-90" />
@@ -64,7 +61,6 @@
             <div class="md:col-span-4 flex flex-col h-full">
                 <a href="{% url 'moneymap:income-expenses' %}" class="flex-grow flex justify-end items-end group">
                     <div class="bg-[#05a99d] rounded-lg p-6 flex flex-col justify-between h-full transform transition-transform duration-300 hover:scale-105 relative overflow-hidden group">
-                        <!-- Background Image -->
                         <img src="{% static 'home/pen.png' %}" alt="Pen" class="absolute bottom-0 right-0 w-1/2 opacity-30 transform transition-transform duration-300 group-hover:-translate-y-8 z-0" />
                         <!-- Content -->
                         <div class="relative z-10">
@@ -102,7 +98,6 @@
                                 Review your past financial activities and make informed decisions.
                             </p>
                         </div>
-                        <!-- Icon (Arrow) -->
                         <div class="absolute top-4 right-4 z-10">
                             <div class="w-12 h-12 md:w-16 md:h-16 border border-[#1b283f] rounded-full flex items-center justify-center">
                                 <img src="{% static 'home/icon1.png' %}" alt="Icon1" class="w-4 h-4 md:w-6 md:h-6 object-contain transform transition-transform duration-300 group-hover:rotate-90" />
@@ -117,49 +112,36 @@
 </section>
 
 <!-- Why Choose Us Section -->
-<div class="w-full h-[405px] p-2.5 flex flex-col justify-center items-center gap-2.5">
-    <div class="max-w-[1354px] w-full flex flex-col md:flex-row justify-start">
-        <!-- Heading -->
-        <div class="flex-1 min-w-[250px] relative">
+<div class="w-full h-auto p-2.5 flex flex-col justify-center items-center gap-4">
+    <div class="max-w-[1354px] w-full flex flex-col md:flex-row justify-center items-center gap-4">
+
+        <div class="flex-1 min-w-[250px] order-1 md:order-none text-center mt-5 md:mt-0">
             <div class="text-[#1b283f] text-5xl font-semibold font-poppins capitalize leading-[72.07px]">
-                Why choose
-            </div>
-            <div class="self-stretch relative">
-                <div class="inline-block">
-                    <div class="absolute -left-10 -top-16 lg:-left-12 lg:-top-18 xl:-left-14 xl:-top-20 w-36 h-36 md:w-48 md:h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80">
-                        <img src="{% static 'home/circle.png' %}" alt="Background Circle" class="w-full h-full object-contain opacity-70" />
-                    </div>
-                    <!-- 'Money' Text -->
-                    <span class="text-[#05a99d] text-5xl md:text-6xl lg:text-7xl xl:text-[5rem] font-normal relative z-10" style="font-family: 'Gochi Hand', cursive;">
-                        MoneyMap
-                    </span>
-                </div>
-                <!-- 'Question Mark' Text -->
-                <span class="text-[#ffbb56] text-5xl md:text-6xl lg:text-7xl xl:text-[5rem] font-normal" style="font-family: 'Gochi Hand', cursive;">
-                    ?
+                Why choose <br />
+                <span class="text-[#05a99d] text-6xl md:text-7xl font-normal" style="font-family: 'Gochi Hand', cursive;">
+                    MoneyMap
                 </span>
+                <span class="text-[#ffbb56] text-6xl md:text-7xl font-normal" style="font-family: 'Gochi Hand', cursive;">?</span>
             </div>
         </div>
 
         <!-- Feature 1 -->
-        <div class="flex-1 min-w-[250px] mb-4">
-            <div class="self-stretch h-[172px] p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-transparent hover:translate-y-[-10px] transition-transform duration-300">
-                <!-- Pointer Image -->
-                <img src="{% static 'home/pointer.png' %}" alt="Pointer" class="mb-2 w-[15%]" />
+        <div class="flex-1 min-w-[250px] order-3 md:order-none text-center md:text-left">
+            <div class="h-auto p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-transparent hover:translate-y-[-10px] transition-transform duration-300">
+                <img src="{% static 'home/pointer.png' %}" alt="Pointer" class="mb-2 w-10 md:w-[15%]" />
                 <div class="text-center text-[#1b283f] text-2xl font-bold font-poppins capitalize">Goal-Focused Savings</div>
-                <div class="text-center text-[#1b283f] text-xl font-normal font-poppins">
+                <div class="text-center text-[#1b283f] text-base md:text-xl font-normal font-poppins">
                     Helps users save for specific goals with deadlines, adjusting daily targets to keep them on track.
                 </div>
             </div>
         </div>
 
         <!-- Feature 2 -->
-        <div class="flex-1 min-w-[250px]">
-            <div class="self-stretch h-[172px] p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-transparent hover:translate-y-[-10px] transition-transform duration-300">
-                <!-- Pointer Image -->
-                <img src="{% static 'home/pointer.png' %}" alt="Pointer" class="mb-2 w-[15%]" />
+        <div class="flex-1 min-w-[250px] order-4 md:order-none text-center md:text-right">
+            <div class="h-auto p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-transparent hover:translate-y-[-10px] transition-transform duration-300">
+                <img src="{% static 'home/pointer.png' %}" alt="Pointer" class="mb-2 w-10 md:w-[15%]" />
                 <div class="text-center text-[#1b283f] text-2xl font-bold font-poppins capitalize">Real-Time Progress</div>
-                <div class="text-center text-[#1b283f] text-xl font-normal font-poppins">
+                <div class="text-center text-[#1b283f] text-base md:text-xl font-normal font-poppins">
                     Dynamic tracking and adjusts savings plans if users fall behind, ensuring goals are met.
                 </div>
             </div>
