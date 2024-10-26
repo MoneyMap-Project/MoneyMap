@@ -234,6 +234,7 @@
 <script>
     const monthIncome = {{ month_income }};
     const monthExpense = {{ month_expense }};
+    const total = monthIncome + monthExpense;
 
     const data = {
         labels: ['Income', 'Expenses'],
@@ -258,6 +259,22 @@
                         font: {
                             family: 'Poppins',
                             size: 16
+                        },
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            const labels = data.labels || [];
+                            const datasets = data.datasets || [];
+                            const total = datasets[0].data.reduce((a, b) => a + b, 0);
+                            return labels.map((label, i) => {
+                                const value = datasets[0].data[i];
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return {
+                                    text: [`${label}`, `${percentage}%`],
+                                    fillStyle: datasets[0].backgroundColor[i],
+                                    hidden: false,
+                                    index: i
+                                };
+                            });
                         }
                     }
                 },
