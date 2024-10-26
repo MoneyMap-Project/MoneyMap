@@ -47,6 +47,12 @@ jobs:
       - name: Install dependencies
         run: pip install pytest pytest-cov pytest-django
 
+      - name: Create Test Database
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          psql -h localhost -U ${{ secrets.DB_USER }} -p ${{ secrets.DB_PORT }} -c "CREATE DATABASE ${DB_NAME};"
+
       - name: Apply migrations
         run: python manage.py migrate
 
