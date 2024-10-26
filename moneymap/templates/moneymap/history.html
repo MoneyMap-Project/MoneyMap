@@ -11,15 +11,20 @@
 
             <!-- Date Range -->
             <div class="date-range flex items-center gap-2.5">
-                <div class="date-picker rounded-lg border border-[#90acaa] flex items-center">
-                    <input type="date" id="startDate" class="date-input px-2 py-1 text-[#1b283f] text-lg font-normal font-poppins capitalize" />
-                </div>
-                <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">To</div>
-                <div class="date-picker rounded-lg border border-[#90acaa] flex items-center">
-                    <input type="date" id="endDate" class="date-input px-2 py-1 text-[#1b283f] text-lg font-normal font-poppins capitalize" />
-                </div>
+                <form method="GET" action="{% url 'moneymap:history' %}">
+                    <div class="date-picker rounded-lg border border-[#90acaa] flex items-center">
+                        <input type="date" id="startDate" name="startDate" class="date-input px-2 py-1 text-[#1b283f] text-lg font-normal font-poppins capitalize" value="{{ start_date }}" />
+                    </div>
+                    <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">To</div>
+                    <div class="date-picker rounded-lg border border-[#90acaa] flex items-center">
+                        <input type="date" id="endDate" name="endDate" class="date-input px-2 py-1 text-[#1b283f] text-lg font-normal font-poppins capitalize" value="{{ end_date }}" />
+                    </div>
+                    <button type="submit" class="ml-4 bg-[#05a99d] text-white px-4 py-2 rounded">Filter</button>
+                </form>
+                <button onclick="window.location.href='{% url 'moneymap:history' %}'" class="ml-4 bg-red-500 text-white px-4 py-2 rounded">Reset</button>
             </div>
         </div>
+
 
         <!-- Table Header -->
         <div class="table-header w-full flex flex-col gap-2.5">

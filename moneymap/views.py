@@ -188,15 +188,35 @@ def income_and_expenses_detail_view(request, date):
         'has_data': has_data,
     })
 
+
 @login_required
 def history_view(request):
     """View showing income and expense history, grouped by date"""
-    # Fetch all unique dates for the IncomeExpense records for the logged-in user
-    dates = IncomeExpense.objects.filter(user_id=request.user).dates('date', 'day')
+    today = timezone.now().date()
 
-    # Prepare history list by iterating through each unique date in reverse order
+    # Get start and end date from GET parameters
+    start_date = request.GET.get('startDate')
+    end_date = request.GET.get('endDate')
+
+    # Check if the dates are provided and parse them
+    if start_date and end_date:
+        # Convert string dates to date objects
+        start_date = timezone.datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = timezone.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+        # Ensure start_date is less than or equal to end_date
+        if start_date > end_date:
+            start_date, end_date = end_date, start_date
+
+        # Filter the date from the range that user select
+        dates = IncomeExpense.objects.filter(user_id=request.user,
+                                             date__range=[start_date, end_date]).dates('date', 'day')
+    else:
+        # Default to show all records if no dates are provided
+        dates = IncomeExpense.objects.filter(user_id=request.user).dates('date', 'day')
+
     history_list = []
-    for date in reversed(dates):  # Iterate over dates in reverse order
+    for date in reversed(dates):
         # Get income and expenses for the day using `get_income_expense_by_day`
         income_expenses = get_income_expense_by_day(request.user, date)
 
@@ -215,7 +235,9 @@ def history_view(request):
             'total': total,
         })
 
-    # Render the history list in the template
+    # Render the history list in the template, along with the date range
     return render(request, 'moneymap/history.html', {
         'history_list': history_list,
+        'start_date': start_date,
+        'end_date': end_date,
     })
