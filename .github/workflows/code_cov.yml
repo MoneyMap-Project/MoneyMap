@@ -1,0 +1,65 @@
+name: codecov
+
+on:
+    push:
+      branches: [ "**" ]
+    pull_request:
+      branches: [ "**" ]
+
+env:
+   SECRET_KEY: ${{ secrets.SECRET_KEY }}
+   ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+   TIME_ZONE: ${{ secrets.TIME_ZONE }}
+   DB_NAME: ${{ secrets.DB_NAME }}
+   DB_USER: ${{ secrets.DB_USER }}
+   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+   DB_HOST: ${{ secrets.DB_HOST }}
+   DB_PORT: ${{ secrets.DB_PORT }}
+
+jobs:
+  test:
+    name: Run tests and collect coverage
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+            python-version: '3.11'
+
+      - name: Install requirements
+        run: pip install -r requirements.txt
+
+
+      - name: Install dependencies
+        run: pip install pytest pytest-cov pytest-django
+
+      - name: Create Test Database
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          psql -h localhost -U ${{ secrets.DB_USER }} -p ${{ secrets.DB_PORT }} -c "CREATE DATABASE ${DB_NAME};"
+
+      - name: Apply migrations
+        run: python manage.py migrate
+
+      - name: Run tests
+        run: pytest --cov
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
