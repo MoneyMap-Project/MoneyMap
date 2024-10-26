@@ -107,7 +107,7 @@ def moneyflow_view(request):
             print(f"New IncomeExpense object created: {new_income_expense}")
 
             # messages.success(request, 'Income/Expense recorded successfully!') #TODO change it to log
-            return redirect('moneymap:money-flow')
+            return redirect('moneymap:income-expenses')
         except ValueError as ve:
             # messages.error(request,
             #                'Invalid amount entered. Please enter a valid number.') #TODO change it to log
