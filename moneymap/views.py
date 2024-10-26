@@ -79,10 +79,6 @@ def goals(request):
     return render(request, 'moneymap/goals.html')
 
 
-def history(request):
-    return render(request, 'moneymap/history.html')
-
-
 @login_required
 def moneyflow_view(request):
     """
@@ -190,4 +186,36 @@ def income_and_expenses_detail_view(request, date):
         'income_percent': percentages['income_percent'],
         'expense_percent': percentages['expense_percent'],
         'has_data': has_data,
+    })
+
+@login_required
+def history_view(request):
+    """View showing income and expense history, grouped by date"""
+    # Fetch all unique dates for the IncomeExpense records for the logged-in user
+    dates = IncomeExpense.objects.filter(user_id=request.user).dates('date', 'day')
+
+    # Prepare history list by iterating through each unique date in reverse order
+    history_list = []
+    for date in reversed(dates):  # Iterate over dates in reverse order
+        # Get income and expenses for the day using `get_income_expense_by_day`
+        income_expenses = get_income_expense_by_day(request.user, date)
+
+        # Calculate the daily income and expense using sum over filtered data
+        day_income = sum(entry.amount for entry in income_expenses if entry.type.lower() == 'income')
+        day_expense = sum(entry.amount for entry in income_expenses if entry.type.lower() == 'expenses')
+
+        # Calculate total (income - expense) for the day
+        total = day_income - day_expense
+
+        # Add the daily record to the history list
+        history_list.append({
+            'date': date,
+            'income': day_income,
+            'expense': day_expense,
+            'total': total,
+        })
+
+    # Render the history list in the template
+    return render(request, 'moneymap/history.html', {
+        'history_list': history_list,
     })

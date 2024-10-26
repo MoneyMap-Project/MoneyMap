@@ -42,26 +42,26 @@
             </div>
 
             <!-- Table Rows -->
-            {% for row in '1234' %}
+            {% for record in history_list %}
             <div class="table-row w-full flex flex-col gap-2.5">
                 <!-- Row -->
                 <div class="row-item w-full h-[40px] rounded-lg border border-[#F4F4F4] flex items-center">
                     <div class="cell w-[229px] pl-10 flex items-center">
-                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">01/01/2024</div>
+                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">{{ record.date }}</div>
                     </div>
                     <div class="cell w-[310px] pl-10 flex items-center">
-                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">2468 Bath</div>
+                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">{{ record.income }} Bath</div>
                     </div>
                     <div class="cell w-[310px] pl-10 flex items-center">
-                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">1234 Bath</div>
+                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">{{ record.expense }} Bath</div>
                     </div>
                     <div class="cell w-[367px] pl-10 flex items-center">
-                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">1234 Bath</div>
+                        <div class="text-[#1b283f] text-lg font-normal font-poppins capitalize">{{ record.total }} Bath</div>
                     </div>
                     <div class="cell w-[135px] flex justify-center items-center">
-                        <button class="action-button w-[100px] bg-[#05a99d] rounded-lg flex justify-center items-center text-white text-base font-normal font-poppins capitalize transition duration-300 hover:bg-[#04897f]">
+                        <a href="{% url 'moneymap:income-expense-detail' record.date %}" class="action-button w-[100px] bg-[#05a99d] rounded-lg flex justify-center items-center text-white text-base font-normal font-poppins capitalize transition duration-300 hover:bg-[#04897f]">
                             Detail
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
