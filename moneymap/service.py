@@ -1,3 +1,5 @@
+"""Service functions for the MoneyMap view."""
+
 from datetime import timedelta
 from .models import IncomeExpense
 

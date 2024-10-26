@@ -3,8 +3,6 @@ Collect the data from the user and store it in the database."""
 
 from django.db import models
 from django.conf import settings
-from decimal import Decimal
-from datetime import date
 
 
 class Goal(models.Model):
@@ -53,6 +51,7 @@ class Goal(models.Model):
         """Calculate the progress graph of the goal."""
         pass
 
+
 class GoalAllocation(models.Model):
     """Model for the allocation of a goal."""
     # user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
@@ -60,11 +59,13 @@ class GoalAllocation(models.Model):
     # percentage =
     pass
 
+
 class IncomeExpense(models.Model):
     """Model for the income expense."""
     IncomeExpense_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                on_delete=models.CASCADE, related_name='income_expenses')
+                                on_delete=models.CASCADE,
+                                related_name='income_expenses')
 
     expense_type = (
         ('income', 'Income'),
@@ -79,6 +80,7 @@ class IncomeExpense(models.Model):
     date = models.DateField()
     description = models.CharField(max_length=255)
     saved_to_income_expense = models.BooleanField(default=False)
+
     # currency_id = pass will be added later
 
     def __str__(self):

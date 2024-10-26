@@ -1,14 +1,19 @@
+import logging
+
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .models import IncomeExpense
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
-from .service import *
+from .service import calculate_balance, calculate_balance_last_7_days, \
+    sum_income, sum_expense, sum_income_by_month, \
+    sum_expense_by_month, calculate_income_expense_percentage, \
+    get_income_expense_by_day
+
+from .models import IncomeExpense
 
 # logger
-import logging
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -48,18 +53,19 @@ def income_and_expenses_view(request):
             'has_data': bool(income_expense_with_balance_today),
             'user_id_display': request.user.username
         })
-    else:
+
         # If user is not authenticated, provide a placeholder for user_id_display
-        return render(request, 'moneymap/income-expenses.html', {
-            'income_expense_with_balance_today': [],
-            'income_expense_with_balance_last_7_days': [],
-            'has_data': False,
-            'user_id_display': 'guest'
-        })
+    return render(request, 'moneymap/income-expenses.html', {
+        'income_expense_with_balance_today': [],
+        'income_expense_with_balance_last_7_days': [],
+        'has_data': False,
+        'user_id_display': 'guest'
+    })
 
 
 @login_required
 def delete_income_expense(request, income_expense_id):
+    """For delete an IncomeExpense object"""
     # Retrieve the IncomeExpense object or return 404 if not found
     income_expense = get_object_or_404(IncomeExpense,
                                        IncomeExpense_id=income_expense_id,
@@ -76,6 +82,7 @@ def delete_income_expense(request, income_expense_id):
 
 
 def goals(request):
+    """View for the goals page"""
     return render(request, 'moneymap/goals.html')
 
 
@@ -105,17 +112,12 @@ def moneyflow_view(request):
                 description=description,
             )
             print(f"New IncomeExpense object created: {new_income_expense}")
-
-            # messages.success(request, 'Income/Expense recorded successfully!') #TODO change it to log
+            logger.debug(request, 'Income/Expense recorded successfully!')
             return redirect('moneymap:money-flow')
-        except ValueError as ve:
-            # messages.error(request,
-            #                'Invalid amount entered. Please enter a valid number.') #TODO change it to log
-            print(f"ValueError: {ve}")
+        except ValueError:
+            logging.error("Invalid amount entered. Please enter a valid number.")
         except Exception as e:
-            # messages.error(request, f'An error occurred: {str(e)}') #TODO change it to log
-            print(f"Exception: {e}")
-
+            logging.exception("An unexpected error occurred: %s", e)
     return render(request, 'moneymap/money-flow.html')
 
 
@@ -131,7 +133,8 @@ def income_and_expenses_detail_view(request, date):
 
     # Retrieve IncomeExpense records for the selected date and the logged-in user
     income_expenses = IncomeExpense.objects.filter(user_id=request.user,
-                                                   date=selected_date).order_by('date')
+                                                   date=selected_date).order_by(
+        'date')
 
     # Check if there is data and calculate balance if data exists
     if income_expenses.exists():
@@ -192,7 +195,6 @@ def income_and_expenses_detail_view(request, date):
 @login_required
 def history_view(request):
     """View showing income and expense history, grouped by date"""
-    today = timezone.now().date()
 
     # Get start and end date from GET parameters
     start_date = request.GET.get('startDate')
@@ -210,10 +212,13 @@ def history_view(request):
 
         # Filter the date from the range that user select
         dates = IncomeExpense.objects.filter(user_id=request.user,
-                                             date__range=[start_date, end_date]).dates('date', 'day')
+                                             date__range=[start_date,
+                                                          end_date]).dates(
+            'date', 'day')
     else:
         # Default to show all records if no dates are provided
-        dates = IncomeExpense.objects.filter(user_id=request.user).dates('date', 'day')
+        dates = IncomeExpense.objects.filter(user_id=request.user).dates(
+            'date', 'day')
 
     history_list = []
     for date in reversed(dates):
@@ -221,8 +226,10 @@ def history_view(request):
         income_expenses = get_income_expense_by_day(request.user, date)
 
         # Calculate the daily income and expense using sum over filtered data
-        day_income = sum(entry.amount for entry in income_expenses if entry.type.lower() == 'income')
-        day_expense = sum(entry.amount for entry in income_expenses if entry.type.lower() == 'expenses')
+        day_income = sum(entry.amount for entry in income_expenses if
+                         entry.type.lower() == 'income')
+        day_expense = sum(entry.amount for entry in income_expenses if
+                          entry.type.lower() == 'expenses')
 
         # Calculate total (income - expense) for the day
         total = day_income - day_expense
