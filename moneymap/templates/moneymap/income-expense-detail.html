@@ -6,7 +6,7 @@
 <!-- Title Section -->
 <div class="flex flex-col items-start gap-2.5 mt-10 mx-auto max-w-[1350px]">
     <div class="h-[72px] w-full">
-        <div class="text-[#1b283f] text-5xl font-semibold leading-[72.07px]">
+        <div class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">
             Income and Expense Report
         </div>
     </div>
@@ -15,7 +15,7 @@
             <img src="{% static 'income-expense-detail/calendar.png' %}" alt="Calendar Icon" class="w-[29px] h-[29px]" />
         </div>
         <div class="text-[#1b283f] text-xl font-bold capitalize">
-            01/01/2024 <!-- date -->
+            <span>{{ selected_date|date:"d/m/Y" }}</span>
         </div>
     </div>
 </div>
@@ -117,17 +117,18 @@
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
                 <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
                     <span>On this day (</span>
-                    <span>01/01/2024</span> <!-- on this day date -->
+                    <span>{{ selected_date|date:"d/m/Y" }}</span>
+
                     <span>)</span>
                 </div>
             </div>
             <div class="flex flex-col flex-grow">
                 <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
-                <div class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">
+                <div class="text-[#1b283f] text-3xl font-bold font-['Poppins'] capitalize mt-2">
                     <span class="mr-2">
-                        334 <!-- on this day amount -->
+                        {{ latest_balance }}
                     </span>
-                    <span>bath</span>
+                    <span>baht</span>
                 </div>
                 <div class="w-full border-2 border-[#90acaa] my-2"></div>
             </div>
@@ -140,9 +141,9 @@
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
                         <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">
                             <span class="mr-2">
-                                3210 <!-- on this day income -->
+                                {{ day_income }}
                             </span>
-                            <span>bath</span>
+                            <span>baht</span>
                         </div>
                     </div>
                 </div>
@@ -154,9 +155,9 @@
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
                         <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
                             <span class="mr-2">
-                                -321 <!-- on this day expense -->
+                                {{ day_expense }}
                             </span>
-                            <span>bath</span>
+                            <span>baht</span>
                         </div>
                     </div>
                 </div>
@@ -168,17 +169,17 @@
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
                 <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
                     <span>Overall this month (</span>
-                    <span>January</span> <!-- on this month month -->
+                    <span>{{ selected_date|date:"F Y" }}</span>
                     <span>)</span>
                 </div>
             </div>
             <div class="flex flex-col flex-grow">
                 <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
-                <div class="text-[#1b283f] text-4xl font-bold font-['Poppins'] capitalize">
+                <div class="text-[#1b283f] text-3xl font-bold font-['Poppins'] capitalize mt-2">
                     <span class="mr-2">
-                        766 <!-- on this month amount -->
+                        {{ month_balance }}
                     </span>
-                    <span>bath</span>
+                    <span>baht</span>
                 </div>
                 <div class="w-full border-2 border-[#90acaa] my-2"></div>
             </div>
@@ -191,9 +192,9 @@
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
                         <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">
                             <span class="mr-2">
-                                2000 <!-- on this month income -->
+                                {{ month_income }}
                             </span>
-                            <span>bath</span>
+                            <span>baht</span>
                         </div>
                     </div>
                 </div>
@@ -205,65 +206,98 @@
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
                         <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
                             <span class="mr-2">
-                                -1234 <!-- on this month expense -->
+                                {{ month_expense }}
                             </span>
-                            <span>bath</span>
+                            <span>baht</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <!-- Pie Chart Card -->
-        <div class="w-full max-w-[1353px] p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-center gap-5 h-auto md:h-[350px]">
+        <div class="w-full max-w-[1353px] p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start md:h-[350px]">
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
                 <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
                     <span>Overall this month (</span>
-                    <span>January</span> <!-- on this month month -->
+                    <span>{{ selected_date|date:"F Y" }}</span>
                     <span>)</span>
                 </div>
             </div>
-            <div class="flex items-center justify-center h-full w-full">
-                <div class="relative w-[220px] h-[220px] flex-shrink-0 animate-pie-chart">
-                    <div class="absolute inset-0 rounded-full bg-[conic-gradient(#05a99d_0%_60%,#ff5757_60%_100%)]"></div> <!--can input like #05a99d_0%_{{ incomepercent }} naja -->
-                    <div class="absolute inset-12 rounded-full bg-white"></div>
-                </div>
-                <div class="flex flex-col justify-center gap-3 ml-5">
-                    <div class="flex flex-col items-start gap-1">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-4 h-4 bg-[#05a99d] rounded-full"></div>
-                            <div class="text-[#1b283f] text-lg font-bold">Income</div>
-                        </div>
-                        <div class="text-[#1b283f] text-lg">60%</div>
-                    </div>
-                    <div class="flex flex-col items-start gap-1">
-                        <div class="flex items-center gap-2">
-                            <div class="w-4 h-4 bg-[#ff5757] rounded-full"></div>
-                            <div class="text-[#1b283f] text-lg font-bold">Expense</div>
-                        </div>
-                        <div class="text-[#1b283f] text-lg">40%</div>
-                    </div>
-                </div>
+            <div class="flex justify-center items-center w-full h-full">
+                <canvas id="incomeExpensePieChart" class="w-full h-full"></canvas>
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const monthIncome = {{ month_income }};
+    const monthExpense = {{ month_expense }};
+    const total = monthIncome + monthExpense;
+
+    const data = {
+        labels: ['Income', 'Expenses'],
+        datasets: [{
+            data: [monthIncome, monthExpense],
+            backgroundColor: ['#05a99d', '#ff5757'],
+            hoverBackgroundColor: ['#05d1bd', '#ff7f7f']
+        }]
+    };
+
+    const config = {
+        type: 'pie',
+        data: data,
+        options: {
+            padding: 0,
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#1b283f',
+                        font: {
+                            family: 'Poppins',
+                            size: 16
+                        },
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            const labels = data.labels || [];
+                            const datasets = data.datasets || [];
+                            const total = datasets[0].data.reduce((a, b) => a + b, 0);
+                            return labels.map((label, i) => {
+                                const value = datasets[0].data[i];
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return {
+                                    text: [`${label}`, `${percentage}%`],
+                                    fillStyle: datasets[0].backgroundColor[i],
+                                    hidden: false,
+                                    index: i
+                                };
+                            });
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            return `${label}: ${value} baht`;
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    const incomeExpensePieChart = new Chart(
+        document.getElementById('incomeExpensePieChart'),
+        config
+    );
+</script>
 
 <style>
-    @keyframes pie-chart-animation {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    .animate-pie-chart {
-        animation: pie-chart-animation 2s ease-in-out;
-    }
-
     @media (max-width: 640px) {
         .text-base {
             font-size: 0.875rem;
