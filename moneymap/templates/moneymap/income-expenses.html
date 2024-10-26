@@ -2,42 +2,39 @@
 {% load static %}
 
 {% block content %}
-    <!-- Banner + Button Section -->
-    <div class="relative pb-10"
-         style="background-image: url('{% static 'income-expenses/banner-bg.png' %}'); background-size: cover; background-position: center;">
-        <div class="flex flex-col items-center justify-center text-center z-10">
-            <div class="flex items-end">
-                <span class="text-[#1b283f] text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2]">Hello</span>
-                <span class="text-[#05a99d] text-6xl md:text-7xl lg:text-7xl xl:text-[7rem] font-normal leading-[1.2] ml-5 capitalize"
-                      style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
-                    {{ user_id_display }}
-                </span>
-                <span class="text-[#1b283f] text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2] ml-4">
-                    !
-                </span>
-            </div>
-            <span class="text-[#1b283f] text-[35px] font-semibold font-['Poppins'] leading-[60.06px] mt-1">
-                What did you spend your money on today?
+<!-- Banner + Button Section -->
+<div class="relative pb-10"
+     style="background-image: url('{% static 'income-expenses/banner-bg.png' %}'); background-size: 1900px; background-position: center; background-repeat: no-repeat; height: 300px;">
+    <div class="flex flex-col items-center justify-center text-center z-10 mt-5">
+        <div class="flex items-end">
+            <span class="text-[#1b283f] text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2]">Hello</span>
+            <span class="text-[#05a99d] text-[6.5rem] md:text-[6rem] lg:text-[6rem] xl:text-[6rem] font-normal leading-[1.2] ml-5 capitalize"
+                  style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
+                {{ user_id_display }}
             </span>
+            <span class="text-[#1b283f] text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2] ml-4">!</span>
         </div>
-
-        <!-- Add Money Flow Button -->
-        <div class="flex items-center justify-center mt-10">
-            <a href="{% url 'moneymap:money-flow' %}"
-               class="flex w-auto min-w-[300px] h-[50px] pl-3 pr-5 py-2.5 bg-white rounded-[40px] border-2 border-[#ffbb56] items-center gap-[15px] shadow-[0_2px_10px_rgba(255,187,86,0.5)] transition-all duration-300 group hover:text-white">
-                <div class="w-[30px] h-[30px] flex-shrink-0 transition-transform duration-300 group-hover:translate-x-2">
-                    <img src="{% static 'income-expenses/plus.png' %}" alt="Plus Icon" class="w-full h-full object-contain transition-transform duration-300 group-hover:rotate-90"/>
-                </div>
-                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize transition-transform duration-300 group-hover:translate-x-2">
-                    Add your money flow of the day
-                </div>
-            </a>
-        </div>
+        <span class="text-[#1b283f] text-[28px] sm:text-[28px] md:text-[35px] lg:text-[35px] font-semibold font-['Poppins'] leading-[1.2] whitespace-nowrap mt-1">
+            What did you spend your money on today?
+        </span>
     </div>
+    <!-- Add Money Flow Button -->
+    <div class="flex items-center justify-center mt-12">
+        <a href="{% url 'moneymap:money-flow' %}"
+           class="flex w-auto min-w-[300px] h-[50px] pl-3 pr-5 py-2.5 bg-white rounded-[40px] border-2 border-[#ffbb56] items-center gap-[15px] shadow-[0_2px_10px_rgba(255,187,86,0.5)] transition-all duration-300 group hover:text-white">
+            <div class="w-[30px] h-[30px] flex-shrink-0 transition-transform duration-300 group-hover:translate-x-2">
+                <img src="{% static 'income-expenses/plus.png' %}" alt="Plus Icon" class="w-full h-full object-contain transition-transform duration-300 group-hover:rotate-90"/>
+            </div>
+            <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize transition-transform duration-300 group-hover:translate-x-2">
+                Add your money flow of the day
+            </div>
+        </a>
+    </div>
+</div>
 
 <!-- Table Section -->
 <div class="flex justify-center">
-    <div class="w-full max-w-[1353px] flex flex-col rounded-[10px] mb-2 ml-2 mr-2">
+    <div class="w-full max-w-[1353px] flex flex-col rounded-[10px] mb-2 ml-2 mr-2 mt-5">
         <!-- Header Row -->
         <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
             <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]"></div>
@@ -91,9 +88,7 @@
                                 <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
                                     {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
                                 </span>
-                                <span class="text-[#1b283f]">
-                                    {{ item.amount }}
-                                </span>
+                                <span class="text-[#1b283f]">{{ item.amount }}</span>
                             </span>
                         </div>
 
@@ -110,8 +105,8 @@
                         <!-- Delete Icon Column -->
                         <div class="flex-1 py-2.5 flex justify-center items-center">
                             <a href="{% url 'moneymap:delete_income_expense' item.IncomeExpense_id %}" class="group">
-                                <img src="{% static 'income-expenses/trash1.png' %}" alt="Delete Icon" class="w-4 h-6 group-hover:hidden" />
-                                <img src="{% static 'income-expenses/trash2.png' %}" alt="Delete Icon Hover" class="w-4 h-6 hidden group-hover:block" />
+                                <img src="{% static 'income-expenses/trash1.png' %}" alt="Delete Icon" class="w-4 h-auto group-hover:hidden" />
+                                <img src="{% static 'income-expenses/trash2.png' %}" alt="Delete Icon Hover" class="w-4 h-auto hidden group-hover:block" />
                             </a>
                         </div>
                     </div>
@@ -134,25 +129,24 @@
     </div>
 </div>
 
-    <!-- History Section -->
-    <div class="w-full max-w-[1354px] h-auto flex flex-col items-center justify-center mx-auto mt-10">
-        <div class="flex items-center justify-between w-full mb-4">
-            <div class="flex items-center">
-                <span class="text-[#1b283f] text-xl font-bold font-['Poppins'] capitalize">Explore Your</span>
-                <span class="text-[#ffbb56] text-4xl font-normal capitalize mx-3" style="font-family: 'Gochi Hand', sans-serif;">7-Day</span>
-                <span class="text-[#1b283f] text-xl font-bold font-['Poppins'] capitalize">Financial Journey</span>
-            </div>
-            <a href="{% url 'moneymap:history' %}"
-               class="ml-4 px-4 py-2 bg-[#05a99d] text-white rounded-lg hover:bg-[#048f83] transition duration-300 ease-in-out">
-                See More
-            </a>
+<!-- History Section -->
+<div class="w-full max-w-[1354px] h-auto flex flex-col items-center justify-center mx-auto mt-10">
+    <div class="flex items-center justify-between w-full mb-4">
+        <div class="flex items-center">
+            <span class="text-[#1b283f] text-xl font-bold font-['Poppins'] capitalize">Explore Your</span>
+            <span class="text-[#ffbb56] text-4xl font-normal capitalize mx-3" style="font-family: 'Gochi Hand', sans-serif;">7-Day</span>
+            <span class="text-[#1b283f] text-xl font-bold font-['Poppins'] capitalize">Financial Journey</span>
         </div>
-
+        <a href="{% url 'moneymap:history' %}"
+           class="ml-4 px-4 py-2 bg-[#05a99d] text-white rounded-lg hover:bg-[#048f83] transition duration-300 ease-in-out">
+            See More
+        </a>
+    </div>
+    {% if user.is_authenticated %}
         <!-- Cards Section -->
         <div class="flex flex-wrap justify-center overflow-visible space-x-4 w-full mb-10">
             {% for day in income_expense_with_balance_last_7_days %}
                 <div class="flex-grow-0 flex-shrink-0 w-full sm:w-[calc((100%/3)-1rem)] md:w-[calc((100%/4)-1rem)] lg:w-[calc((100%/7)-1rem)] h-[150px] bg-[#ffffff] border-2 border-[#f2f2f2] rounded-[10px] flex flex-col transition-transform duration-300 ease-in-out hover:scale-105 hover:relative mb-4">
-
                     <!-- Enhanced Date Label Section -->
                     <div class="bg-white text-[#91ACAA] text-lg font-bold text-center py-2 rounded-[10px] mb-1">
                         {% if forloop.first %}
@@ -173,9 +167,7 @@
                         {% else %}
                             <span class="text-[#ea3d53] text-3xl font-bold font-['Poppins']">-</span>
                         {% endif %}
-                        <span class="text-[#1b283f] text-3xl font-bold font-['Poppins']">
-                            {{ day.total_balance_amount }}
-                        </span>
+                        <span class="text-[#1b283f] text-3xl font-bold font-['Poppins']">{{ day.total_balance_amount }}</span>
                     </div>
 
                     <!-- "See Detail" Section -->
@@ -187,5 +179,11 @@
                 </div>
             {% endfor %}
         </div>
-    </div>
+    {% else %}
+        <div class="flex justify-center items-center mt-5">
+            <img src="{% static 'income-expenses/alert.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+            <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">Login required to see financial history.</p>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
