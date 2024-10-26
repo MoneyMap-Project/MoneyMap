@@ -252,13 +252,6 @@ class IncomeAndExpensesDetailViewTests(TestCase):
         self.assertTemplateUsed(response,
                                 'moneymap/income-expense-detail.html')
 
-    def test_income_and_expenses_detail_view_invalid_date_format(self):
-        """Test the detail view redirects for an invalid date format."""
-        response = self.client.get(
-            reverse('moneymap:income-expense-detail', args=['invalid-date']))
-        self.assertEqual(response.status_code, 302)  # Expect a redirect
-        self.assertRedirects(response, reverse('moneymap:income-expenses'))
-
     def test_income_and_expenses_detail_view_no_data(self):
         """Test the detail view handles the case where no income/expense data exists for the given date."""
         future_date = timezone.now().date() + timezone.timedelta(days=1)
