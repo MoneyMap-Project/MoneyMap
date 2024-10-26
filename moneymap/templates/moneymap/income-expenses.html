@@ -8,7 +8,7 @@
         <div class="flex flex-col items-center justify-center text-center z-10">
             <div class="flex items-end">
                 <span class="text-[#1b283f] text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2]">Hello</span>
-                <span class="text-[#05a99d] text-6xl md:text-7xl lg:text-7xl xl:text-[7rem] font-normal leading-[1.2] ml-5 capitalize"
+                <span class="text-[#05a99d] text-8xl md:text-8xl lg:text-9xl xl:text-[7rem] font-normal leading-[1.2] ml-5 capitalize"
                       style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
                     {{ user_id_display }}
                 </span>
@@ -147,7 +147,7 @@
                 See More
             </a>
         </div>
-
+        {% if user.is_authenticated %}
         <!-- Cards Section -->
         <div class="flex flex-wrap justify-center overflow-visible space-x-4 w-full mb-10">
             {% for day in income_expense_with_balance_last_7_days %}
@@ -187,5 +187,11 @@
                 </div>
             {% endfor %}
         </div>
+        {% else %}
+            <div class="flex justify-center items-center mt-5">
+                <img src="{% static 'income-expenses/alert.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+                <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">Login required to see financial history.</p>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
