@@ -29,7 +29,6 @@
 <section class="w-full bg-[#f2f2f2] py-8">
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-
             <!-- Card 1 -->
             <div class="md:col-span-4 flex flex-col h-full">
                 <a href="{% url 'moneymap:goals' %}" class="flex-grow flex justify-end items-end relative">
@@ -61,7 +60,7 @@
             <div class="md:col-span-4 flex flex-col h-full">
                 <a href="{% url 'moneymap:income-expenses' %}" class="flex-grow flex justify-end items-end group">
                     <div class="bg-[#05a99d] rounded-lg p-6 flex flex-col justify-between h-full transform transition-transform duration-300 hover:scale-105 relative overflow-hidden group">
-                        <img src="{% static 'home/pen.png' %}" alt="Pen" class="absolute bottom-0 right-0 w-1/2 opacity-30 transform transition-transform duration-300 group-hover:-translate-y-8 z-0" />
+                        <img src="{% static 'home/pen.png' %}" alt="Pen" class="absolute bottom-0 right-0 w-1/2 opacity-30 transform transition-transform duration-500 group-hover:-translate-y-8 z-0" />
                         <!-- Content -->
                         <div class="relative z-10">
                             <div class="px-4 py-1 rounded-full border border-[#f2f2f2] inline-block mb-4">
@@ -106,15 +105,13 @@
                     </div>
                 </a>
             </div>
-
         </div>
     </div>
 </section>
 
 <!-- Why Choose Us Section -->
-<div class="w-full h-auto p-2.5 flex flex-col justify-center items-center gap-4">
+<div class="w-full h-auto p-2.5 flex flex-col justify-center items-center gap-4 mt-10 mb-10">
     <div class="max-w-[1354px] w-full flex flex-col md:flex-row justify-center items-center gap-4">
-
         <div class="flex-1 min-w-[250px] order-1 md:order-none text-center mt-5 md:mt-0">
             <div class="text-[#1b283f] text-5xl font-semibold font-poppins capitalize leading-[72.07px]">
                 Why choose <br />

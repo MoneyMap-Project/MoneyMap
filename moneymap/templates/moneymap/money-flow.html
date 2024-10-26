@@ -15,7 +15,7 @@
                     <div class="w-full flex flex-col gap-3">
                         <label for="description" class="text-black text-lg font-normal font-['Poppins'] capitalize">Description</label>
                         <input type="text" id="description" name="description" placeholder="Description about your money flow"
-                            class="w-full p-2.5 rounded-[10px] border border-[#1b283f] text-[#1b283f] text-lg font-normal font-['Poppins'] focus:outline-none focus:border-[#05a99d]" required />
+                               class="w-full p-2.5 rounded-[10px] border border-[#1b283f] text-[#1b283f] text-lg font-normal font-['Poppins'] focus:outline-none focus:border-[#05a99d]" required />
                     </div>
 
                     <!-- Amount Section -->
@@ -23,9 +23,9 @@
                         <label for="amount" class="text-black text-lg font-normal font-['Poppins'] capitalize">Amount</label>
                         <div class="w-full p-2.5 rounded-[10px] border border-[#1b283f] flex justify-between items-center amount-container">
                             <input type="number" id="amount" name="amount" placeholder="Enter amount"
-                                class="w-full focus:outline-none text-[#1b283f] text-lg font-normal font-['Poppins'] amount-input"
-                                oninput="formatBaht()" onkeydown="return restrictInput(event)"
-                                min="0" step="any" required />
+                                   class="w-full focus:outline-none text-[#1b283f] text-lg font-normal font-['Poppins'] amount-input"
+                                   oninput="formatBaht()" onkeydown="return restrictInput(event)"
+                                   min="0" step="any" required />
                             <span id="currency-label" class="ml-2 text-[#1b283f] text-lg font-normal font-['Poppins']">baht</span>
                         </div>
                     </div>
