@@ -1,10 +1,7 @@
-import datetime
-
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 
 from datetime import date
 
@@ -18,6 +15,7 @@ from .service import (
 
 
 # Create your tests here.
+#TODO: test create user
 
 class IncomeExpenseModelTests(TestCase):
     """Test the IncomeExpense model."""
@@ -271,3 +269,102 @@ class IncomeAndExpensesDetailViewTests(TestCase):
                                 'moneymap/income-expense-detail.html')
         self.assertFalse(
             response.context['has_data'])  # Check that has_data is False
+
+
+class HistoryViewTests(TestCase):
+
+    def setUp(self):
+        # Create a user for testing
+        self.user = User.objects.create_user(username='testuser',
+                                             password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+
+    def create_income_expenses(self):
+        # Create IncomeExpense entries for the user
+        IncomeExpense.objects.create(
+            user_id=self.user,
+            type='Income',
+            amount=200.00,
+            date=timezone.now().date(),
+            description='Test Income 1'
+        )
+        IncomeExpense.objects.create(
+            user_id=self.user,
+            type='Income',
+            amount=150.00,
+            date=timezone.now().date() - timezone.timedelta(days=1),
+            description='Test Income 2'
+        )
+        IncomeExpense.objects.create(
+            user_id=self.user,
+            type='Expenses',
+            amount=100.00,
+            date=timezone.now().date(),
+            description='Test Expense 1'
+        )
+        IncomeExpense.objects.create(
+            user_id=self.user,
+            type='Expenses',
+            amount=50.00,
+            date=timezone.now().date() - timezone.timedelta(days=1),
+            description='Test Expense 2'
+        )
+
+    def test_history_view_with_valid_date_range(self):
+        """Test the history view returns the correct history for a valid date range."""
+        self.create_income_expenses()
+
+        start_date = (timezone.now().date() - timezone.timedelta(
+            days=1)).strftime('%Y-%m-%d')
+        end_date = timezone.now().date().strftime('%Y-%m-%d')
+
+        response = self.client.get(reverse('moneymap:history'),
+                                   {'startDate': start_date,
+                                    'endDate': end_date})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'moneymap/history.html')
+        self.assertIn('history_list', response.context)
+
+        # Check if the history_list contains the correct data
+        history_list = response.context['history_list']
+        self.assertEqual(len(history_list), 2)  # Two days of records
+        self.assertEqual(history_list[0]['income'], 200.00)
+        self.assertEqual(history_list[0]['expense'], 100.00)
+        self.assertEqual(history_list[0]['total'], 100.00)
+
+    def test_history_view_without_dates(self):
+        """Test the history view returns all records when no dates are provided."""
+        self.create_income_expenses()
+
+        response = self.client.get(reverse('moneymap:history'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'moneymap/history.html')
+        self.assertIn('history_list', response.context)
+
+        # Check that all records are included
+        history_list = response.context['history_list']
+        self.assertEqual(len(history_list), 2)  # Two days of records
+        self.assertEqual(history_list[0]['income'], 200.00)
+        self.assertEqual(history_list[0]['expense'], 100.00)
+
+    def test_history_view_start_date_greater_than_end_date(self):
+        """Test the history view handles the case where start date is greater than end date."""
+        self.create_income_expenses()
+
+        start_date = timezone.now().date().strftime('%Y-%m-%d')
+        end_date = (timezone.now().date() - timezone.timedelta(
+            days=1)).strftime('%Y-%m-%d')
+
+        response = self.client.get(reverse('moneymap:history'),
+                                   {'startDate': start_date,
+                                    'endDate': end_date})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'moneymap/history.html')
+        self.assertIn('history_list', response.context)
+
+        # Check that the history_list still returns the correct data
+        history_list = response.context['history_list']
+        self.assertEqual(len(history_list), 2)  # Two days of records
