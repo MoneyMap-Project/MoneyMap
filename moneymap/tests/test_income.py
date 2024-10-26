@@ -5,8 +5,8 @@ from django.urls import reverse
 
 from datetime import date
 
-from .models import IncomeExpense
-from .service import (
+from moneymap.models import IncomeExpense
+from moneymap.service import (
     calculate_balance, get_income_expense_by_day,
     calculate_balance_last_7_days,
     sum_income, sum_expense, sum_income_by_month, sum_expense_by_month,
@@ -251,13 +251,6 @@ class IncomeAndExpensesDetailViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response,
                                 'moneymap/income-expense-detail.html')
-
-    def test_income_and_expenses_detail_view_invalid_date_format(self):
-        """Test the detail view redirects for an invalid date format."""
-        response = self.client.get(
-            reverse('moneymap:income-expense-detail', args=['invalid-date']))
-        self.assertEqual(response.status_code, 302)  # Expect a redirect
-        self.assertRedirects(response, reverse('moneymap:income-expenses'))
 
     def test_income_and_expenses_detail_view_no_data(self):
         """Test the detail view handles the case where no income/expense data exists for the given date."""

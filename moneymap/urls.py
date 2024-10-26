@@ -4,7 +4,8 @@ from django.urls import path
 
 from . import views
 
-APP_NAME = "moneymap"
+app_name = "moneymap"
+
 urlpatterns = [
     path('', views.home, name='home'),
     path('income-and-expenses/', views.income_and_expenses_view,
