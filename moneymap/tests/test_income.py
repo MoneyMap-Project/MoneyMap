@@ -93,6 +93,34 @@ class IncomeExpenseServiceTests(TestCase):
 
         today = timezone.localtime(timezone.now()).date()
 
+        # Create multiple income and expense objects for today
+        income_expense1 = IncomeExpense.objects.create(
+            user_id=user,
+            type='Income',
+            amount=200.00,
+            date=today,
+            description='Income 1',
+            saved_to_income_expense=True
+        )
+
+        income_expense2 = IncomeExpense.objects.create(
+            user_id=user,
+            type='Expense',
+            amount=50.00,
+            date=today,
+            description='Expense 1',
+            saved_to_income_expense=True
+        )
+
+        income_expense3 = IncomeExpense.objects.create(
+            user_id=user,
+            type='Income',
+            amount=100.00,
+            date=today,
+            description='Income 2',
+            saved_to_income_expense=True
+        )
+
         income_expenses_today = IncomeExpense.objects.filter(user_id=user,
                                                              date=today).order_by(
             'date')
