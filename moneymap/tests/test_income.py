@@ -2,7 +2,7 @@
 Unit tests for the IncomeExpense model and related services/views in the moneymap application.
 """
 from datetime import date
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.test import TestCase
 from django.urls import reverse
@@ -14,23 +14,24 @@ from moneymap.service import (
     calculate_income_expense_percentage
 )
 
+User = get_user_model()
+
 
 class IncomeExpenseModelTests(TestCase):
     """Test the IncomeExpense model."""
 
+    def setUp(self):
+        """Set up a user for tests."""
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+
     def test_create_income_expense(self):
         """Test creating an income expense object."""
-        # Create a new user
-        user = User.objects.create_user(username='testuser',
-                                        password='testpassword')
-        user.save()
 
-        # Capture the current time before creating the income expense object
         now = timezone.now()
 
         # Create a new income expense object
         income_expense = IncomeExpense.objects.create(
-            user_id=user,
+            user_id=self.user,
             type='Income',
             amount=100.00,
             date=now,
@@ -40,7 +41,7 @@ class IncomeExpenseModelTests(TestCase):
         income_expense.save()
 
         # Check if the income expense object was created successfully
-        self.assertEqual(income_expense.user_id, user)
+        self.assertEqual(income_expense.user_id, self.user)
         self.assertEqual(income_expense.type, 'Income')
         self.assertEqual(income_expense.amount, 100.00)
         self.assertEqual(income_expense.date,
@@ -51,18 +52,11 @@ class IncomeExpenseModelTests(TestCase):
 
     def test_save_income_expense_view(self):
         """Test saving an income expense object in database."""
-
-        # Create a new user
-        user = User.objects.create_user(username='testuser',
-                                        password='testpassword')
-        user.save()
-
-        # Capture the current time before creating the income expense object
         now = timezone.now()
 
         # Create a new income expense object
         income_expense = IncomeExpense.objects.create(
-            user_id=user,
+            user_id=self.user,
             type='Income',
             amount=100.00,
             date=now,
@@ -84,17 +78,17 @@ class IncomeExpenseModelTests(TestCase):
 class IncomeExpenseServiceTests(TestCase):
     """Test the calculate_balance utility function."""
 
+    def setUp(self):
+        """Set up a user for tests."""
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+
     def test_calculate_balance(self):
         """Test if the balance for today is calculated correctly, line by line."""
-
-        user = User.objects.create_user(username='testuser', password='testpassword')
-        user.save()
-
         today = timezone.localtime(timezone.now()).date()
 
         # Create multiple income and expense objects for today
         income_expense1 = IncomeExpense.objects.create(
-            user_id=user,
+            user_id=self.user,
             type='Income',
             amount=200.00,
             date=today,
@@ -103,7 +97,7 @@ class IncomeExpenseServiceTests(TestCase):
         )
 
         income_expense2 = IncomeExpense.objects.create(
-            user_id=user,
+            user_id=self.user,
             type='Expense',
             amount=50.00,
             date=today,
@@ -112,7 +106,7 @@ class IncomeExpenseServiceTests(TestCase):
         )
 
         income_expense3 = IncomeExpense.objects.create(
-            user_id=user,
+            user_id=self.user,
             type='Income',
             amount=100.00,
             date=today,
@@ -120,7 +114,7 @@ class IncomeExpenseServiceTests(TestCase):
             saved_to_income_expense=True
         )
 
-        income_expenses_today = IncomeExpense.objects.filter(user_id=user, date=today).order_by('date')
+        income_expenses_today = IncomeExpense.objects.filter(user_id=self.user, date=today).order_by('date')
         income_expense_with_balance = calculate_balance(income_expenses_today)
 
         self.assertEqual(income_expense_with_balance[0]['balance'], 200.00)  # First balance
