@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
+    <title>MoneyMap - Sign Out</title>
+    {% load static %}
+</head>
+
+<body class="h-full w-full m-0 p-0">
+    <div class="flex h-screen w-screen overflow-hidden">
+        <!-- Left section (Menu and account info) -->
+        <div class="flex flex-col justify-center items-start w-full lg:w-1/2 p-10 ml-10 mr-10">
+            <div class="w-full flex flex-col items-start gap-10">
+                <h1 class="text-[#1b283f] text-6xl font-semibold font-['Poppins']">Sign Out</h1>
+
+                <!-- Signed In Message -->
+                <div class="w-full">
+                    <p class="text-[#1b283f] text-2xl font-normal font-['Poppins']">Now you are signed in as <strong>{{ user.username }}</strong>.</p>
+                </div>
+
+                <!-- Sign Out Section -->
+                <div class="w-full mt-10">
+                    <p class="text-[#1b283f] text-xl font-normal font-['Poppins']">Are you sure you want to sign out?</p>
+
+                    <!-- Sign Out Button -->
+                    <form method="POST" action="{% url 'account_logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full h-14 pl-7 pr-2.5 py-2 bg-[#d9534f] rounded-full flex justify-center items-center mt-5 hover:bg-[#c9302c] transition duration-300 ease-in-out">
+                            <span class="text-white text-[24px] font-normal font-['Poppins'] capitalize">Sign Out</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right section -->
+        <div class="hidden lg:flex w-1/2 bg-[#05a99d] justify-center items-center">
+            <img src="/static/login/logo.png" alt="Logo" class="h-auto max-h-[388.63px]">
+        </div>
+    </div>
+</body>
+
+</html>

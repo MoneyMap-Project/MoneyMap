@@ -10,60 +10,92 @@
     <title>MoneyMap</title>
     {% load static %}
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
+            font-family: 'Poppins', sans-serif;
         }
+
         body {
             display: flex;
             flex-direction: column;
         }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+        }
+
         main {
             flex: 1;
+            padding-top: 6rem;
         }
     </style>
 </head>
 
 <body>
-    <header class="w-full bg-white top-0 left-0 right-0 z-50 shadow-sm">
+    <header class="w-full bg-white shadow-sm">
         <div class="container mx-auto px-4 flex justify-between items-center h-24">
             <!-- Logo -->
             <div class="flex items-center h-full">
                 <a href="{% url 'moneymap:home' %}">
-                    <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-12 object-contain" />
-                </a>
-            </div>
-            <!-- Dropdown for small screens -->
-            <div class="relative md:hidden">
-                <button id="dropdownButton" class="flex items-center px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
-                    <img src="{% static 'base/list.png' %}" alt="Menu" class="h-5 w-5 mr-2">
-                    <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Menu</div>
-                </button>
-                <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                    <a href="{% url 'moneymap:income-expenses' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-gray-100">Income and Expenses</a>
-                    <a href="{% url 'moneymap:goals' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-gray-100">Goals</a>
-                </div>
-            </div>
-
-            <!-- Buttons for larger screens -->
-            <div class="hidden md:flex gap-4">
-                <a href="{% url 'moneymap:income-expenses' %}" class="px-5 py-2.5 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
-                    <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Income and Expenses</div>
-                </a>
-                <a href="{% url 'moneymap:goals' %}" class="px-5 py-2.5 bg-white rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all ease-out duration-300">
-                    <div class="text-[#1b283f] text-base font-normal font-Poppins capitalize">Goals</div>
+                    <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-10 md:h-12 object-contain" />
                 </a>
             </div>
 
-            <div class="h-[60px] px-4 py-2.5 rounded-full border-2 border-[#aec2c0] flex items-center gap-4">
-                <!-- Logout Button -->
-                <div class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
-                    <div class="text-white text-base font-normal font-Poppins capitalize transition-colors duration-300">Logout</div>
+            <div class="flex-1 flex justify-center">
+                <!-- Links for larger screens (centered) -->
+                <div class="hidden md:flex gap-4">
+                    <a href="{% url 'moneymap:income-expenses' %}" class="whitespace-nowrap px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all duration-300">
+                        <div class="text-[#1b283f] text-sm md:text-base font-normal capitalize">Income & Expenses</div>
+                    </a>
+                    <a href="{% url 'moneymap:goals' %}" class="whitespace-nowrap px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all duration-300">
+                        <div class="text-[#1b283f] text-sm md:text-base font-normal capitalize">Goals</div>
+                    </a>
                 </div>
-                <!-- Profile Image -->
-                <div class="w-12 h-12 rounded-full overflow-hidden">
-                    <img src="{% static 'base/profile.png' %}" alt="Profile" class="w-full h-full object-cover" />
+
+                <!-- Dropdown button for small screens -->
+                <div class="relative md:hidden">
+                    <button id="dropdownButton" class="flex items-center px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all duration-300">
+                        <img src="{% static 'base/list.png' %}" alt="Menu" class="h-4 w-4 mr-2">
+                        <div class="text-[#1b283f] text-sm font-normal capitalize">Menu</div>
+                    </button>
+
+                    <!-- Styled dropdown menu -->
+                    <div id="dropdownMenu" class="hidden absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white rounded-md border border-[#aec2c0] z-10">
+                        <a href="{% url 'moneymap:income-expenses' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-[#05a99d] hover:text-white text-center transition-colors duration-300">
+                            Income & Expenses
+                        </a>
+                        <a href="{% url 'moneymap:goals' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-[#05a99d] hover:text-white text-center transition-colors duration-300">
+                            Goals
+                        </a>
+                    </div>
                 </div>
+            </div>
+
+            <!-- User Account Actions -->
+            <div class="flex items-center gap-4">
+                {% if user.is_authenticated %}
+                    <div class="flex items-center px-4 py-2 rounded-full border-2 border-[#aec2c0]">
+                        <div class="text-[#1b283f] text-sm md:text-base font-normal capitalize mr-2">
+                            {{ user.username }}
+                        </div>
+                        <a href="/accounts/logout/" class="text-white bg-[#05a99d] px-3 py-1.5 rounded-full transition-colors duration-300 ml-2 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                            Logout
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="/accounts/login/" class="text-white bg-[#05a99d] rounded-full px-4 py-2 transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                        Login
+                    </a>
+                    <a href="/accounts/signup/" class="text-white bg-[#05a99d] rounded-full px-4 py-2 transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                        Signup
+                    </a>
+                {% endif %}
             </div>
         </div>
     </header>
@@ -92,15 +124,16 @@
 
     <!-- Footer Section -->
     <footer class="w-full bg-[#05a99d] text-white py-4">
-        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-12">
-            <div class="text-lg md:text-xl font-semibold font-poppins">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-12 text-sm md:text-base">
+            <div class="font-normal">
                 2024 MoneyMap. All rights reserved. Licensed under MIT.
             </div>
-            <a href="https://github.com/MoneyMap-Project/MoneyMap" target="_blank" class="flex items-center mt-4 md:mt-0">
-                <img src="{% static 'home/github.png' %}" alt="GitHub" class="w-8 h-8 mr-2">
-                <span class="text-lg font-medium">MoneyMap GitHub</span>
+            <a href="https://github.com/MoneyMap-Project/MoneyMap" target="_blank" class="flex items-center mt-2 md:mt-0">
+                <img src="{% static 'home/github.png' %}" alt="GitHub" class="w-6 h-6 mr-2">
+                <span class="font-normal">MoneyMap GitHub</span>
             </a>
         </div>
     </footer>
 </body>
+
 </html>

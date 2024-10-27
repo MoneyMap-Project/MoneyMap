@@ -1,0 +1,49 @@
+name: Pylint
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+    paths-ignore:
+      - "templates/**"
+      - "moneymap/migrations/**"
+
+permissions:
+  contents: read
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.11'
+
+      - name: Install pylint and dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pylint pylint-django
+
+      - name: Set environment variables
+        run: |
+          echo "DJANGO_SETTINGS_MODULE=config.settings" >> $GITHUB_ENV
+          echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
+          echo "TIME_ZONE=Asia/Bangkok" >> $GITHUB_ENV
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
+          echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+          echo "DEBUG=True" >> $GITHUB_ENV
+
+      - name: Run pylint
+        run: |
+          pylint --load-plugins=pylint_django moneymap --ignore=migrations,templates

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
+    <title>MoneyMap</title>
+    {% load static %}
+    {% load socialaccount %}
+</head>
+
+<body class="h-full w-full m-0 p-0">
+    <div class="flex h-screen w-screen overflow-hidden">
+        <!-- Left section (Login form) -->
+        <div class="flex flex-col justify-center items-start flex-grow p-10 relative">
+            <!-- View as guest -->
+            <div class="absolute top-4 right-4">
+                <div class="bg-[#05a99d] rounded-full px-4 py-2 flex items-center justify-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                    <a href="/" class="text-white text-base font-normal font-Poppins capitalize">View as guest</a>
+                </div>
+            </div>
+
+            <div class="w-full flex flex-col items-start gap-10 mt-10 ml-20">
+                <h1 class="text-[#1b283f] text-6xl font-semibold font-['Poppins']">Login</h1>
+
+                <form method="POST" action="{% url 'account_login' %}">
+                    {% csrf_token %}
+                    <div class="w-full flex flex-col items-center gap-10">
+                        <div class="w-full flex flex-col gap-5">
+                            <div class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#1b283f] flex items-center">
+                                {{ form.login }}
+                            </div>
+                            <div class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#1b283f] flex items-center justify-between">
+                                {{ form.password }}
+                                <div class="w-8 h-8"></div>
+                            </div>
+                        </div>
+
+                        <div class="w-full flex justify-between items-center">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="remember-me" class="mr-2" />
+                                <label for="remember-me" class="text-[#1b283f] text-xl font-normal font-['Poppins']">Remember me</label>
+                            </div>
+                            <a href="/accounts/password/reset/" class="text-right text-[#1b283f] text-xl font-normal font-['Poppins']">Forgot password?</a>
+                        </div>
+
+                        <!-- Login Button and Register Link -->
+                        <div class="w-full flex flex-col items-center gap-5">
+                            <button type="submit" class="w-full h-14 pl-7 pr-2.5 py-2 bg-[#05a99d] rounded-full flex justify-center items-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                                <span class="text-white text-[24px] font-normal font-['Poppins'] capitalize">Login</span>
+                            </button>
+                            <div class="w-[454px] h-8 text-center">
+                                <span class="text-black text-xl font-normal font-['Poppins']">Not registered yet? </span>
+                                <a href="{{ signup_url }}" class="text-[#05a99d] text-xl font-normal font-['Poppins'] underline">Create account</a>
+                            </div>
+                        </div>
+
+                        <!-- Or Continue with -->
+                        <div class="w-full flex items-center relative">
+                            <div class="flex-grow h-px bg-black"></div>
+                            <div class="text-center text-black text-xl font-normal font-['Poppins'] mx-4">or continue with</div>
+                            <div class="flex-grow h-px bg-black"></div>
+                        </div>
+                        <a href="{% provider_login_url 'google' %}" class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#90acaa] flex justify-center items-center gap-3 transition-colors duration-300 hover:bg-[#f0f0f0] hover:text-[#1b283f] hover:border-transparent">
+                            <img src="/static/login/google.png" alt="Google" class="w-7 h-7" />
+                            <span class="text-[#1b283f] text-[24px] font-normal font-['Poppins']">Login with Google</span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right section (Image or content) -->
+        <div class="hidden lg:flex w-1/2 bg-[#05a99d] justify-center items-center">
+            <img src="/static/login/logo.png" alt="Logo" class="h-auto max-h-[388.63px]">
+        </div>
+    </div>
+</body>
+
+</html>
