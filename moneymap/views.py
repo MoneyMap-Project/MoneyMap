@@ -25,14 +25,6 @@ from .models import IncomeExpense
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-from .utils import *
-
-# logger
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
 
 def is_admin(user):
     """Check if the user is a superuser."""
@@ -72,13 +64,13 @@ def income_and_expenses_view(request):
             'user_id_display': request.user.username
         })
 
-        # If user is not authenticated, provide a placeholder for user_id_display
-        return render(request, 'moneymap/income-expenses.html', {
-            'income_expense_with_balance_today': [],
-            'income_expense_with_balance_last_7_days': [],
-            'has_data': False,
-            'user_id_display': 'guest'
-        })
+    # If user is not authenticated, provide a placeholder for user_id_display
+    return render(request, 'moneymap/income-expenses.html', {
+        'income_expense_with_balance_today': [],
+        'income_expense_with_balance_last_7_days': [],
+        'has_data': False,
+        'user_id_display': 'guest'
+    })
 
 
 @login_required
@@ -132,7 +124,6 @@ def moneyflow_view(request):
                 description=description,
             )
             print(f"New IncomeExpense object created: {new_income_expense}")
-            
             logger.debug(request, 'Income/Expense recorded successfully!')
             return redirect('moneymap:income-expenses')
         except ValueError:
