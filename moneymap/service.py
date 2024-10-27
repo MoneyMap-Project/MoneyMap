@@ -5,6 +5,7 @@ from .models import IncomeExpense
 
 
 def calculate_balance(income_expenses):
+    """Calculate the balance based on income and expenses."""
     balance = 0
     check = 0
     income_expense_with_balance = []
@@ -43,8 +44,7 @@ def get_income_expense_by_day(user, date):
     Returns:
         QuerySet: A list of IncomeExpense objects for the given day.
     """
-    return IncomeExpense.objects.filter(user_id=user, date=date).order_by(
-        'date')
+    return IncomeExpense.objects.filter(user_id=user, date=date).order_by('date')
 
 
 def calculate_balance_last_7_days(user, today):
@@ -58,7 +58,6 @@ def calculate_balance_last_7_days(user, today):
     Returns:
         List[Dict]: A list where each item contains the total balance and date for the last 7 days.
     """
-
     balance_last_7_days = []
 
     for last_day in range(7):
@@ -84,32 +83,29 @@ def calculate_balance_last_7_days(user, today):
 
     return balance_last_7_days
 
+
 def sum_income(user, date):
-    """Get summation of type is `income` for specific day"""
-    income = IncomeExpense.objects.filter(user_id=user, date=date,
-                                          type='Income')
-    return sum([item.amount for item in income])
+    """Get summation of type 'Income' for a specific day."""
+    income = IncomeExpense.objects.filter(user_id=user, date=date, type='Income')
+    return sum(item.amount for item in income)
 
 
 def sum_expense(user, date):
-    """Get summation of type 'Expense' for a specific day"""
-    expenses = IncomeExpense.objects.filter(user_id=user, date=date,
-                                            type='Expenses')
-    return sum([item.amount for item in expenses])
+    """Get summation of type 'Expense' for a specific day."""
+    expenses = IncomeExpense.objects.filter(user_id=user, date=date, type='Expenses')
+    return sum(item.amount for item in expenses)
 
 
 def sum_income_by_month(user, month):
-    """Get summation of type 'Income' for a specific month"""
-    income = IncomeExpense.objects.filter(user_id=user, date__month=month,
-                                          type='Income')
-    return sum([item.amount for item in income])
+    """Get summation of type 'Income' for a specific month."""
+    income = IncomeExpense.objects.filter(user_id=user, date__month=month, type='Income')
+    return sum(item.amount for item in income)
 
 
 def sum_expense_by_month(user, month):
-    """Get summation of type 'Expense' for a specific month"""
-    expenses = IncomeExpense.objects.filter(user_id=user, date__month=month,
-                                            type='Expenses')
-    return sum([item.amount for item in expenses])
+    """Get summation of type 'Expense' for a specific month."""
+    expenses = IncomeExpense.objects.filter(user_id=user, date__month=month, type='Expenses')
+    return sum(item.amount for item in expenses)
 
 
 def calculate_income_expense_percentage(month_income, month_expense):

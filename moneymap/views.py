@@ -1,16 +1,24 @@
+"""
+Views for the MoneyMap application.
+
+This module contains views related to managing income and expenses,
+displaying financial reports, and handling user interactions.
+"""
 import logging
-
 from django.shortcuts import render, redirect, get_object_or_404
-
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-
-from .service import calculate_balance, calculate_balance_last_7_days, \
-    sum_income, sum_expense, sum_income_by_month, \
-    sum_expense_by_month, calculate_income_expense_percentage, \
-    get_income_expense_by_day
-
+from .service import (
+    calculate_balance,
+    calculate_balance_last_7_days,
+    sum_income,
+    sum_expense,
+    sum_income_by_month,
+    sum_expense_by_month,
+    calculate_income_expense_percentage,
+    get_income_expense_by_day,
+)
 from .models import IncomeExpense
 
 # logger
@@ -20,14 +28,17 @@ logger = logging.getLogger(__name__)
 
 
 def is_admin(user):
+    """Check if the user is a superuser."""
     return user.is_superuser  # Check if the user is a superuser
 
 
 def home(request):
+    """Render the home page."""
     return render(request, 'moneymap/home.html')
 
 
 def income_and_expenses_view(request):
+    """View for displaying today's income and expenses."""
     local_time = timezone.localtime(timezone.now())
     today = local_time.date()
 
@@ -116,8 +127,8 @@ def moneyflow_view(request):
             return redirect('moneymap:money-flow')
         except ValueError:
             logging.error("Invalid amount entered. Please enter a valid number.")
-        except Exception as e:
-            logging.exception("An unexpected error occurred: %s", e)
+        except Exception as specific_error:
+            logging.exception("An unexpected error occurred: %s", specific_error)
     return render(request, 'moneymap/money-flow.html')
 
 

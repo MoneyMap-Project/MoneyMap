@@ -1,10 +1,11 @@
+"""
+Unit tests for the IncomeExpense model and related services/views in the moneymap application.
+"""
+from datetime import date
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.test import TestCase
 from django.urls import reverse
-
-from datetime import date
-
 from moneymap.models import IncomeExpense
 from moneymap.service import (
     calculate_balance, get_income_expense_by_day,
@@ -13,9 +14,6 @@ from moneymap.service import (
     calculate_income_expense_percentage
 )
 
-
-# Create your tests here.
-#TODO: test create user
 
 class IncomeExpenseModelTests(TestCase):
     """Test the IncomeExpense model."""
@@ -94,34 +92,6 @@ class IncomeExpenseServiceTests(TestCase):
         user.save()
 
         today = timezone.localtime(timezone.now()).date()
-
-        # Create multiple income and expense objects for today
-        income_expense1 = IncomeExpense.objects.create(
-            user_id=user,
-            type='Income',
-            amount=200.00,
-            date=today,
-            description='Income 1',
-            saved_to_income_expense=True
-        )
-
-        income_expense2 = IncomeExpense.objects.create(
-            user_id=user,
-            type='Expense',
-            amount=50.00,
-            date=today,
-            description='Expense 1',
-            saved_to_income_expense=True
-        )
-
-        income_expense3 = IncomeExpense.objects.create(
-            user_id=user,
-            type='Income',
-            amount=100.00,
-            date=today,
-            description='Income 2',
-            saved_to_income_expense=True
-        )
 
         income_expenses_today = IncomeExpense.objects.filter(user_id=user,
                                                              date=today).order_by(
@@ -228,8 +198,10 @@ class IncomeExpenseViewsTests(TestCase):
 
 
 class IncomeAndExpensesDetailViewTests(TestCase):
+    """Tests for the detail view of income and expense entries."""
 
     def setUp(self):
+        """Set up a user and an IncomeExpense entry for detail view testing."""
         # Create a user for testing
         self.user = User.objects.create_user(username='testuser',
                                              password='testpassword')
@@ -253,7 +225,8 @@ class IncomeAndExpensesDetailViewTests(TestCase):
                                 'moneymap/income-expense-detail.html')
 
     def test_income_and_expenses_detail_view_no_data(self):
-        """Test the detail view handles the case where no income/expense data exists for the given date."""
+        """Test the detail view handles the case where no
+        income/expense data exists for the given date."""
         future_date = timezone.now().date() + timezone.timedelta(days=1)
         response = self.client.get(
             reverse('moneymap:income-expense-detail', args=[future_date]))
@@ -265,14 +238,17 @@ class IncomeAndExpensesDetailViewTests(TestCase):
 
 
 class HistoryViewTests(TestCase):
+    """Tests for the history view of income and expense records."""
 
     def setUp(self):
+        """Set up a user and create income/expense records for history testing."""
         # Create a user for testing
         self.user = User.objects.create_user(username='testuser',
                                              password='testpassword')
         self.client.login(username='testuser', password='testpassword')
 
     def create_income_expenses(self):
+        """Create multiple income and expense entries for the user."""
         # Create IncomeExpense entries for the user
         IncomeExpense.objects.create(
             user_id=self.user,
