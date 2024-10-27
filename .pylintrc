@@ -13,9 +13,6 @@ load-plugins=pylint_django
 # Allow loading of arbitrary C extensions
 unsafe-load-any-extension=no
 
-# Allow optimization of some AST trees
-optimize-ast=no
-
 [MESSAGES CONTROL]
 # Disable specific warnings
 disable=C0111, # missing docstring

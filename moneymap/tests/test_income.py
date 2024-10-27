@@ -87,8 +87,7 @@ class IncomeExpenseServiceTests(TestCase):
     def test_calculate_balance(self):
         """Test if the balance for today is calculated correctly, line by line."""
 
-        user = User.objects.create_user(username='testuser',
-                                        password='testpassword')
+        user = User.objects.create_user(username='testuser', password='testpassword')
         user.save()
 
         today = timezone.localtime(timezone.now()).date()
@@ -121,17 +120,16 @@ class IncomeExpenseServiceTests(TestCase):
             saved_to_income_expense=True
         )
 
-        income_expenses_today = IncomeExpense.objects.filter(user_id=user,
-                                                             date=today).order_by(
-            'date')
+        income_expenses_today = IncomeExpense.objects.filter(user_id=user, date=today).order_by('date')
         income_expense_with_balance = calculate_balance(income_expenses_today)
 
-        self.assertEqual(income_expense_with_balance[0]['balance'],
-                         200.00)  # First balance
-        self.assertEqual(income_expense_with_balance[1]['balance'],
-                         150.00)  # After expense
-        self.assertEqual(income_expense_with_balance[2]['balance'],
-                         250.00)  # Final balance after second income
+        self.assertEqual(income_expense_with_balance[0]['balance'], 200.00)  # First balance
+        self.assertEqual(income_expense_with_balance[1]['balance'], 150.00)  # After expense
+        self.assertEqual(income_expense_with_balance[2]['balance'], 250.00)  # Final balance after second income
+
+        self.assertEqual(income_expense1.amount, 200.00)
+        self.assertEqual(income_expense2.amount, 50.00)
+        self.assertEqual(income_expense3.amount, 100.00)
 
 
 class IncomeExpenseViewsTests(TestCase):
