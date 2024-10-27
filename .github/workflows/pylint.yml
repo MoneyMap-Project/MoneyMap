@@ -32,4 +32,4 @@ jobs:
           pip install pylint
 
       - name: Run pylint
-        run: pylint moneymap
+        run: pylint moneymap --ignore=migrations,templates
