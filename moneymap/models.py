@@ -3,8 +3,6 @@ Collect the data from the user and store it in the database."""
 
 from django.db import models
 from django.conf import settings
-from decimal import Decimal
-from datetime import date
 
 
 class Goal(models.Model):
@@ -29,42 +27,13 @@ class Goal(models.Model):
         """Calculate the days remaining to reach the goal."""
         return (self.end_date - self.start_date).days
 
-    def total_saved(self):
-        """Calculate the total saved amount for the goal."""
-        pass
-
-    def min_saving_per_day(self):
-        """Calculate the minimum saving per day to reach the goal."""
-        pass
-
-    def avg_saving_per_day(self):
-        """Calculate the average saving from start date until current date."""
-        pass
-
-    def current_progress(self):
-        """Calculate the current progress of the goal."""
-        pass
-
-    def progress_trend(self):
-        """Calculate the trend of the goal."""
-        pass
-
-    def progress_graph(self):
-        """Calculate the progress graph of the goal."""
-        pass
-
-class GoalAllocation(models.Model):
-    """Model for the allocation of a goal."""
-    # user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    # goal = models.ForeignKey(Goal, on_delete=models.CASCADE)
-    # percentage =
-    pass
 
 class IncomeExpense(models.Model):
     """Model for the income expense."""
     IncomeExpense_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                on_delete=models.CASCADE, related_name='income_expenses')
+                                on_delete=models.CASCADE,
+                                related_name='income_expenses')
 
     expense_type = (
         ('income', 'Income'),
@@ -79,11 +48,11 @@ class IncomeExpense(models.Model):
     date = models.DateField()
     description = models.CharField(max_length=255)
     saved_to_income_expense = models.BooleanField(default=False)
+
     # currency_id = pass will be added later
 
     def __str__(self):
-        return self.description
-        # return f"{self.type} of {self.amount} on {self.date}"
+        return f"{self.description}"
 
 
 class SavingEntry(models.Model):
