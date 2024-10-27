@@ -1,6 +1,5 @@
 """
 Views for the MoneyMap application.
-
 This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
@@ -22,6 +21,14 @@ from .service import (
 from .models import IncomeExpense
 
 # logger
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+from .utils import *
+
+# logger
+import logging
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -66,17 +73,18 @@ def income_and_expenses_view(request):
         })
 
         # If user is not authenticated, provide a placeholder for user_id_display
-    return render(request, 'moneymap/income-expenses.html', {
-        'income_expense_with_balance_today': [],
-        'income_expense_with_balance_last_7_days': [],
-        'has_data': False,
-        'user_id_display': 'guest'
-    })
+        return render(request, 'moneymap/income-expenses.html', {
+            'income_expense_with_balance_today': [],
+            'income_expense_with_balance_last_7_days': [],
+            'has_data': False,
+            'user_id_display': 'guest'
+        })
 
 
 @login_required
 def delete_income_expense(request, income_expense_id):
     """For delete an IncomeExpense object"""
+
     # Retrieve the IncomeExpense object or return 404 if not found
     income_expense = get_object_or_404(IncomeExpense,
                                        IncomeExpense_id=income_expense_id,
@@ -94,6 +102,7 @@ def delete_income_expense(request, income_expense_id):
 
 def goals(request):
     """View for the goals page"""
+
     return render(request, 'moneymap/goals.html')
 
 
@@ -123,12 +132,14 @@ def moneyflow_view(request):
                 description=description,
             )
             print(f"New IncomeExpense object created: {new_income_expense}")
+            
             logger.debug(request, 'Income/Expense recorded successfully!')
-            return redirect('moneymap:money-flow')
+            return redirect('moneymap:income-expenses')
         except ValueError:
             logging.error("Invalid amount entered. Please enter a valid number.")
         except Exception as specific_error:
             logging.exception("An unexpected error occurred: %s", specific_error)
+
     return render(request, 'moneymap/money-flow.html')
 
 

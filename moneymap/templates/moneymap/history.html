@@ -1,4 +1,6 @@
 {% extends 'moneymap/base.html' %}
+{% load static %}
+
 {% block content %}
 <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-8 mx-auto mt-10 mb-10">
     <div class="header w-full flex flex-col gap-5">
@@ -13,15 +15,27 @@
             <div class="date-range flex items-center gap-2.5 mt-4 md:mt-0">
                 <form method="GET" action="{% url 'moneymap:history' %}" class="flex items-center gap-2">
                     <div class="date-picker border border-[#90acaa] flex items-center">
-                        <label for="startDate"></label><input type="date" id="startDate" name="startDate" class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize" value="{{ start_date }}" />
+                        <label for="startDate"></label>
+                        <input type="date" id="startDate" name="startDate"
+                               class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize"
+                               value="{{ start_date }}" />
                     </div>
                     <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize">To</div>
-                    <div class="date-picker border border-[#90acaa] flex items-center ">
-                        <label for="endDate"></label><input type="date" id="endDate" name="endDate" class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize" value="{{ end_date }}" />
+                    <div class="date-picker border border-[#90acaa] flex items-center">
+                        <label for="endDate"></label>
+                        <input type="date" id="endDate" name="endDate"
+                               class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize"
+                               value="{{ end_date }}" />
                     </div>
-                    <button type="submit" class="ml-4 bg-[#05a99d] text-white px-4 py-2 rounded-lg hover:bg-[#04897f] transition duration-300">Filter</button>
+                    <button type="submit"
+                            class="ml-4 bg-[#05a99d] text-white px-4 py-2 rounded-lg hover:bg-[#04897f] transition duration-300">
+                        Filter
+                    </button>
                 </form>
-                <button onclick="window.location.href='{% url 'moneymap:history' %}'" class="ml-4 bg-[#FF5757] text-white px-4 py-2 rounded-lg hover:bg-[#e04c4c] transition duration-300">Reset</button>
+                <button onclick="window.location.href='{% url 'moneymap:history' %}'"
+                        class="ml-4 bg-[#FF5757] text-white px-4 py-2 rounded-lg hover:bg-[#e04c4c] transition duration-300">
+                    Reset
+                </button>
             </div>
         </div>
 
@@ -44,35 +58,50 @@
                     <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Action</div>
                 </div>
             </div>
-
-            <!-- Table Rows -->
-            {% for record in history_list %}
-            <div class="table-row w-full flex items-center">
-                <div class="row-item w-full h-12 border-b border-[#DAE0EB] flex items-center">
-                    <div class="cell w-1/5 pl-4 flex items-center">
-                        <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">{{ record.date|date:"d/m/Y" }}</div>
+            {% if history_list %}
+                {% for record in history_list %}
+                    <div class="table-row w-full flex items-center">
+                        <div class="row-item w-full h-12 border-b border-[#DAE0EB] flex items-center">
+                            <div class="cell w-1/5 pl-4 flex items-center">
+                                <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
+                                    {{ record.date|date:"d/m/Y" }}
+                                </div>
+                            </div>
+                            <div class="cell w-1/4 pl-4 flex items-center">
+                                <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
+                                    {{ record.income }} Baht
+                                </div>
+                            </div>
+                            <div class="cell w-1/4 pl-4 flex items-center">
+                                <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
+                                    {{ record.expense }} Baht
+                                </div>
+                            </div>
+                            <div class="cell w-1/4 pl-4 flex items-center">
+                                <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
+                                    {{ record.total }} Baht
+                                </div>
+                            </div>
+                            <div class="cell w-1/5 flex justify-center items-center">
+                                <a href="{% url 'moneymap:income-expense-detail' record.date %}"
+                                   class="action-button w-20 bg-[#05a99d] text-white text-sm md:text-base font-normal font-poppins flex justify-center items-center rounded-lg hover:bg-[#04897f] transition duration-300">
+                                    Detail
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="cell w-1/4 pl-4 flex items-center">
-                        <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">{{ record.income }} Baht</div>
-                    </div>
-                    <div class="cell w-1/4 pl-4 flex items-center">
-                        <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">{{ record.expense }} Baht</div>
-                    </div>
-                    <div class="cell w-1/4 pl-4 flex items-center">
-                        <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">{{ record.total }} Baht</div>
-                    </div>
-                    <div class="cell w-1/5 flex justify-center items-center">
-                        <a href="{% url 'moneymap:income-expense-detail' record.date %}" class="action-button w-20 bg-[#05a99d] text-white text-sm md:text-base font-normal font-poppins flex justify-center items-center rounded-lg hover:bg-[#04897f] transition duration-300">
-                            Detail
-                        </a>
-                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="flex justify-center items-center h-12 mt-8">
+                    <img src="{% static 'income-expenses/no.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+                    <p class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">No data available.</p>
                 </div>
-            </div>
-            {% endfor %}
+            {% endif %}
         </div>
 
     </div>
 </div>
+
 <style>
     @media (max-width: 640px) {
         .date-input {
