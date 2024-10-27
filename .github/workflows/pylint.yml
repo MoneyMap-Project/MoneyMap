@@ -32,7 +32,7 @@ jobs:
           pip install pylint pylint-django
 
       - name: Set DJANGO_SETTINGS_MODULE
-        run: echo "DJANGO_SETTINGS_MODULE=moneymap.settings" >> $GITHUB_ENV
+        run: echo "DJANGO_SETTINGS_MODULE=config.settings" >> $GITHUB_ENV
 
       - name: Run pylint
         run: |
