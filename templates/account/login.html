@@ -64,14 +64,10 @@
                             <div class="text-center text-black text-xl font-normal font-['Poppins'] mx-4">or continue with</div>
                             <div class="flex-grow h-px bg-black"></div>
                         </div>
-                        {% if has_google_credentials %}
-                            <a href="{% provider_login_url 'google' %}" class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#90acaa] flex justify-center items-center gap-3 transition-colors duration-300 hover:bg-[#f0f0f0] hover:text-[#1b283f] hover:border-transparent">
-                                <img src="/static/login/google.png" alt="Google" class="w-7 h-7" />
-                                <span class="text-[#1b283f] text-[24px] font-normal font-['Poppins']">Login with Google</span>
-                            </a>
-                        {% else %}
-                            <p>Google login is not available.</p>
-                        {% endif %}
+                        <a href="{% provider_login_url 'google' %}" class="w-full h-14 pl-7 pr-2.5 py-2 rounded-full border-2 border-[#90acaa] flex justify-center items-center gap-3 transition-colors duration-300 hover:bg-[#f0f0f0] hover:text-[#1b283f] hover:border-transparent">
+                            <img src="/static/login/google.png" alt="Google" class="w-7 h-7" />
+                            <span class="text-[#1b283f] text-[24px] font-normal font-['Poppins']">Login with Google</span>
+                        </a>
                     </div>
                 </form>
             </div>
