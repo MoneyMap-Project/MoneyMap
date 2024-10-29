@@ -16,6 +16,7 @@ urlpatterns = [
          name='money-flow'),
     path('income-and-expenses/delete/<int:income_expense_id>/',
          views.delete_income_expense, name='delete_income_expense'),
-    path('income-expenses/detail/<str:date>/',
-         views.income_and_expenses_detail_view, name='income-expense-detail'),
+    path('income-expenses/<str:date>/',
+         views.IncomeAndExpensesDetailView.as_view(),
+         name='income-expense-detail'),
 ]

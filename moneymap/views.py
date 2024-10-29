@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .service import (
     calculate_balance,
     calculate_balance_last_7_days,
@@ -166,76 +167,134 @@ def moneyflow_view(request):
     return render(request, 'moneymap/money-flow.html')
 
 
-@login_required
-def income_and_expenses_detail_view(request, date):
-    """Income and Expense Report for a specific date"""
-    # Convert the date string to a datetime object
-    try:
-        selected_date = timezone.datetime.strptime(date, '%Y-%m-%d').date()
-    except ValueError:
-        logger.error("Invalid date format.")
-        return redirect('moneymap:income-expenses')
+# @login_required
+# def income_and_expenses_detail_view(request, date):
+#     """Income and Expense Report for a specific date"""
+#     # Convert the date string to a datetime object
+#     try:
+#         selected_date = timezone.datetime.strptime(date, '%Y-%m-%d').date()
+#     except ValueError:
+#         logger.error("Invalid date format.")
+#         return redirect('moneymap:income-expenses')
+#
+#     # Retrieve IncomeExpense records for the selected date and the logged-in user
+#     income_expenses = IncomeExpense.objects.filter(user_id=request.user,
+#                                                    date=selected_date).order_by(
+#         'date')
+#
+#     # Check if there is data and calculate balance if data exists
+#     if income_expenses.exists():
+#         income_expense_with_balance = calculate_balance(income_expenses)
+#         latest_balance = income_expense_with_balance[-1]['balance']
+#         # logger.debug(f"Latest balance: {latest_balance}")
+#
+#         # Retrieve only income and expenses using utility functions
+#         day_income = sum_income(request.user, selected_date)
+#         # logger.debug(f"Total income: {day_income}")  # 5,020
+#         day_expense = sum_expense(request.user, selected_date)
+#         # logger.debug(f"Total income: {day_expense}")  # 117
+#
+#         month_income = sum_income_by_month(request.user, selected_date.month)
+#         # logger.debug(f"Total income: {month_income}")  # 5,020
+#         month_expense = sum_expense_by_month(request.user, selected_date.month)
+#
+#         month_balance = month_income - month_expense
+#
+#         percentages = calculate_income_expense_percentage(month_income,
+#                                                           month_expense)
+#
+#         has_data = True
+#     else:
+#         income_expense_with_balance = None
+#         latest_balance = 0
+#
+#         day_income = 0
+#         day_expense = 0
+#
+#         month_income = sum_income_by_month(request.user, selected_date.month)
+#         month_expense = sum_expense_by_month(request.user, selected_date.month)
+#
+#         month_balance = month_income - month_expense
+#
+#         percentages = calculate_income_expense_percentage(month_income,
+#                                                           month_expense)
+#
+#         has_data = False
+#
+#     # logger.debug(income_expense_with_balance[1]['type'])
+#
+#     return render(request, 'moneymap/income-expense-detail.html', {
+#         'income_expense_with_balance': income_expense_with_balance,
+#         'selected_date': selected_date,
+#         'latest_balance': latest_balance,
+#         'day_income': day_income,
+#         'day_expense': day_expense,
+#         'month_income': month_income,
+#         'month_expense': month_expense,
+#         'month_balance': month_balance,
+#         'income_percent': percentages['income_percent'],
+#         'expense_percent': percentages['expense_percent'],
+#         'has_data': has_data,
+#     })
 
-    # Retrieve IncomeExpense records for the selected date and the logged-in user
-    income_expenses = IncomeExpense.objects.filter(user_id=request.user,
-                                                   date=selected_date).order_by(
-        'date')
+class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
+    """Income and Expense Report for a specific date."""
+    template_name = 'moneymap/income-expense-detail.html'
 
-    # Check if there is data and calculate balance if data exists
-    if income_expenses.exists():
-        income_expense_with_balance = calculate_balance(income_expenses)
-        latest_balance = income_expense_with_balance[-1]['balance']
-        # logger.debug(f"Latest balance: {latest_balance}")
+    def get(self, request, *args, **kwargs):
+        # Convert the date string to a datetime object
+        date_str = kwargs.get('date')
+        try:
+            selected_date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            logger.error("Invalid date format.")
+            return redirect('moneymap:income-expenses')
 
-        # Retrieve only income and expenses using utility functions
-        day_income = sum_income(request.user, selected_date)
-        # logger.debug(f"Total income: {day_income}")  # 5,020
-        day_expense = sum_expense(request.user, selected_date)
-        # logger.debug(f"Total income: {day_expense}")  # 117
+        # Retrieve IncomeExpense records for the selected date and the logged-in user
+        income_expenses = IncomeExpense.objects.filter(
+            user_id=request.user,
+            date=selected_date
+        ).order_by('date')
 
-        month_income = sum_income_by_month(request.user, selected_date.month)
-        # logger.debug(f"Total income: {month_income}")  # 5,020
-        month_expense = sum_expense_by_month(request.user, selected_date.month)
+        # Prepare the context data
+        context = self.get_context_data(income_expenses=income_expenses, selected_date=selected_date)
+        return self.render_to_response(context)
 
-        month_balance = month_income - month_expense
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        income_expenses = kwargs.get('income_expenses')
+        selected_date = kwargs.get('selected_date')
 
-        percentages = calculate_income_expense_percentage(month_income,
-                                                          month_expense)
+        if income_expenses.exists():
+            income_expense_with_balance = calculate_balance(income_expenses)
+            context['latest_balance'] = income_expense_with_balance[-1]['balance']
+            context['day_income'] = sum_income(self.request.user, selected_date)
+            context['day_expense'] = sum_expense(self.request.user, selected_date)
+            context['has_data'] = True
+        else:
+            income_expense_with_balance = None
+            context['latest_balance'] = 0
+            context['day_income'] = 0
+            context['day_expense'] = 0
+            context['has_data'] = False
 
-        has_data = True
-    else:
-        income_expense_with_balance = None
-        latest_balance = 0
+        # Monthly income and expense calculations
+        month_income = sum_income_by_month(self.request.user, selected_date.month)
+        month_expense = sum_expense_by_month(self.request.user, selected_date.month)
+        context['month_income'] = month_income
+        context['month_expense'] = month_expense
+        context['month_balance'] = month_income - month_expense
 
-        day_income = 0
-        day_expense = 0
+        # Income and expense percentages
+        percentages = calculate_income_expense_percentage(month_income, month_expense)
+        context['income_percent'] = percentages['income_percent']
+        context['expense_percent'] = percentages['expense_percent']
 
-        month_income = sum_income_by_month(request.user, selected_date.month)
-        month_expense = sum_expense_by_month(request.user, selected_date.month)
+        # Additional context
+        context['income_expense_with_balance'] = income_expense_with_balance
+        context['selected_date'] = selected_date
 
-        month_balance = month_income - month_expense
-
-        percentages = calculate_income_expense_percentage(month_income,
-                                                          month_expense)
-
-        has_data = False
-
-    # logger.debug(income_expense_with_balance[1]['type'])
-
-    return render(request, 'moneymap/income-expense-detail.html', {
-        'income_expense_with_balance': income_expense_with_balance,
-        'selected_date': selected_date,
-        'latest_balance': latest_balance,
-        'day_income': day_income,
-        'day_expense': day_expense,
-        'month_income': month_income,
-        'month_expense': month_expense,
-        'month_balance': month_balance,
-        'income_percent': percentages['income_percent'],
-        'expense_percent': percentages['expense_percent'],
-        'has_data': has_data,
-    })
-
+        return context
 
 @login_required
 def history_view(request):
