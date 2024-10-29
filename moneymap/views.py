@@ -249,3 +249,7 @@ class HistoryView(LoginRequiredMixin, View):
             'start_date': start_date,
             'end_date': end_date,
         })
+
+
+class AddGoals(TemplateView):
+    template_name = 'moneymap/add_goals.html'
