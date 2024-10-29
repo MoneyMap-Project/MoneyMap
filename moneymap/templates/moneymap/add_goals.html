@@ -61,8 +61,8 @@
                         <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize"></div>
                     </div>
                 </div>
-                <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-lg flex justify-center items-center text-white text-lg font-bold uppercase hover:bg-[#009b86] transition">
-                    Add New Goal
+                <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
+                    <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add new goal</div>
                 </button>
             </div>
         </div>
@@ -81,17 +81,25 @@
             const summaryDates = document.getElementById('summary-dates');
             const summaryAmount = document.getElementById('summary-amount');
 
-            const bangkokOffset = 7 * 60;  // offset in minutes
+            const bangkokOffset = 7 * 60;
             const bangkokDate = new Date(new Date().getTime() + (bangkokOffset - new Date().getTimezoneOffset()) * 60000);
             startDateInput.value = bangkokDate.toISOString().split('T')[0];
+
+            function formatDateToDDMMYY(dateString) {
+                if (!dateString) return "";
+                const [year, month, day] = dateString.split("-");
+                return `${day}/${month}/${year.slice(-2)}`;
+            }
 
             function updateSummary() {
                 summaryTitle.textContent = titleInput.value;
                 summaryDescription.textContent = descriptionInput.value;
 
-                const startDate = startDateInput.value ? `<strong>${startDateInput.value}</strong>` : "";
-                const endDate = endDateInput.value ? `<strong>${endDateInput.value}</strong>` : "";
-                summaryDates.innerHTML = startDate && endDate ? `From ${startDate} to ${endDate}` : startDate || endDate;
+                const formattedStartDate = formatDateToDDMMYY(startDateInput.value);
+                const formattedEndDate = formatDateToDDMMYY(endDateInput.value);
+                summaryDates.innerHTML = formattedStartDate && formattedEndDate
+                    ? `From <strong>${formattedStartDate}</strong> to <strong>${formattedEndDate}</strong>`
+                    : formattedStartDate || formattedEndDate;
 
                 summaryAmount.textContent = amountInput.value ? `${amountInput.value} Baht` : "";
             }
