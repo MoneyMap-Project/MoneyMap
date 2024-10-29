@@ -7,7 +7,7 @@ from . import views
 app_name = "moneymap"   # pylint: disable=C0103
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', views.HomeView.as_view(), name='home'),
     path('income-and-expenses/', views.income_and_expenses_view,
          name='income-expenses'),
     path('goals/', views.goals, name='goals'),

@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.views.generic import TemplateView
 from .service import (
     calculate_balance,
     calculate_balance_last_7_days,
@@ -26,14 +27,9 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-def is_admin(user):
-    """Check if the user is a superuser."""
-    return user.is_superuser  # Check if the user is a superuser
-
-
-def home(request):
+class HomeView(TemplateView):
     """Render the home page."""
-    return render(request, 'moneymap/home.html')
+    template_name = 'moneymap/home.html'
 
 
 def income_and_expenses_view(request):
