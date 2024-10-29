@@ -1,0 +1,200 @@
+{% extends 'moneymap/base.html' %}
+{% load static %}
+
+{% block content %}
+<form id="add-money-form" action="{% url 'moneymap:add_money_goals' %}" method="POST">
+    {% csrf_token %}
+    <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
+        <h1 class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">Add Money to Your Goal</h1>
+
+        <div class="w-full flex flex-col lg:flex-row justify-start items-start gap-5">
+            <!-- Left Column -->
+            <div class="w-full lg:w-2/3 p-5 rounded-[10px] border border-[#aec2c0] flex flex-col justify-start items-start gap-[35px]">
+                <div class="w-full flex flex-col gap-[30px]">
+                    <!-- Description Section -->
+                    <div class="w-full flex flex-col gap-3">
+                        <label for="goal-description" class="text-black text-lg font-normal font-['Poppins'] capitalize">Description</label>
+                        <input type="text" id="goal-description" name="goal_description" placeholder="Description about your goal"
+                               class="w-full p-2.5 rounded-[10px] border border-[#1b283f] text-[#1b283f] text-lg font-normal font-['Poppins'] focus:outline-none focus:border-[#05a99d]" required />
+                    </div>
+
+                    <!-- Amount Section -->
+                    <div class="w-full flex flex-col gap-3">
+                        <label for="goal-amount" class="text-black text-lg font-normal font-['Poppins'] capitalize">Amount</label>
+                        <div class="w-full p-2.5 rounded-[10px] border border-[#1b283f] flex justify-between items-center amount-container">
+                            <input type="number" id="goal-amount" name="goal_amount" placeholder="Enter amount"
+                                   class="w-full focus:outline-none text-[#1b283f] text-lg font-normal font-['Poppins'] amount-input"
+                                   oninput="formatBaht()" onkeydown="return restrictInput(event)"
+                                   min="0" step="any" required />
+                            <span id="currency-label" class="ml-2 text-[#1b283f] text-lg font-normal font-['Poppins']">baht</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Savings Goals -->
+                <div class="w-full p-5 rounded-[10px] border border-[#90acaa] flex flex-col gap-5">
+                    <!-- Distributing Evenly -->
+                    <div class="flex items-center mb-4">
+                        <input type="checkbox" id="distribute-evenly" name="distribute_evenly" class="mr-5" onclick="handleCheckboxToggle('distribute-evenly')">
+                        <div class="flex flex-col">
+                            <label for="distribute-evenly" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Distribute Evenly</label>
+                            <p class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Automatically split your money equally across all savings goals</p>
+                        </div>
+                    </div>
+
+                    <!-- Setting Custom Percentages -->
+                    <div class="flex items-center mb-4">
+                        <input type="checkbox" id="set-custom-percentages" name="set_custom_percentages" class="mr-5" onclick="handleCheckboxToggle('set-custom-percentages')">
+                        <div class="flex flex-col">
+                            <label for="set-custom-percentages" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Set Custom Percentages</label>
+                            <p class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Allocate specific percentages to each savings goal</p>
+                        </div>
+                    </div>
+
+                    <!-- Container for Input Fields -->
+                    <div id="percentage-inputs" class="flex flex-wrap justify-between gap-4 hidden">
+                        {% for i in '0123' %}
+                        <div class="w-[185px] p-2.5 bg-[#f2f2f2] rounded-[10px] flex-col flex gap-[5px]">
+                            <label class="text-[#1b283f] text-xl font-normal font-['Poppins'] capitalize">Tuition Fee {{ forloop.index }}</label>
+                            <div class="flex items-center">
+                                <label>
+                                    <input type="number"
+                                           name="percentage_{{ forloop.index }}"
+                                           class="w-full p-2 text-[#1b283f] text-[15px] font-normal font-['Poppins'] rounded-[10px] focus:outline-none"
+                                           min="0"
+                                           max="100"
+                                           step="1"
+                                           value="25"
+                                           oninput="updateSummary()">
+                                </label>
+                                <span class="ml-2 text-[#1b283f]">%</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- New Independent Checkbox Box -->
+                <div class="w-full p-5 rounded-[10px] border border-[#90acaa] flex flex-col gap-5">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="add-income-expense" name="add_income_expense" class="mr-5" onclick="updateSummary()">
+                        <div class="flex flex-col">
+                            <label for="add-income-expense" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Add this money to income and expense</label>
+                            <p class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Deduction of money from income and expenses in type of saving.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="w-full lg:w-1/3 flex flex-col gap-4">
+                <!-- Summary Section -->
+                <div class="w-full p-5 rounded-[10px] border border-[#aec2c0] flex flex-col gap-5">
+                    <h2 class="text-[#1b283f] text-[28px] font-semibold font-['Poppins'] capitalize">Summary</h2>
+                    <div class="w-[72px] h-[2px] bg-[#90acaa]"></div>
+                    <div class="w-full flex flex-col gap-4">
+                        <div id="summary-description" class="text-[#1b283f] text-lg font-bold font-['Poppins'] capitalize">No description</div>
+                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold font-['Poppins'] capitalize">No amount</div>
+                        <div id="summary-distribution" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Distribute Evenly</div>
+                        <div id="summary-percentages" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize hidden"></div>
+                        <div id="summary-income-expense" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize hidden">Add to income and expense</div>
+                    </div>
+                </div>
+
+                <!-- Add New Money Flow Button -->
+                <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
+                    <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add New Money Flow</div>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    function formatBaht() {
+        const input = document.getElementById('goal-amount');
+        const currencyLabel = document.getElementById('currency-label');
+        currencyLabel.style.display = input.value ? 'inline' : 'none';
+    }
+
+    function restrictInput(event) {
+        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', '.'];
+        if (event.key >= 0 && event.key <= 9 || allowedKeys.includes(event.key)) {
+            return true;
+        }
+        return false;
+    }
+
+    document.getElementById('goal-description').addEventListener('input', updateSummary);
+    document.getElementById('goal-amount').addEventListener('input', updateSummary);
+
+    function updateSummary() {
+        const description = document.getElementById('goal-description').value.trim();
+        const amount = document.getElementById('goal-amount').value.trim();
+        const distribution = document.getElementById('distribute-evenly').checked ? 'Distribute Evenly' : 'Set Custom Percentages';
+
+        document.getElementById('summary-description').textContent = description || 'No description';
+        document.getElementById('summary-amount').textContent = amount ? `฿${amount}` : 'No amount';
+        document.getElementById('summary-distribution').textContent = distribution;
+
+        const customPercentagesSection = document.getElementById('summary-percentages');
+        if (distribution === 'Set Custom Percentages') {
+            customPercentagesSection.classList.remove('hidden');
+            customPercentagesSection.innerHTML = '';
+
+            const percentagesContainer = document.createElement('div');
+            percentagesContainer.className = 'goal-percentages';
+
+            document.querySelectorAll('[name^="percentage_"]').forEach((input, index) => {
+                const percentageValue = input.value;
+                const goalItem = document.createElement('div');
+                goalItem.className = 'goal-percentage-item';
+                goalItem.innerHTML = `<span class="goal-title">Goal ${index + 1}:</span> <span class="goal-percentage-value">${percentageValue}%</span>`;
+                percentagesContainer.appendChild(goalItem);
+            });
+
+            customPercentagesSection.appendChild(percentagesContainer);
+        } else {
+            customPercentagesSection.classList.add('hidden');
+        }
+
+        const addIncomeExpense = document.getElementById('add-income-expense').checked;
+        const incomeExpenseSection = document.getElementById('summary-income-expense');
+        incomeExpenseSection.classList.toggle('hidden', !addIncomeExpense);
+    }
+
+    function handleCheckboxToggle(id) {
+        const distributeEvenlyCheckbox = document.getElementById('distribute-evenly');
+        const customPercentagesCheckbox = document.getElementById('set-custom-percentages');
+
+        if (id === 'distribute-evenly' && distributeEvenlyCheckbox.checked) {
+            customPercentagesCheckbox.checked = false;
+        } else if (id === 'set-custom-percentages' && customPercentagesCheckbox.checked) {
+            distributeEvenlyCheckbox.checked = false;
+        }
+
+        if (!distributeEvenlyCheckbox.checked && !customPercentagesCheckbox.checked) {
+            if (id === 'distribute-evenly') {
+                customPercentagesCheckbox.checked = true;
+            } else {
+                distributeEvenlyCheckbox.checked = true;
+            }
+        }
+
+        togglePercentageInputs();
+        updateSummary();
+    }
+
+    function togglePercentageInputs() {
+        const percentageInputs = document.getElementById('percentage-inputs');
+        const customPercentagesCheckbox = document.getElementById('set-custom-percentages');
+        percentageInputs.classList.toggle('hidden', !customPercentagesCheckbox.checked);
+    }
+
+    window.onload = function() {
+        document.getElementById('distribute-evenly').checked = true;
+        togglePercentageInputs();
+        updateSummary();
+    };
+</script>
+
+{% endblock %}
