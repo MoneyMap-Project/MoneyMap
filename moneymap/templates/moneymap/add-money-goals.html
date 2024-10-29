@@ -133,7 +133,7 @@
         const distribution = document.getElementById('distribute-evenly').checked ? 'Distribute Evenly' : 'Set Custom Percentages';
 
         document.getElementById('summary-description').textContent = description || 'No description';
-        document.getElementById('summary-amount').textContent = amount ? `฿${amount}` : 'No amount';
+        document.getElementById('summary-amount').textContent = amount ? `${amount} Baht` : 'No amount';
         document.getElementById('summary-distribution').textContent = distribution;
 
         const customPercentagesSection = document.getElementById('summary-percentages');
