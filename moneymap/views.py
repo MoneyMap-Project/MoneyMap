@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.views import View
 from django.views.generic import TemplateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .service import (
@@ -131,14 +132,53 @@ def goals(request):
     return render(request, 'moneymap/goals.html')
 
 
-@login_required
-def moneyflow_view(request):
+# @login_required
+# def moneyflow_view(request):
+#     """
+#     After clicked the `Income and Expense` button,
+#     this view will be called
+#     """
+#     if request.method == 'POST':
+#         # Get data from the form
+#         selected_type = request.POST.get('money_type')
+#         amount = request.POST.get('amount')
+#         description = request.POST.get('description')
+#
+#         try:
+#             amount_decimal = float(amount)
+#             print(f"Converted amount: {amount_decimal}")
+#
+#             # Create and save a new IncomeExpense object
+#             new_income_expense = IncomeExpense.objects.create(
+#                 user_id=request.user,
+#                 saved_to_income_expense=True,
+#                 type=selected_type,
+#                 amount=amount_decimal,
+#                 date=timezone.now(),
+#                 description=description,
+#             )
+#             print(f"New IncomeExpense object created: {new_income_expense}")
+#             # logger.debug(request, 'Income/Expense recorded successfully!')
+#             return redirect('moneymap:income-expenses')
+#         except ValueError:
+#             logging.error("Invalid amount entered. Please enter a valid number.")
+#         except Exception as specific_error:
+#             logging.exception("An unexpected error occurred: %s", specific_error)
+#
+#     return render(request, 'moneymap/money-flow.html')
+
+class MoneyFlowView(LoginRequiredMixin, View):
     """
-    After clicked the `Income and Expense` button,
-    this view will be called
+    After clicking the `Income and Expense` button,
+    this view will be called.
     """
-    if request.method == 'POST':
-        # Get data from the form
+
+    def get(self, request):
+        """Render the money flow form."""
+        return render(request, 'moneymap/money-flow.html')
+
+    def post(self, request):
+        """Handle the submitted form data."""
         selected_type = request.POST.get('money_type')
         amount = request.POST.get('amount')
         description = request.POST.get('description')
@@ -164,8 +204,8 @@ def moneyflow_view(request):
         except Exception as specific_error:
             logging.exception("An unexpected error occurred: %s", specific_error)
 
-    return render(request, 'moneymap/money-flow.html')
-
+        # Render the form again with any errors (optional)
+        return render(request, 'moneymap/money-flow.html')
 
 # @login_required
 # def income_and_expenses_detail_view(request, date):
