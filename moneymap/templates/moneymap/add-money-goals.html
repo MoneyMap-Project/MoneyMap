@@ -5,7 +5,7 @@
 <form id="add-money-form" action="{% url 'moneymap:add_money_goals' %}" method="POST">
     {% csrf_token %}
     <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
-        <h1 class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">Add Money to Your Goal</h1>
+        <h1 class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">Add money to your goal</h1>
 
         <div class="w-full flex flex-col lg:flex-row justify-start items-start gap-5">
             <!-- Left Column -->
@@ -79,7 +79,7 @@
                     <div class="flex items-center">
                         <input type="checkbox" id="add-income-expense" name="add_income_expense" class="mr-5" onclick="updateSummary()">
                         <div class="flex flex-col">
-                            <label for="add-income-expense" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Add this money to income and expense</label>
+                            <label for="add-income-expense" class="text-[#1b283f] text-lg font-normal font-['Poppins']">Add this money to income and expense</label>
                             <p class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Deduction of money from income and expenses in type of saving.</p>
                         </div>
                     </div>
