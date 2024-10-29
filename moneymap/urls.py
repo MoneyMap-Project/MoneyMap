@@ -8,7 +8,7 @@ app_name = "moneymap"   # pylint: disable=C0103
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
-    path('income-and-expenses/', views.income_and_expenses_view,
+    path('income-expenses/', views.IncomeAndExpensesView.as_view(),
          name='income-expenses'),
     path('goals/', views.goals, name='goals'),
     path('income-and-expenses/history/', views.history_view, name='history'),

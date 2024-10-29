@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from .service import (
     calculate_balance,
     calculate_balance_last_7_days,
@@ -32,42 +32,78 @@ class HomeView(TemplateView):
     template_name = 'moneymap/home.html'
 
 
-def income_and_expenses_view(request):
+# def income_and_expenses_view(request):
+#     """View for displaying today's income and expenses."""
+#     local_time = timezone.localtime(timezone.now())
+#     today = local_time.date()
+#
+#     # Check if user is authenticated
+#     if request.user.is_authenticated:
+#         # Retrieve income/expense records for today
+#         income_expenses_today = IncomeExpense.objects.filter(
+#             user_id=request.user,
+#             date=today
+#         ).order_by('date')
+#
+#         # Use the function to calculate balance for the last 7 days
+#         income_expense_with_balance_last_7_days = calculate_balance_last_7_days(
+#             request.user, today)
+#
+#         # Calculate today's balance separately
+#         income_expense_with_balance_today = calculate_balance(
+#             income_expenses_today)
+#
+#         return render(request, 'moneymap/income-expenses.html', {
+#             'income_expense_with_balance_today': income_expense_with_balance_today,
+#             'income_expense_with_balance_last_7_days': income_expense_with_balance_last_7_days,
+#             'has_data': bool(income_expense_with_balance_today),
+#             'user_id_display': request.user.username
+#         })
+#
+#     # If user is not authenticated, provide a placeholder for user_id_display
+#     return render(request, 'moneymap/income-expenses.html', {
+#         'income_expense_with_balance_today': [],
+#         'income_expense_with_balance_last_7_days': [],
+#         'has_data': False,
+#         'user_id_display': 'guest'
+#     })
+
+
+class IncomeAndExpensesView(TemplateView):
     """View for displaying today's income and expenses."""
-    local_time = timezone.localtime(timezone.now())
-    today = local_time.date()
+    template_name = 'moneymap/income-expenses.html'
 
-    # Check if user is authenticated
-    if request.user.is_authenticated:
-        # Retrieve income/expense records for today
-        income_expenses_today = IncomeExpense.objects.filter(
-            user_id=request.user,
-            date=today
-        ).order_by('date')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        local_time = timezone.localtime(timezone.now())
+        today = local_time.date()
 
-        # Use the function to calculate balance for the last 7 days
-        income_expense_with_balance_last_7_days = calculate_balance_last_7_days(
-            request.user, today)
+        if self.request.user.is_authenticated:
+            # Retrieve income/expense records for today
+            income_expenses_today = IncomeExpense.objects.filter(
+                user_id=self.request.user,
+                date=today
+            ).order_by('date')
 
-        # Calculate today's balance separately
-        income_expense_with_balance_today = calculate_balance(
-            income_expenses_today)
+            # Use the function to calculate balance for the last 7 days
+            context['income_expense_with_balance_last_7_days'] = calculate_balance_last_7_days(
+                self.request.user, today)
 
-        return render(request, 'moneymap/income-expenses.html', {
-            'income_expense_with_balance_today': income_expense_with_balance_today,
-            'income_expense_with_balance_last_7_days': income_expense_with_balance_last_7_days,
-            'has_data': bool(income_expense_with_balance_today),
-            'user_id_display': request.user.username
-        })
+            # Calculate today's balance separately
+            context['income_expense_with_balance_today'] = calculate_balance(
+                income_expenses_today)
 
-    # If user is not authenticated, provide a placeholder for user_id_display
-    return render(request, 'moneymap/income-expenses.html', {
-        'income_expense_with_balance_today': [],
-        'income_expense_with_balance_last_7_days': [],
-        'has_data': False,
-        'user_id_display': 'guest'
-    })
+            # Indicate if there's data for today
+            context['has_data'] = bool(context['income_expense_with_balance_today'])
+            context['user_id_display'] = self.request.user.username
+        else:
+            # If user is not authenticated, set default context values
+            context['income_expense_with_balance_today'] = []
+            context['income_expense_with_balance_last_7_days'] = []
+            context['has_data'] = False
+            context['user_id_display'] = 'guest'
 
+        return context
 
 @login_required
 def delete_income_expense(request, income_expense_id):
@@ -120,7 +156,7 @@ def moneyflow_view(request):
                 description=description,
             )
             print(f"New IncomeExpense object created: {new_income_expense}")
-            logger.debug(request, 'Income/Expense recorded successfully!')
+            # logger.debug(request, 'Income/Expense recorded successfully!')
             return redirect('moneymap:income-expenses')
         except ValueError:
             logging.error("Invalid amount entered. Please enter a valid number.")
