@@ -10,7 +10,7 @@ urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
     path('income-expenses/', views.IncomeAndExpensesView.as_view(),
          name='income-expenses'),
-    path('goals/', views.goals, name='goals'),
+    path('goals/', views.GoalView.as_view(), name='goals'),
     path('income-and-expenses/history/', views.HistoryView.as_view(),
          name='history'),
     path('income-and-expenses/money-flow/', views.MoneyFlowView.as_view(),
