@@ -67,47 +67,76 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const titleInput = document.getElementById('goal-title');
-            const descriptionInput = document.getElementById('goal-description');
-            const startDateInput = document.getElementById('start-date');
-            const endDateInput = document.getElementById('end-date');
-            const amountInput = document.getElementById('amount');
-
-            const summaryTitle = document.getElementById('summary-title');
-            const summaryDescription = document.getElementById('summary-description');
-            const summaryDates = document.getElementById('summary-dates');
-            const summaryAmount = document.getElementById('summary-amount');
-
-            const bangkokOffset = 7 * 60;
-            const bangkokDate = new Date(new Date().getTime() + (bangkokOffset - new Date().getTimezoneOffset()) * 60000);
-            startDateInput.value = bangkokDate.toISOString().split('T')[0];
-
-            function formatDateToDDMMYY(dateString) {
-                if (!dateString) return "";
-                const [year, month, day] = dateString.split("-");
-                return `${day}/${month}/${year.slice(-2)}`;
-            }
-
-            function updateSummary() {
-                summaryTitle.textContent = titleInput.value;
-                summaryDescription.textContent = descriptionInput.value;
-
-                const formattedStartDate = formatDateToDDMMYY(startDateInput.value);
-                const formattedEndDate = formatDateToDDMMYY(endDateInput.value);
-                summaryDates.innerHTML = formattedStartDate && formattedEndDate
-                    ? `From <strong>${formattedStartDate}</strong> to <strong>${formattedEndDate}</strong>`
-                    : formattedStartDate || formattedEndDate;
-
-                summaryAmount.textContent = amountInput.value ? `${amountInput.value} Baht` : "";
-            }
-
-            [titleInput, descriptionInput, startDateInput, endDateInput, amountInput].forEach(input => {
-                input.addEventListener('input', updateSummary);
-            });
-        });
-    </script>
 </form>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleInput = document.getElementById('goal-title');
+        const descriptionInput = document.getElementById('goal-description');
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+        const amountInput = document.getElementById('amount');
+
+        const summaryTitle = document.getElementById('summary-title');
+        const summaryDescription = document.getElementById('summary-description');
+        const summaryDates = document.getElementById('summary-dates');
+        const summaryAmount = document.getElementById('summary-amount');
+
+        const bangkokOffset = 7 * 60;
+        const bangkokDate = new Date(new Date().getTime() + (bangkokOffset - new Date().getTimezoneOffset()) * 60000);
+        startDateInput.value = bangkokDate.toISOString().split('T')[0];
+
+        function formatDateToDDMMYY(dateString) {
+            if (!dateString) return "";
+            const [year, month, day] = dateString.split("-");
+            return `${day}/${month}/${year.slice(-2)}`;
+        }
+
+        function updateSummary() {
+            summaryTitle.textContent = titleInput.value;
+            summaryDescription.textContent = descriptionInput.value;
+
+            const formattedStartDate = formatDateToDDMMYY(startDateInput.value);
+            const formattedEndDate = formatDateToDDMMYY(endDateInput.value);
+            summaryDates.innerHTML = formattedStartDate && formattedEndDate
+                ? `From <strong>${formattedStartDate}</strong> to <strong>${formattedEndDate}</strong>`
+                : formattedStartDate || formattedEndDate;
+
+            summaryAmount.textContent = amountInput.value ? `${amountInput.value} Baht` : "";
+        }
+
+        [titleInput, descriptionInput, startDateInput, endDateInput, amountInput].forEach(input => {
+            input.addEventListener('input', updateSummary);
+        });
+    });
+</script>
+
+<style>
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+        .lg\:w-2\/3 {
+            width: 100%;
+        }
+        .lg\:flex-row {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .text-4xl {
+            font-size: 2rem;
+        }
+        .text-lg {
+            font-size: 1rem;
+        }
+    }
+
+    .amount-container:focus-within {
+        border-color: #05a99d;
+    }
+
+    .amount-input:focus {
+        outline: none;
+    }
+</style>
+
 {% endblock %}
