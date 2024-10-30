@@ -251,5 +251,9 @@ class HistoryView(LoginRequiredMixin, View):
         })
 
 
+class AddMoney(TemplateView):
+    template_name = 'moneymap/add-money-goals.html'
+
+    
 class AddGoals(TemplateView):
     template_name = 'moneymap/add_goals.html'

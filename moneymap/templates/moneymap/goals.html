@@ -33,7 +33,7 @@
 
 <!-- Add Money Button -->
 <div class="flex items-center justify-center mt-5">
-    <a
+    <a href="{% url 'moneymap:add_money_goals' %}"
        class="flex w-auto min-w-[300px] h-[50px] pl-3 pr-5 py-2.5 bg-white rounded-[40px] border-2 border-[#ffbb56] items-center gap-[15px] shadow-[0_2px_10px_rgba(255,187,86,0.5)] transition-all duration-300 group hover:text-white">
         <div class="w-[30px] h-[30px] flex-shrink-0 transition-transform duration-300 group-hover:translate-x-2">
             <img src="{% static 'income-expenses/plus.png' %}" alt="Plus Icon" class="w-full h-full object-contain transition-transform duration-300 group-hover:rotate-90"/>
