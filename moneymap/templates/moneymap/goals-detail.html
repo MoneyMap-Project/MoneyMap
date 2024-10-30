@@ -15,8 +15,16 @@
             <div class="flex items-center">
                 <img src="{% static 'goal-detail/calendar.png' %}" alt="Calendar" class="w-11 h-12 mr-5">
                 <div>
-                    <h2 class="text-[#1b283f] text-xl font-bold capitalize">1 January 2025</h2>
-                    <p class="text-[#90acaa] text-lg capitalize">Remaining 82 days</p>
+                    <h2 class="text-[#1b283f] text-xl font-bold capitalize">
+                        1 January 2025   <!-- Date -->
+                    </h2>
+                    <p class="text-[#90acaa] text-lg capitalize">
+                        <span>Remaining</span>
+                        <span class="mx-1">
+                            82   <!-- Remaining days -->
+                        </span>
+                        <span>days</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -31,7 +39,20 @@
             <img src="{% static 'goal-detail/progress.png' %}" alt="Progress" class="w-13 h-12 mr-5">
             <div>
                 <h2 class="text-[#1b283f] text-xl font-bold capitalize">Progress</h2>
-                <p class="text-[#05a99d] text-lg font-bold">24378 / 60700 (40%)</p>
+                <p class="text-[#05a99d] text-lg font-bold">
+                    <span>
+                        24378   <!-- Progress -->
+                    </span>
+                    <span class="mx-1">/</span>
+                    <span>
+                        60700   <!-- Progress -->
+                    </span>
+                    <span>(</span>
+                    <span>
+                        40   <!-- Progress -->
+                    </span>
+                    <span>%)</span>
+                </p>
             </div>
         </div>
     </div>
@@ -40,7 +61,7 @@
     <div class="flex flex-wrap gap-5 w-full">
         <!-- Chart Section -->
         <div class="flex flex-col w-full lg:w-[893px]">
-            <h2 class="text-[#1b283f] text-xl font-bold capitalize">Tuition Fee Burndown Chart</h2>
+            <h2 class="text-[#1b283f] text-xl font-bold capitalize">Burndown Chart</h2>
             <div class="h-[400px] mt-5 p-5 bg-white rounded-lg flex justify-center items-center">
                 <!-- Canvas for Chart.js -->
                 <canvas id="burndownChart" class="w-full h-full max-h-[350px]"></canvas>
@@ -51,17 +72,29 @@
             <div class="p-5 bg-[#f2f2f2] rounded-lg">
                 <h2 class="text-[#1b283f] text-xl font-bold capitalize">Average Saving</h2>
                 <p class="text-[#90acaa] text-lg capitalize">Average daily collection rate</p>
-                <p class="text-[#05a99d] text-xl font-bold capitalize">284 bath/day</p>
+                <p class="text-[#05a99d] text-xl font-bold capitalize">
+                    <span class="text-xl">
+                        284 <!-- Average Saving -->
+                    </span> bath/day
+                </p>
             </div>
             <div class="p-5 bg-[#f2f2f2] rounded-lg">
                 <h2 class="text-[#1b283f] text-xl font-bold capitalize">Minimum Saving</h2>
                 <p class="text-[#90acaa] text-lg">Amount you should save per day</p>
-                <p class="text-[#05a99d] text-xl font-bold capitalize">243 bath/day</p>
+                <p class="text-[#05a99d] text-xl font-bold capitalize">
+                    <span class="text-xl">
+                        243 <!-- Minimum Saving -->
+                    </span> bath/day
+                </p>
             </div>
             <div class="p-5 bg-[#f2f2f2] rounded-lg">
                 <h2 class="text-[#1b283f] text-xl font-bold capitalize">Savings Shortfall</h2>
                 <p class="text-[#90acaa] text-lg">Extra needed daily to meet goal</p>
-                <p class="text-[#05a99d] text-xl font-bold capitalize">-41 bath/day</p>
+                <p class="text-[#05a99d] text-xl font-bold capitalize">
+                    <span class="text-xl">
+                        -41 <!-- Savings Shortfall-->
+                    </span> bath/day
+                </p>
             </div>
         </div>
     </div>
@@ -106,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize Chart
     try {
-        const burndownChart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'line',
             data: {
                 labels: ['Day 1', 'Day 10', 'Day 20', 'Day 30', 'Day 40', 'Day 50', 'Day 60', 'Day 70', 'Day 80', 'Day 85'],
