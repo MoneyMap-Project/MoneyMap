@@ -1,0 +1,190 @@
+{% extends 'moneymap/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
+    <!-- Header Section -->
+    <div class="w-full p-2.5 flex items-center">
+        <h1 class="text-[#1b283f] text-4xl font-semibold capitalize leading-tight">Tuition Fee Overview</h1>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="flex flex-col sm:flex-row w-full gap-5">
+        <div class="flex flex-col w-full sm:w-[437px] h-[100px] p-5 bg-[#f2f2f2] rounded-lg">
+            <div class="flex items-center">
+                <img src="{% static 'goal-detail/calendar.png' %}" alt="Calendar" class="w-11 h-12 mr-5">
+                <div>
+                    <h2 class="text-[#1b283f] text-xl font-bold capitalize">
+                        1 January 2025   <!-- Date -->
+                    </h2>
+                    <p class="text-[#90acaa] text-lg capitalize">
+                        <span>Remaining</span>
+                        <span class="mx-1">
+                            82   <!-- Remaining days -->
+                        </span>
+                        <span>days</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#07d4c5]/20 rounded-lg">
+            <img src="{% static 'goal-detail/positive.png' %}" alt="Positive Trend" class="w-12 h-12 mr-5">
+            <div>
+                <h2 class="text-[#1b283f] text-xl font-bold capitalize">Positive Trend</h2>
+                <p class="text-[#90acaa] text-lg">You’ll reach your goal!</p>
+            </div>
+        </div>
+        <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#f2f2f2] rounded-lg">
+            <img src="{% static 'goal-detail/progress.png' %}" alt="Progress" class="w-13 h-12 mr-5">
+            <div>
+                <h2 class="text-[#1b283f] text-xl font-bold capitalize">Progress</h2>
+                <p class="text-[#05a99d] text-lg font-bold">
+                    <span>
+                        24378   <!-- Progress -->
+                    </span>
+                    <span class="mx-1">/</span>
+                    <span>
+                        60700   <!-- Progress -->
+                    </span>
+                    <span>(</span>
+                    <span>
+                        40   <!-- Progress -->
+                    </span>
+                    <span>%)</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart and Data Overview -->
+    <div class="flex flex-wrap gap-5 w-full">
+        <!-- Chart Section -->
+        <div class="flex flex-col w-full lg:w-[893px]">
+            <h2 class="text-[#1b283f] text-xl font-bold capitalize">Burndown Chart</h2>
+            <div class="h-[400px] mt-5 p-5 bg-white rounded-lg flex justify-center items-center">
+                <!-- Canvas for Chart.js -->
+                <canvas id="burndownChart" class="w-full h-full max-h-[350px]"></canvas>
+            </div>
+        </div>
+        <!-- Statistics Section -->
+        <div class="flex flex-col w-full lg:w-[437px] gap-5">
+            <div class="p-5 bg-[#f2f2f2] rounded-lg">
+                <h2 class="text-[#1b283f] text-xl font-bold capitalize">Average Saving</h2>
+                <p class="text-[#90acaa] text-lg capitalize">Average daily collection rate</p>
+                <p class="text-[#05a99d] text-xl font-bold capitalize">
+                    <span class="text-xl">
+                        284 <!-- Average Saving -->
+                    </span> bath/day
+                </p>
+            </div>
+            <div class="p-5 bg-[#f2f2f2] rounded-lg">
+                <h2 class="text-[#1b283f] text-xl font-bold capitalize">Minimum Saving</h2>
+                <p class="text-[#90acaa] text-lg">Amount you should save per day</p>
+                <p class="text-[#05a99d] text-xl font-bold capitalize">
+                    <span class="text-xl">
+                        243 <!-- Minimum Saving -->
+                    </span> bath/day
+                </p>
+            </div>
+            <div class="p-5 bg-[#f2f2f2] rounded-lg">
+                <h2 class="text-[#1b283f] text-xl font-bold capitalize">Savings Shortfall</h2>
+                <p class="text-[#90acaa] text-lg">Extra needed daily to meet goal</p>
+                <p class="text-[#05a99d] text-xl font-bold capitalize">
+                    <span class="text-xl">
+                        -41 <!-- Savings Shortfall-->
+                    </span> bath/day
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="w-full">
+        <div class="w-full bg-[#f2f2f2] rounded-t-lg flex">
+            <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[15%] text-center">#</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[35%] text-left">Description</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[25%] text-left">Amount</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[25%] text-left">Goal's Balance</div>
+        </div>
+        {% for i in '012' %}
+        <!-- Transaction Rows -->
+        <div class="w-full border-t border-[#DAE0EB] flex">
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[15%] text-center">{{ forloop.counter }}</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[35%] text-left">Pocket Money</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">2000</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">2000</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Confirm Chart.js loaded
+    if (typeof Chart !== 'undefined') {
+        console.log('Chart.js loaded successfully');
+    } else {
+        console.error('Chart.js failed to load');
+    }
+
+    // Select canvas for chart rendering
+    const ctx = document.getElementById('burndownChart').getContext('2d');
+    if (ctx) {
+        console.log('Canvas selected successfully');
+    } else {
+        console.error('Failed to select canvas');
+    }
+
+    // Initialize Chart
+    try {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Day 1', 'Day 10', 'Day 20', 'Day 30', 'Day 40', 'Day 50', 'Day 60', 'Day 70', 'Day 80', 'Day 85'],
+                datasets: [
+                    {
+                        label: 'Target Savings',
+                        data: [60700, 54600, 48500, 42400, 36300, 30200, 24100, 18000, 12000, 0],
+                        borderColor: '#05a99d',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Actual Savings',
+                        data: [60700, 58000, 52000, 50000, 45000, 40000],
+                        borderColor: '#1b283f',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Days'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Amount (Bath)'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        console.log('Chart initialized successfully');
+    } catch (error) {
+        console.error('Failed to initialize chart:', error);
+    }
+});
+</script>
+{% endblock %}

@@ -257,3 +257,7 @@ class AddMoney(TemplateView):
     
 class AddGoals(TemplateView):
     template_name = 'moneymap/add_goals.html'
+
+
+class GoalsDetail(TemplateView):
+    template_name = 'moneymap/goals-detail.html'
