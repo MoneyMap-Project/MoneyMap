@@ -113,54 +113,55 @@
             </div>
         </div>
 
-       <!-- Calendar View -->
-        <div id="calendarView" class="hidden w-full h-screen bg-white mt-5 p-4 flex flex-col">
-            <div class="flex items-center justify-between px-4 py-2 border-b">
-                <button id="prevMonth" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
+<div id="calendarView" class="hidden w-full h-auto bg-white mt-5 p-4 flex flex-col">
+    <div class="flex items-center justify-between px-4 py-2 border-b">
+        <button id="prevMonth" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+        <h2 id="monthYear" class="text-2xl font-semibold text-gray-800"></h2>
+        <button id="nextMonth" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Days of the Week -->
+    <div class="grid grid-cols-7 gap-1 text-center font-semibold text-gray-600 py-2 mt-4">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+    </div>
+
+    <!-- Calendar Days -->
+    <div id="days" class="grid grid-cols-7 gap-1 text-center text-gray-700 flex-grow overflow-y-auto">
+    </div>
+
+    <!-- Overlay for Details -->
+    <div id="overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50 transition-opacity duration-300 ease-in-out">
+        <div class="bg-white p-6 rounded-xl shadow-lg text-center max-w-md mx-auto">
+            <h2 class="font-bold text-2xl mb-4 text-[#1b283f]">Income/Expense Details</h2>
+            <p id="overlayMessage" class="text-gray-700 text-base"></p>
+            <div id="overlayButtonContainer" class="mt-4">
+            </div>
+            <div class="flex justify-center mt-6 gap-4">
+                <button id="closeOverlay" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg shadow hover:bg-gray-400 transition duration-300 transform hover:scale-105">
+                    Close
                 </button>
-                <h2 id="monthYear" class="text-2xl font-semibold text-gray-800"></h2>
-                <button id="nextMonth" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Days of the Week -->
-            <div class="grid grid-cols-7 gap-1 text-center font-semibold text-gray-600 py-2 mt-4">
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
-            </div>
-
-            <!-- Calendar Days -->
-            <div id="days" class="grid grid-cols-7 gap-1 text-center text-gray-700 flex-grow overflow-y-auto">
-            </div>
-
-            <div id="overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50 transition-opacity duration-300 ease-in-out">
-                <div class="bg-white p-6 rounded-xl shadow-lg text-center max-w-md mx-auto">
-                    <h2 class="font-bold text-2xl mb-4 text-[#1b283f]">Income/Expense Details</h2>
-                    <p id="overlayMessage" class="text-gray-700 text-base"></p>
-                    <div id="overlayButtonContainer" class="mt-4">
-                    </div>
-                    <div class="flex justify-center mt-6 gap-4">
-                        <button id="closeOverlay" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg shadow hover:bg-gray-400 transition duration-300 transform hover:scale-105">
-                            Close
-                        </button>
-                        <a id="detailButton" href="#" class="bg-[#05a99d] text-white px-5 py-2 rounded-lg shadow hover:bg-[#04897f] transition duration-300 transform hover:scale-105 hidden">
-                            View Details
-                        </a>
-                    </div>
-                </div>
+                <a id="detailButton" href="#" class="bg-[#05a99d] text-white px-5 py-2 rounded-lg shadow hover:bg-[#04897f] transition duration-300 transform hover:scale-105 hidden">
+                    View Details
+                </a>
             </div>
         </div>
+    </div>
+</div>
+
     </div>
 </div>
 <script>
@@ -218,7 +219,6 @@ function renderCalendar() {
         const dayCell = document.createElement("div");
         dayCell.classList.add("py-4", "rounded-lg", "cursor-pointer", "relative", "flex", "justify-center", "items-center");
 
-        // Create a circle element for the date
         const circle = document.createElement("span");
         circle.classList.add("absolute", "w-10", "h-10", "rounded-full", "flex", "items-center", "justify-center", "z-0");
 
@@ -247,13 +247,19 @@ function renderCalendar() {
         dayCell.appendChild(dateText);
 
         dayCell.addEventListener('click', () => {
-            overlayMessage.textContent = `Date: ${dateString}\nIncome: ${records[dateString] ? records[dateString].income : 0} Baht\nExpense: ${records[dateString] ? records[dateString].expense : 0} Baht\nTotal: ${records[dateString] ? records[dateString].total : 0} Baht`;
+            if (records[dateString]) {
+                // Show details in the overlay without alert
+                overlayMessage.textContent = `Date: ${dateString}\nIncome: ${records[dateString].income} Baht\nExpense: ${records[dateString].expense} Baht\nTotal: ${records[dateString].total} Baht`;
 
-            const detailButton = document.getElementById("detailButton");
-            detailButton.href = "{% url 'moneymap:income-expense-detail' '__date__' %}".replace('__date__', dateString);
-            detailButton.classList.remove('hidden');
+                const detailButton = document.getElementById("detailButton");
+                detailButton.href = "{% url 'moneymap:income-expense-detail' '__date__' %}".replace('__date__', dateString);
+                detailButton.classList.remove('hidden');
 
-            overlay.classList.remove('hidden');
+                overlay.classList.remove('hidden');
+            } else {
+                // Alert for no data available
+                alert(`No data available for this date: ${dateString}`);
+            }
         });
 
         daysContainer.appendChild(dayCell);
@@ -284,4 +290,5 @@ closeOverlayButton.addEventListener('click', () => {
 
 renderCalendar();
 </script>
+
 {% endblock %}
