@@ -12,7 +12,7 @@
         <!-- Title and Date Range -->
         <div class="title-date-range w-full flex flex-col md:flex-row justify-between items-center">
             <!-- History Title -->
-            <div class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">
+            <div class="w-full md:w-auto text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">
                 History
             </div>
 
@@ -20,14 +20,14 @@
             <div class="date-range flex items-center gap-2.5 mt-4 md:mt-0">
                 <form method="GET" action="{% url 'moneymap:history' %}" class="flex items-center gap-2">
                     <div class="date-picker border border-[#90acaa] flex items-center">
-                        <label for="startDate"></label>
+                        <label for="startDate" class="sr-only">Start Date</label>
                         <input type="date" id="startDate" name="startDate"
                                class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize"
                                value="{{ start_date }}" />
                     </div>
                     <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize">To</div>
                     <div class="date-picker border border-[#90acaa] flex items-center">
-                        <label for="endDate"></label>
+                        <label for="endDate" class="sr-only">End Date</label>
                         <input type="date" id="endDate" name="endDate"
                                class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize"
                                value="{{ end_date }}" />
@@ -42,11 +42,15 @@
                     Reset
                 </button>
 
-                <!-- New Calendar View Toggle Button -->
-                <button onclick="toggleView()"
-                        class="ml-4 bg-[#1b283f] text-white px-4 py-2 rounded-lg hover:bg-[#2b3a50] transition duration-300">
-                    Calendar View
-                </button>
+                <label for="toggleView" class="flex items-center cursor-pointer select-none text-dark dark:text-white ml-5">
+                    <img src="{% static 'history/table.png' %}" alt="Table View" class="ml-3 h-6 w-6 mr-2" />
+                    <div class="relative">
+                        <input type="checkbox" id="toggleView" class="peer sr-only" onclick="toggleView()" />
+                        <div class="block h-6 rounded-full dark:bg-dark-2 bg-gray-300 w-10"></div>
+                        <div class="absolute w-4 h-4 transition bg-white rounded-full left-1 top-1 peer-checked:translate-x-full peer-checked:bg-[#05a99d]"></div>
+                    </div>
+                    <img src="{% static 'history/calendar.png' %}" alt="Calendar View" class="ml-3 h-6 w-6" />
+                </label>
             </div>
         </div>
 
@@ -178,13 +182,15 @@ const records = {
 function toggleView() {
     const tableView = document.getElementById('tableView');
     const calendarView = document.getElementById('calendarView');
+    const toggleCheckbox = document.getElementById('toggleView');
 
-    if (tableView.classList.contains('hidden')) {
-        tableView.classList.remove('hidden');
-        calendarView.classList.add('hidden');
-    } else {
+    // Show/hide views based on checkbox state
+    if (toggleCheckbox.checked) {
         tableView.classList.add('hidden');
         calendarView.classList.remove('hidden');
+    } else {
+        tableView.classList.remove('hidden');
+        calendarView.classList.add('hidden');
     }
 }
 
