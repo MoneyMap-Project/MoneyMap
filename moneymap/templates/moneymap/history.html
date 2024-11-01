@@ -1,5 +1,6 @@
 {% extends 'moneymap/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-8 mx-auto mt-10 mb-10">
@@ -69,17 +70,17 @@
                             </div>
                             <div class="cell w-1/4 pl-4 flex items-center">
                                 <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
-                                    {{ record.income }} Baht
+                                    {{ record.income|intcomma }} Baht
                                 </div>
                             </div>
                             <div class="cell w-1/4 pl-4 flex items-center">
                                 <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
-                                    {{ record.expense }} Baht
+                                    {{ record.expense|intcomma  }} Baht
                                 </div>
                             </div>
                             <div class="cell w-1/4 pl-4 flex items-center">
                                 <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
-                                    {{ record.total }} Baht
+                                    {{ record.total|intcomma  }} Baht
                                 </div>
                             </div>
                             <div class="cell w-1/5 flex justify-center items-center">
