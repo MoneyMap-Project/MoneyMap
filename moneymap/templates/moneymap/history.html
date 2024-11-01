@@ -1,6 +1,10 @@
 {% extends 'moneymap/base.html' %}
 {% load static %}
 {% load humanize %}
+<link rel="dns-prefetch" href="//unpkg.com" />
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
 
 {% block content %}
 <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-8 mx-auto mt-10 mb-10">
@@ -37,91 +41,247 @@
                         class="ml-4 bg-[#FF5757] text-white px-4 py-2 rounded-lg hover:bg-[#e04c4c] transition duration-300">
                     Reset
                 </button>
+
+                <!-- New Calendar View Toggle Button -->
+                <button onclick="toggleView()"
+                        class="ml-4 bg-[#1b283f] text-white px-4 py-2 rounded-lg hover:bg-[#2b3a50] transition duration-300">
+                    Calendar View
+                </button>
             </div>
         </div>
 
-        <!-- Table Header -->
-        <div class="table-header w-full flex flex-col gap-2.5 mt-5 px-4">
-            <div class="header-row w-full h-12 rounded-lg border border-[#90acaa] flex items-center">
-                <div class="header-cell w-1/5 pl-4 flex items-center">
-                    <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Date</div>
+        <!-- Table View -->
+        <div id="tableView" class="w-full">
+            <!-- Table Header and Content -->
+            <div class="table-header w-full flex flex-col gap-2.5 mt-5 px-4">
+                <div class="header-row w-full h-12 rounded-lg border border-[#90acaa] flex items-center">
+                    <div class="header-cell w-1/5 pl-4 flex items-center">
+                        <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Date</div>
+                    </div>
+                    <div class="header-cell w-1/4 pl-4 flex items-center">
+                        <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Income</div>
+                    </div>
+                    <div class="header-cell w-1/4 pl-4 flex items-center">
+                        <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Expense</div>
+                    </div>
+                    <div class="header-cell w-1/4 pl-4 flex items-center">
+                        <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Total</div>
+                    </div>
+                    <div class="header-cell w-1/5 flex justify-center items-center">
+                        <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Action</div>
+                    </div>
                 </div>
-                <div class="header-cell w-1/4 pl-4 flex items-center">
-                    <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Income</div>
-                </div>
-                <div class="header-cell w-1/4 pl-4 flex items-center">
-                    <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Expense</div>
-                </div>
-                <div class="header-cell w-1/4 pl-4 flex items-center">
-                    <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Total</div>
-                </div>
-                <div class="header-cell w-1/5 flex justify-center items-center">
-                    <div class="text-[#1b283f] text-base md:text-lg font-bold font-poppins capitalize">Action</div>
-                </div>
-            </div>
-            {% if history_list %}
-                {% for record in history_list %}
-                    <div class="table-row w-full flex items-center">
-                        <div class="row-item w-full h-12 border-b border-[#DAE0EB] flex items-center">
-                            <div class="cell w-1/5 pl-4 flex items-center">
-                                <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
-                                    {{ record.date|date:"d/m/Y" }}
+                {% if history_list %}
+                    {% for record in history_list %}
+                        <div class="table-row w-full flex items-center">
+                            <div class="row-item w-full h-12 border-b border-[#DAE0EB] flex items-center">
+                                <div class="cell w-1/5 pl-4 flex items-center">
+                                    <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
+                                        {{ record.date|date:"d/m/Y" }}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="cell w-1/4 pl-4 flex items-center">
-                                <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
-                                    {{ record.income|intcomma }} Baht
+                                <div class="cell w-1/4 pl-4 flex items-center">
+                                    <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
+                                        {{ record.income|intcomma }} Baht
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="cell w-1/4 pl-4 flex items-center">
-                                <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
-                                    {{ record.expense|intcomma  }} Baht
+                                <div class="cell w-1/4 pl-4 flex items-center">
+                                    <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
+                                        {{ record.expense|intcomma }} Baht
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="cell w-1/4 pl-4 flex items-center">
-                                <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
-                                    {{ record.total|intcomma  }} Baht
+                                <div class="cell w-1/4 pl-4 flex items-center">
+                                    <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">
+                                        {{ record.total|intcomma }} Baht
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="cell w-1/5 flex justify-center items-center">
-                                <a href="{% url 'moneymap:income-expense-detail' record.date %}"
-                                   class="action-button w-20 bg-[#05a99d] text-white text-sm md:text-base font-normal font-poppins flex justify-center items-center rounded-lg hover:bg-[#04897f] transition duration-300">
-                                    Detail
-                                </a>
+                                <div class="cell w-1/5 flex justify-center items-center">
+                                    <a href="{% url 'moneymap:income-expense-detail' record.date %}"
+                                       class="action-button w-20 bg-[#05a99d] text-white text-sm md:text-base font-normal font-poppins flex justify-center items-center rounded-lg hover:bg-[#04897f] transition duration-300">
+                                        Detail
+                                    </a>
+                                </div>
                             </div>
                         </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="flex justify-center items-center h-12 mt-8">
+                        <img src="{% static 'income-expenses/no.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
+                        <p class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">No data available.</p>
                     </div>
-                {% endfor %}
-            {% else %}
-                <div class="flex justify-center items-center h-12 mt-8">
-                    <img src="{% static 'income-expenses/no.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
-                    <p class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">No data available.</p>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
 
+       <!-- Calendar View -->
+        <div id="calendarView" class="hidden w-full h-screen bg-white mt-5 p-4 flex flex-col">
+            <div class="flex items-center justify-between px-4 py-2 border-b">
+                <button id="prevMonth" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <h2 id="monthYear" class="text-2xl font-semibold text-gray-800"></h2>
+                <button id="nextMonth" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Days of the Week -->
+            <div class="grid grid-cols-7 gap-1 text-center font-semibold text-gray-600 py-2 mt-4">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+
+            <!-- Calendar Days -->
+            <div id="days" class="grid grid-cols-7 gap-1 text-center text-gray-700 flex-grow overflow-y-auto">
+            </div>
+
+            <div id="overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50 transition-opacity duration-300 ease-in-out">
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center max-w-md mx-auto">
+                    <h2 class="font-bold text-2xl mb-4 text-[#1b283f]">Income/Expense Details</h2>
+                    <p id="overlayMessage" class="text-gray-700 text-base"></p>
+                    <div id="overlayButtonContainer" class="mt-4">
+                    </div>
+                    <div class="flex justify-center mt-6 gap-4">
+                        <button id="closeOverlay" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg shadow hover:bg-gray-400 transition duration-300 transform hover:scale-105">
+                            Close
+                        </button>
+                        <a id="detailButton" href="#" class="bg-[#05a99d] text-white px-5 py-2 rounded-lg shadow hover:bg-[#04897f] transition duration-300 transform hover:scale-105 hidden">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script>
+const records = {
+    {% for record in history_list %}
+        "{{ record.date|date:'Y-m-d' }}": {
+            income: {{ record.income }},
+            expense: {{ record.expense }},
+            total: {{ record.total }}
+        },
+    {% endfor %}
+};
 
-<style>
-    @media (max-width: 640px) {
-        .date-input {
-            width: 120px;
-            font-size: 0.75rem;
-        }
+function toggleView() {
+    const tableView = document.getElementById('tableView');
+    const calendarView = document.getElementById('calendarView');
+
+    if (tableView.classList.contains('hidden')) {
+        tableView.classList.remove('hidden');
+        calendarView.classList.add('hidden');
+    } else {
+        tableView.classList.add('hidden');
+        calendarView.classList.remove('hidden');
+    }
+}
+
+const today = new Date();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
+
+const monthYear = document.getElementById("monthYear");
+const daysContainer = document.getElementById("days");
+const prevMonthButton = document.getElementById("prevMonth");
+const nextMonthButton = document.getElementById("nextMonth");
+const overlay = document.getElementById("overlay");
+const overlayMessage = document.getElementById("overlayMessage");
+const closeOverlayButton = document.getElementById("closeOverlay");
+
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function renderCalendar() {
+    daysContainer.innerHTML = "";
+    monthYear.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement("div");
+        daysContainer.appendChild(emptyCell);
     }
 
-    @media (min-width: 641px) and (max-width: 768px) {
-        .date-input {
-            width: 140px;
-        }
-    }
+    for (let day = 1; day <= lastDate; day++) {
+        const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayCell = document.createElement("div");
+        dayCell.classList.add("py-4", "rounded-lg", "cursor-pointer", "relative", "flex", "justify-center", "items-center");
 
-    @media (min-width: 769px) {
-        .date-input {
-            width: 160px;
-            font-size: 1rem;
+        // Create a circle element for the date
+        const circle = document.createElement("span");
+        circle.classList.add("absolute", "w-10", "h-10", "rounded-full", "flex", "items-center", "justify-center", "z-0");
+
+        if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
+            dayCell.style.backgroundColor = "#05a99d";
+            dayCell.classList.add("text-white");
         }
+
+        if (records[dateString]) {
+            const total = records[dateString].total;
+
+            if (total < 0) {
+                circle.classList.add("bg-red-200");
+            } else if (total > 0) {
+                circle.classList.add("bg-green-200");
+            }
+        } else {
+            circle.classList.add("hidden");
+        }
+
+        dayCell.appendChild(circle);
+
+        const dateText = document.createElement("span");
+        dateText.textContent = day;
+        dateText.classList.add("relative", "z-10");
+        dayCell.appendChild(dateText);
+
+        dayCell.addEventListener('click', () => {
+            overlayMessage.textContent = `Date: ${dateString}\nIncome: ${records[dateString] ? records[dateString].income : 0} Baht\nExpense: ${records[dateString] ? records[dateString].expense : 0} Baht\nTotal: ${records[dateString] ? records[dateString].total : 0} Baht`;
+
+            const detailButton = document.getElementById("detailButton");
+            detailButton.href = "{% url 'moneymap:income-expense-detail' '__date__' %}".replace('__date__', dateString);
+            detailButton.classList.remove('hidden');
+
+            overlay.classList.remove('hidden');
+        });
+
+        daysContainer.appendChild(dayCell);
     }
-</style>
+}
+
+prevMonthButton.addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    }
+    renderCalendar();
+});
+
+nextMonthButton.addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    }
+    renderCalendar();
+});
+
+closeOverlayButton.addEventListener('click', () => {
+    overlay.classList.add('hidden');
+});
+
+renderCalendar();
+</script>
 {% endblock %}
