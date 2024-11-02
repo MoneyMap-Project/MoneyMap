@@ -303,32 +303,28 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
     template_name = 'moneymap/goals-detail.html'
     context_object_name = 'goal'
 
-    def get_queryset(self):
-        # Ensure only goals belonging to the logged-in user are retrieved
-        return Goal.objects.filter(user_id=self.request.user)
-
     def get(self, request, *args, **kwargs):
         goal_id = kwargs.get('pk')
-        # Use get_object_or_404 to fetch the goal while ensuring it exists
         selected_goal = get_object_or_404(self.get_queryset(), pk=goal_id)
 
         # Set the object for use in the template
         self.object = selected_goal
-        context = self.get_context_data(goal=self.object)
+        context = self.get_context_data(goal=self.object, user=request.user)  # Pass the single goal instance
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        goal = self.object  # `self.object` is set by DetailView
-
-        start_date = goal.start_date
-        end_date = goal.end_date
-        completed_by_date = calculate_days_remaining(goal, start_date)
-        burndown_chart = calculate_burndown_chart(goal, start_date)
-
-        context['burndown_chart'] = burndown_chart
-        context['completed_by_date'] = completed_by_date
-        context['start_date'] = start_date
-        context['end_date'] = end_date
-
-        return context
+        pass
+        # context = super().get_context_data(**kwargs)
+        # goal = self.object  # `self.object` is set by DetailView
+        #
+        # start_date = goal.start_date
+        # end_date = goal.end_date
+        # # completed_by_date = calculate_days_remaining(goal, start_date)
+        # # burndown_chart = calculate_burndown_chart(goal, start_date)
+        #
+        # context['burndown_chart'] = burndown_chart
+        # context['completed_by_date'] = completed_by_date
+        # context['start_date'] = start_date
+        # context['end_date'] = end_date
+        #
+        # return context
