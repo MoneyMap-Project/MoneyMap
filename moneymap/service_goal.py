@@ -21,21 +21,30 @@ from datetime import datetime, timedelta
 #     return (self.end_date - self.start_date).days
 
 
-def calculate_days_remaining(user, date):
+def calculate_days_remaining(user, date, goal_id):
     """
-    Calculate the days remaining to reach the goal.
+    Calculate the days remaining to reach a specific goal for a user.
 
     Args:
         user: The user for whom to retrieve the records.
-        date: The specific date for which to retrieve the records.
+        date: The specific date for which to calculate the remaining days.
+        goal_id: The ID of the specific goal for which to calculate remaining days.
 
     Returns:
-        QuerySet: A list of Goal objects for the given user.
+        int: The number of days remaining to reach the specified goal, or None if the goal is not found or already past.
     """
-    goals = Goal.objects.filter(user_id=user, end_date__gte=date)
-    for goal in goals:
-        goal.days_remaining = (goal.end_date - date).days
-    return goals
+    try:
+        goal = Goal.objects.get(user_id=user, goal_id=goal_id)
+
+        # Check if the goal's end date is in the future
+        if goal.end_date >= date:
+            days_remaining = (goal.end_date - date).days
+            return days_remaining
+        else:
+            return 0  # Goal is already past
+
+    except Goal.DoesNotExist:
+        return None  # Goal not found
 
 def calculate_trend(user, date):
     """

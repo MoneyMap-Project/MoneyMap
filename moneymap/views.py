@@ -316,10 +316,14 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         goal = self.object  # `self.object` is set by DetailView
 
-        # completed_by_date = calculate_days_remaining(goal, start_date)
-        #
-        # context['completed_by_date'] = completed_by_date
+        user = self.request.user
+        current_date = timezone.now().date()  # Get today's date
+
+        # Calculate the remaining days for the goal
+        remaining_days = calculate_days_remaining(user, current_date, goal.goal_id)
+
         context['start_date'] = goal.start_date.strftime("%-d %B %Y")
         context['end_date'] = goal.end_date.strftime("%-d %B %Y")
+        context['remaining_day'] = remaining_days if remaining_days is not None else "Goal not found"
 
         return context
