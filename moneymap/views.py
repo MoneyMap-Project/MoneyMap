@@ -313,18 +313,13 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
-        pass
-        # context = super().get_context_data(**kwargs)
-        # goal = self.object  # `self.object` is set by DetailView
+        context = super().get_context_data(**kwargs)
+        goal = self.object  # `self.object` is set by DetailView
+
+        # completed_by_date = calculate_days_remaining(goal, start_date)
         #
-        # start_date = goal.start_date
-        # end_date = goal.end_date
-        # # completed_by_date = calculate_days_remaining(goal, start_date)
-        # # burndown_chart = calculate_burndown_chart(goal, start_date)
-        #
-        # context['burndown_chart'] = burndown_chart
         # context['completed_by_date'] = completed_by_date
-        # context['start_date'] = start_date
-        # context['end_date'] = end_date
-        #
-        # return context
+        context['start_date'] = goal.start_date.strftime("%-d %B %Y")
+        context['end_date'] = goal.end_date.strftime("%-d %B %Y")
+
+        return context
