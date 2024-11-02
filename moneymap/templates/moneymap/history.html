@@ -15,45 +15,46 @@
             <div class="w-full md:w-auto text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">
                 History
             </div>
-
-            <!-- Date Range -->
-            <div class="date-range flex items-center gap-2.5 mt-4 md:mt-0">
-                <form method="GET" action="{% url 'moneymap:history' %}" class="flex items-center gap-2">
-                    <div class="date-picker border border-[#90acaa] flex items-center">
-                        <label for="startDate" class="sr-only">Start Date</label>
-                        <input type="date" id="startDate" name="startDate"
-                               class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize"
-                               value="{{ start_date }}" />
-                    </div>
-                    <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize">To</div>
-                    <div class="date-picker border border-[#90acaa] flex items-center">
-                        <label for="endDate" class="sr-only">End Date</label>
-                        <input type="date" id="endDate" name="endDate"
-                               class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize"
-                               value="{{ end_date }}" />
-                    </div>
-                    <button type="submit"
-                            class="ml-4 bg-[#05a99d] text-white px-4 py-2 rounded-lg hover:bg-[#04897f] transition duration-300">
-                        Filter
+            <!-- Date Range and Toggle -->
+            <div class="date-range flex items-center gap-5 mt-4 md:mt-0">
+                <div id="dateRangeFilter" class="flex items-center gap-4">
+                    <form method="GET" action="{% url 'moneymap:history' %}" class="flex items-center gap-2">
+                        <div class="date-picker border border-[#90acaa] flex items-center">
+                            <label for="startDate" class="sr-only">Start Date</label>
+                            <input type="date" id="startDate" name="startDate"
+                                   class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize"
+                                   value="{{ start_date }}" />
+                        </div>
+                        <div class="text-[#1b283f] text-base md:text-lg font-normal font-poppins">To</div>
+                        <div class="date-picker border border-[#90acaa] flex items-center">
+                            <label for="endDate" class="sr-only">End Date</label>
+                            <input type="date" id="endDate" name="endDate"
+                                   class="date-input px-2 py-1 text-[#1b283f] text-base md:text-lg font-normal font-poppins capitalize"
+                                   value="{{ end_date }}" />
+                        </div>
+                        <button type="submit"
+                                class="bg-[#05a99d] text-white px-4 py-2 rounded-lg hover:bg-[#04897f] transition duration-300 ml-2">
+                            Filter
+                        </button>
+                    </form>
+                    <button onclick="window.location.href='{% url 'moneymap:history' %}'"
+                            class="bg-[#FF5757] text-white px-4 py-2 rounded-lg hover:bg-[#e04c4c] transition duration-300">
+                        Reset
                     </button>
-                </form>
-                <button onclick="window.location.href='{% url 'moneymap:history' %}'"
-                        class="ml-4 bg-[#FF5757] text-white px-4 py-2 rounded-lg hover:bg-[#e04c4c] transition duration-300">
-                    Reset
-                </button>
+                </div>
 
-                <label for="toggleView" class="flex items-center cursor-pointer select-none text-dark dark:text-white ml-5">
-                    <img src="{% static 'history/table.png' %}" alt="Table View" class="ml-3 h-6 w-6 mr-2" />
+                <label for="toggleView" class="flex items-center cursor-pointer select-none text-dark dark:text-white">
+                    <img src="{% static 'history/table.png' %}" alt="Table View" class="h-5 w-5 mr-2" />
                     <div class="relative">
                         <input type="checkbox" id="toggleView" class="peer sr-only" onclick="toggleView()" />
                         <div class="block h-6 rounded-full dark:bg-dark-2 bg-gray-300 w-10"></div>
                         <div class="absolute w-4 h-4 transition bg-white rounded-full left-1 top-1 peer-checked:translate-x-full peer-checked:bg-[#05a99d]"></div>
                     </div>
-                    <img src="{% static 'history/calendar.png' %}" alt="Calendar View" class="ml-3 h-6 w-6" />
+                    <img src="{% static 'history/calendar.png' %}" alt="Calendar View" class="h-5 w-5 ml-2" />
                 </label>
             </div>
         </div>
-
+    </div>
         <!-- Table View -->
         <div id="tableView" class="w-full">
             <!-- Table Header and Content -->
@@ -101,7 +102,7 @@
                                 </div>
                                 <div class="cell w-1/5 flex justify-center items-center">
                                     <a href="{% url 'moneymap:income-expense-detail' record.date %}"
-                                       class="action-button w-20 bg-[#05a99d] text-white text-sm md:text-base font-normal font-poppins flex justify-center items-center rounded-lg hover:bg-[#04897f] transition duration-300">
+                                       class="action-button bg-[#05a99d] text-white text-sm md:text-base font-normal font-poppins flex justify-center items-center rounded-lg px-4 py-1 hover:bg-[#04897f] transition duration-300 transform">
                                         Detail
                                     </a>
                                 </div>
@@ -149,7 +150,7 @@
 
     <!-- Overlay for Details -->
     <div id="overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50 transition-opacity duration-300 ease-in-out">
-        <div class="bg-white p-6 rounded-xl shadow-lg text-center max-w-md mx-auto">
+        <div class="bg-white p-10 rounded-xl shadow-lg text-center max-w-md mx-auto">
             <h2 class="font-bold text-2xl mb-4 text-[#1b283f]">Income/Expense Details</h2>
             <p id="overlayMessage" class="text-gray-700 text-base"></p>
             <div id="overlayButtonContainer" class="mt-4">
@@ -167,7 +168,7 @@
 </div>
 
     </div>
-</div>
+
 <script>
 const records = {
     {% for record in history_list %}
@@ -183,14 +184,17 @@ function toggleView() {
     const tableView = document.getElementById('tableView');
     const calendarView = document.getElementById('calendarView');
     const toggleCheckbox = document.getElementById('toggleView');
+    const dateRangeFilter = document.getElementById('dateRangeFilter');
 
     // Show/hide views based on checkbox state
     if (toggleCheckbox.checked) {
         tableView.classList.add('hidden');
         calendarView.classList.remove('hidden');
+        dateRangeFilter.classList.add('hidden');
     } else {
         tableView.classList.remove('hidden');
         calendarView.classList.add('hidden');
+        dateRangeFilter.classList.remove('hidden');
     }
 }
 
@@ -207,6 +211,15 @@ const overlayMessage = document.getElementById("overlayMessage");
 const closeOverlayButton = document.getElementById("closeOverlay");
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+}
 
 function renderCalendar() {
     daysContainer.innerHTML = "";
@@ -239,7 +252,7 @@ function renderCalendar() {
             if (total < 0) {
                 circle.classList.add("bg-red-200");
             } else if (total > 0) {
-                circle.classList.add("bg-green-200");
+                circle.classList.add("bg-[#bbe6e3]");
             }
         } else {
             circle.classList.add("hidden");
@@ -255,7 +268,7 @@ function renderCalendar() {
         dayCell.addEventListener('click', () => {
             if (records[dateString]) {
                 // Show details in the overlay without alert
-                overlayMessage.textContent = `Date: ${dateString}\nIncome: ${records[dateString].income} Baht\nExpense: ${records[dateString].expense} Baht\nTotal: ${records[dateString].total} Baht`;
+                overlayMessage.innerHTML = `<strong>Date: ${formatDate(dateString)}</strong><br>Income: ${new Intl.NumberFormat().format(records[dateString].income)} Baht<br>Expense: ${new Intl.NumberFormat().format(records[dateString].expense)} Baht<br><br><strong style="font-size: 1.5em;">Total: ${new Intl.NumberFormat().format(records[dateString].total)} Baht</strong>`;
 
                 const detailButton = document.getElementById("detailButton");
                 detailButton.href = "{% url 'moneymap:income-expense-detail' '__date__' %}".replace('__date__', dateString);
@@ -297,4 +310,25 @@ closeOverlayButton.addEventListener('click', () => {
 renderCalendar();
 </script>
 
+<style>
+    @media (max-width: 640px) {
+        .date-input {
+            width: 120px;
+            font-size: 0.75rem;
+        }
+    }
+
+    @media (min-width: 641px) and (max-width: 768px) {
+        .date-input {
+            width: 140px;
+        }
+    }
+
+    @media (min-width: 769px) {
+        .date-input {
+            width: 160px;
+            font-size: 1rem;
+        }
+    }
+</style>
 {% endblock %}
