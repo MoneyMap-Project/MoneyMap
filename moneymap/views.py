@@ -303,37 +303,31 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
     template_name = 'moneymap/goals-detail.html'
     context_object_name = 'goal'
 
+    def get_queryset(self):
+        # Ensure only goals belonging to the logged-in user are retrieved
+        return Goal.objects.filter(user_id=self.request.user)
+
     def get(self, request, *args, **kwargs):
-        # Convert the date string to a datetime object
         goal_id = kwargs.get('pk')
-        try:
-            selected_goal = Goal.objects.get(pk=goal_id)
+        # Use get_object_or_404 to fetch the goal while ensuring it exists
+        selected_goal = get_object_or_404(self.get_queryset(), pk=goal_id)
 
-        except ValueError:
-            logger.error("Goal not found.")
-            return redirect('moneymap:goals')
-
-        # Retrieve Goal for the selected date and the logged-in user
-        goal = Goal.objects.filter(
-            user_id=request.user,
-            goal=selected_goal.pk
-        ).order_by('start_date')
-
-        # Prepare the context data
-        context = self.get_context_data(goal=goal, selected_goal=selected_goal)
+        # Set the object for use in the template
+        self.object = selected_goal
+        context = self.get_context_data(goal=self.object)
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        goal = kwargs.get('goal')
+        goal = self.object  # `self.object` is set by DetailView
+
         start_date = goal.start_date
         end_date = goal.end_date
         completed_by_date = calculate_days_remaining(goal, start_date)
-
         burndown_chart = calculate_burndown_chart(goal, start_date)
+
         context['burndown_chart'] = burndown_chart
         context['completed_by_date'] = completed_by_date
-        context['goal'] = goal
         context['start_date'] = start_date
         context['end_date'] = end_date
 
