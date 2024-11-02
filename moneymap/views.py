@@ -21,7 +21,17 @@ from .service import (
     calculate_income_expense_percentage,
     get_income_expense_by_day,
 )
-from .models import IncomeExpense
+from .service_goal import (
+    calculate_days_remaining,
+    calculate_trend,
+    calculate_saving_progress,
+    calculate_burndown_chart,
+    calculate_avg_saving,
+    calculate_min_saving,
+    calculate_saving_shortfall,
+    get_all_goals
+)
+from .models import IncomeExpense, Goal
 
 # logger
 
@@ -51,7 +61,8 @@ class IncomeAndExpensesView(TemplateView):
             ).order_by('date')
 
             # Use the function to calculate balance for the last 7 days
-            context['income_expense_with_balance_last_7_days'] = calculate_balance_last_7_days(
+            context[
+                'income_expense_with_balance_last_7_days'] = calculate_balance_last_7_days(
                 self.request.user, today)
 
             # Calculate today's balance separately
@@ -59,7 +70,8 @@ class IncomeAndExpensesView(TemplateView):
                 income_expenses_today)
 
             # Indicate if there's data for today
-            context['has_data'] = bool(context['income_expense_with_balance_today'])
+            context['has_data'] = bool(
+                context['income_expense_with_balance_today'])
             context['user_id_display'] = self.request.user.username
         else:
             # If user is not authenticated, set default context values
@@ -92,7 +104,7 @@ def delete_income_expense(request, income_expense_id):
 
 class GoalView(TemplateView):
     """View for the goals page"""
-    template_name ='moneymap/goals.html' #TODO P,Fourth Edit GoalView At Here NaKrub :D
+    template_name = 'moneymap/goals.html'  # TODO P,Fourth Edit GoalView At Here NaKrub :D
 
 
 class MoneyFlowView(LoginRequiredMixin, View):
@@ -128,9 +140,11 @@ class MoneyFlowView(LoginRequiredMixin, View):
             # logger.debug(request, 'Income/Expense recorded successfully!')
             return redirect('moneymap:income-expenses')
         except ValueError:
-            logging.error("Invalid amount entered. Please enter a valid number.")
+            logging.error(
+                "Invalid amount entered. Please enter a valid number.")
         except Exception as specific_error:
-            logging.exception("An unexpected error occurred: %s", specific_error)
+            logging.exception("An unexpected error occurred: %s",
+                              specific_error)
 
         # Render the form again with any errors (optional)
         return render(request, 'moneymap/money-flow.html')
@@ -144,7 +158,8 @@ class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
         # Convert the date string to a datetime object
         date_str = kwargs.get('date')
         try:
-            selected_date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
+            selected_date = timezone.datetime.strptime(date_str,
+                                                       '%Y-%m-%d').date()
         except ValueError:
             logger.error("Invalid date format.")
             return redirect('moneymap:income-expenses')
@@ -156,7 +171,8 @@ class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
         ).order_by('date')
 
         # Prepare the context data
-        context = self.get_context_data(income_expenses=income_expenses, selected_date=selected_date)
+        context = self.get_context_data(income_expenses=income_expenses,
+                                        selected_date=selected_date)
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
@@ -166,9 +182,12 @@ class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
 
         if income_expenses.exists():
             income_expense_with_balance = calculate_balance(income_expenses)
-            context['latest_balance'] = income_expense_with_balance[-1]['balance']
-            context['day_income'] = sum_income(self.request.user, selected_date)
-            context['day_expense'] = sum_expense(self.request.user, selected_date)
+            context['latest_balance'] = income_expense_with_balance[-1][
+                'balance']
+            context['day_income'] = sum_income(self.request.user,
+                                               selected_date)
+            context['day_expense'] = sum_expense(self.request.user,
+                                                 selected_date)
             context['has_data'] = True
         else:
             income_expense_with_balance = None
@@ -178,14 +197,17 @@ class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
             context['has_data'] = False
 
         # Monthly income and expense calculations
-        month_income = sum_income_by_month(self.request.user, selected_date.month)
-        month_expense = sum_expense_by_month(self.request.user, selected_date.month)
+        month_income = sum_income_by_month(self.request.user,
+                                           selected_date.month)
+        month_expense = sum_expense_by_month(self.request.user,
+                                             selected_date.month)
         context['month_income'] = month_income
         context['month_expense'] = month_expense
         context['month_balance'] = month_income - month_expense
 
         # Income and expense percentages
-        percentages = calculate_income_expense_percentage(month_income, month_expense)
+        percentages = calculate_income_expense_percentage(month_income,
+                                                          month_expense)
         context['income_percent'] = percentages['income_percent']
         context['expense_percent'] = percentages['expense_percent']
 
@@ -207,7 +229,8 @@ class HistoryView(LoginRequiredMixin, View):
         # Check if the dates are provided and parse them
         if start_date and end_date:
             # Convert string dates to date objects
-            start_date = timezone.datetime.strptime(start_date, '%Y-%m-%d').date()
+            start_date = timezone.datetime.strptime(start_date,
+                                                    '%Y-%m-%d').date()
             end_date = timezone.datetime.strptime(end_date, '%Y-%m-%d').date()
 
             # Ensure start_date is less than or equal to end_date
@@ -221,7 +244,8 @@ class HistoryView(LoginRequiredMixin, View):
             ).dates('date', 'day')
         else:
             # Default to show all records if no dates are provided
-            dates = IncomeExpense.objects.filter(user_id=request.user).dates('date', 'day')
+            dates = IncomeExpense.objects.filter(user_id=request.user).dates(
+                'date', 'day')
 
         history_list = []
         for date in reversed(dates):
@@ -229,8 +253,10 @@ class HistoryView(LoginRequiredMixin, View):
             income_expenses = get_income_expense_by_day(request.user, date)
 
             # Calculate the daily income and expense using sum over filtered data
-            day_income = sum(entry.amount for entry in income_expenses if entry.type.lower() == 'income')
-            day_expense = sum(entry.amount for entry in income_expenses if entry.type.lower() == 'expenses')
+            day_income = sum(entry.amount for entry in income_expenses if
+                             entry.type.lower() == 'income')
+            day_expense = sum(entry.amount for entry in income_expenses if
+                              entry.type.lower() == 'expenses')
 
             # Calculate total (income - expense) for the day
             total = day_income - day_expense
@@ -254,10 +280,52 @@ class HistoryView(LoginRequiredMixin, View):
 class AddMoney(TemplateView):
     template_name = 'moneymap/add-money-goals.html'
 
-    
+
 class AddGoals(TemplateView):
     template_name = 'moneymap/add_goals.html'
 
 
-class GoalsDetail(TemplateView):
+# class GoalsDetail(TemplateView):
+#     # goals/detail
+#     template_name = 'moneymap/goals-detail.html'
+class GoalsDetailView(LoginRequiredMixin, DetailView):
+    """Goal Report for a specific date."""
+    model = Goal
     template_name = 'moneymap/goals-detail.html'
+    context_object_name = 'goal'
+
+    def get(self, request, *args, **kwargs):
+        # Convert the date string to a datetime object
+        goal_id = kwargs.get('pk')
+        try:
+            selected_goal = Goal.objects.get(pk=goal_id)
+
+        except ValueError:
+            logger.error("Goal not found.")
+            return redirect('moneymap:goals')
+
+        # Retrieve Goal for the selected date and the logged-in user
+        goal = Goal.objects.filter(
+            user_id=request.user,
+            goal=selected_goal.pk
+        ).order_by('start_date')
+
+        # Prepare the context data
+        context = self.get_context_data(goal=goal, selected_goal=selected_goal)
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        goal = kwargs.get('goal')
+        start_date = goal.start_date
+        end_date = goal.end_date
+        completed_by_date = calculate_days_remaining(goal, start_date)
+
+        burndown_chart = calculate_burndown_chart(goal, start_date)
+        context['burndown_chart'] = burndown_chart
+        context['completed_by_date'] = completed_by_date
+        context['goal'] = goal
+        context['start_date'] = start_date
+        context['end_date'] = end_date
+
+        return context
