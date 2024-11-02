@@ -14,7 +14,7 @@ urlpatterns = [
     path('goals/add-money', views.AddMoney.as_view(), name='add_money_goals'),
     # path('goals/detail', views.GoalsDetailView.as_view(), name='goal-detail'),
     path('goal/detail/<int:pk>/', views.GoalsDetailView.as_view(), name='goal-detail'),
-    path('goals/add', views.AddGoals.as_view(), name='add_goals'),
+    path('goals/add/', views.AddGoalsView.as_view(), name='add_goals'),
     path('income-and-expenses/history/', views.HistoryView.as_view(),
          name='history'),
     path('income-and-expenses/money-flow/', views.MoneyFlowView.as_view(),

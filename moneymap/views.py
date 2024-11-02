@@ -4,12 +4,13 @@ This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
 import logging
+from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .service import (
     calculate_balance,
@@ -32,6 +33,7 @@ from .service_goal import (
     get_all_goals
 )
 from .models import IncomeExpense, Goal
+from .forms import GoalForm
 
 # logger
 
@@ -281,9 +283,16 @@ class AddMoney(TemplateView):
     template_name = 'moneymap/add-money-goals.html'
 
 
-class AddGoals(TemplateView):
+class AddGoalsView(LoginRequiredMixin, CreateView):
+    model = Goal
+    form_class = GoalForm
     template_name = 'moneymap/add_goals.html'
+    success_url = reverse_lazy('moneymap:goals')  # redirect to goals page
 
+    def form_valid(self, form):
+        # Associate the goal with the logged-in user
+        form.instance.user_id = self.request.user
+        return super().form_valid(form)
 
 # class GoalsDetail(TemplateView):
 #     # goals/detail
