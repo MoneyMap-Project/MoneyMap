@@ -241,9 +241,17 @@ function renderCalendar() {
         const circle = document.createElement("span");
         circle.classList.add("absolute", "w-10", "h-10", "rounded-full", "flex", "items-center", "justify-center", "z-0");
 
-        if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
-            dayCell.style.backgroundColor = "#05a99d";
-            dayCell.classList.add("text-white");
+        // Check if the current day is today
+        const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+
+        if (isToday) {
+            dayCell.style.backgroundColor = "#05a99d"; // Background color for today
+            // Check if there's data for today
+            if (records[dateString]) {
+                dayCell.classList.add("text-[#1b283f]"); // Change text color to #1b283f if data exists
+            } else {
+                dayCell.classList.add("text-white"); // Keep text color white if no data
+            }
         }
 
         if (records[dateString]) {
@@ -267,7 +275,7 @@ function renderCalendar() {
 
         dayCell.addEventListener('click', () => {
             if (records[dateString]) {
-                // Show details in the overlay without alert
+                // Show details in the overlay
                 overlayMessage.innerHTML = `<strong>Date: ${formatDate(dateString)}</strong><br>Income: ${new Intl.NumberFormat().format(records[dateString].income)} Baht<br>Expense: ${new Intl.NumberFormat().format(records[dateString].expense)} Baht<br><br><strong style="font-size: 1.5em;">Total: ${new Intl.NumberFormat().format(records[dateString].total)} Baht</strong>`;
 
                 const detailButton = document.getElementById("detailButton");
