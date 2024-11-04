@@ -3,7 +3,7 @@ Collect the data from the user and store it in the database."""
 
 from django.db import models
 from django.conf import settings
-
+from decimal import Decimal
 
 class Goal(models.Model):
     """Model for a goal."""
@@ -12,8 +12,11 @@ class Goal(models.Model):
     # user_id as a foreign key
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE, related_name='goals')
-    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, default='No title')
+    description = models.CharField(max_length=255, default='No description')
+
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    current_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     start_date = models.DateField()
     end_date = models.DateField()
 

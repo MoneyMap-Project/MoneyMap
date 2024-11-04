@@ -21,7 +21,7 @@ from .service import (
     calculate_income_expense_percentage,
     get_income_expense_by_day,
 )
-from .models import IncomeExpense
+from .models import IncomeExpense, Goal
 
 # logger
 
@@ -257,6 +257,42 @@ class AddMoney(TemplateView):
     
 class AddGoals(TemplateView):
     template_name = 'moneymap/add_goals.html'
+
+    def get(self, request):
+        """Render the money flow form."""
+        return render(request, 'moneymap/add_goals.html')
+
+    def post(self, request):
+        """Handle the submitted form data."""
+        title = request.POST.get('goal_title')
+        description = request.POST.get('goal_description')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        target_amount = request.POST.get('target_amount')
+
+        try:
+            target_amount_decimal = float(target_amount)
+            print(f"Converted target amount: {target_amount_decimal}")
+
+            # Create and save a new Goal object
+            new_goal = Goal.objects.create(
+                user_id=request.user,
+                title=title,
+                description=description,
+                start_date=start_date,
+                end_date=end_date,
+                target_amount=target_amount_decimal,
+                current_amount=0,
+            )
+            print(f"New Goal object created: {new_goal}")
+            # logger.debug(request, 'Income/Expense recorded successfully!')
+            return redirect('moneymap:goals')
+        except ValueError:
+            logging.error("Invalid target amount entered. Please enter a valid number.")
+            return render(request, 'moneymap/add_goals.html', {'error': 'Invalid target amount entered.'})
+        except Exception as specific_error:
+            logging.exception("An unexpected error occurred: %s", specific_error)
+            return render(request, 'moneymap/add_goals.html', {'error': 'An unexpected error occurred.'})
 
 
 class GoalsDetail(TemplateView):
