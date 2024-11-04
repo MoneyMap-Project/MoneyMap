@@ -32,8 +32,9 @@ from .service_goal import (
     calculate_saving_shortfall,
     get_all_goals
 )
+from decimal import Decimal, DecimalException
 from .models import IncomeExpense, Goal
-from .forms import GoalForm
+from .forms import GoalForm, AddMoneyForm
 
 # logger
 
@@ -279,8 +280,54 @@ class HistoryView(LoginRequiredMixin, View):
         })
 
 
-class AddMoney(TemplateView):
+class AddMoney(View):
     template_name = 'moneymap/add-money-goals.html'
+
+    def get(self, request):
+        # Render the form to add money
+        return render(request, self.template_name)
+
+    def post(self, request):
+        # Get form data
+        transaction_description = request.POST.get('transaction_description')
+        goal_amount = Decimal(request.POST.get('goal_amount'))
+        distribute_evenly = request.POST.get('distribute_evenly') == 'on'
+        set_custom_percentages = request.POST.get(
+            'set_custom_percentages') == 'on'
+        add_income_expense = request.POST.get('add_income_expense') == 'on'
+
+        # Retrieve all goals for the user
+        user_goals = Goal.objects.filter(user_id=request.user)
+
+        # Determine how to distribute the amount
+        if distribute_evenly:
+            total_goals = user_goals.count()
+            if total_goals > 0:
+                amount_per_goal = goal_amount / total_goals
+                for goal in user_goals:
+                    goal.update_current_amount(amount_per_goal)
+        elif set_custom_percentages:
+            total_percentage = 0
+            percentage_distribution = []
+            for i in range(1, 5):  # Assuming you have up to 4 goals
+                percentage = Decimal(request.POST.get(f'percentage_{i}', 0))
+                percentage_distribution.append(percentage)
+                total_percentage += percentage
+
+            if total_percentage > 0:
+                for goal, percentage in zip(user_goals,
+                                            percentage_distribution):
+                    amount_for_goal = (percentage / 100) * goal_amount
+                    goal.update_current_amount(amount_for_goal)
+
+        # Optional: Handle income and expense logic here
+        if add_income_expense:
+            # Logic to add this transaction to income/expense records
+            pass
+
+        messages.success(request, "Money added to your goals successfully!")
+        return redirect(
+            request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 
 
 class AddGoalsView(LoginRequiredMixin, CreateView):
@@ -333,9 +380,14 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
             'trend'] if trend_for_goal else "No trend data"
         print(trend_status)
 
+        current_amount = goal.current_amount
+        target_amount = goal.target_amount
+
         context['start_date'] = goal.start_date.strftime("%-d %B %Y")
         context['end_date'] = goal.end_date.strftime("%-d %B %Y")
         context['remaining_day'] = remaining_days if remaining_days is not None else "Goal not found"
         context['trends'] = trend_status
+        context['current_amount'] = current_amount
+        context['target_amount'] = target_amount
 
         return context
