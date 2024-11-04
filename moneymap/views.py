@@ -281,7 +281,7 @@ class HistoryView(LoginRequiredMixin, View):
 
 
 class AddMoney(View):
-    """Temporary view to add money to goals. #TODO"""
+    """Temporary view to add money to goals. #TODO: No table to store the transaction data yet."""
     template_name = 'moneymap/add-money-goals.html'
 
     def get(self, request):
@@ -310,7 +310,7 @@ class AddMoney(View):
         elif set_custom_percentages:
             total_percentage = 0
             percentage_distribution = []
-            for i in range(1, 5):  # Assuming you have up to 4 goals
+            for i in range(1, 5):  # Assuming have up to 4 goals
                 percentage = Decimal(request.POST.get(f'percentage_{i}', 0))
                 percentage_distribution.append(percentage)
                 total_percentage += percentage
@@ -342,9 +342,6 @@ class AddGoalsView(LoginRequiredMixin, CreateView):
         form.instance.user_id = self.request.user
         return super().form_valid(form)
 
-# class GoalsDetail(TemplateView):
-#     # goals/detail
-#     template_name = 'moneymap/goals-detail.html'
 class GoalsDetailView(LoginRequiredMixin, DetailView):
     """Goal Report for a specific date."""
     model = Goal
@@ -379,7 +376,6 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
 
         trend_status = trend_for_goal[
             'trend'] if trend_for_goal else "No trend data"
-        print(trend_status)
 
         current_amount = goal.current_amount
         target_amount = goal.target_amount
@@ -388,6 +384,13 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         avg_saving = calculate_avg_saving(user, current_date, goal.goal_id)
         min_saving = calculate_min_saving(user, current_date, goal.goal_id)
         saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
+
+        # retrieved all transactions for the goal  #TODO: It's returning all goal, must be transaction!
+        transactions = Goal.objects.filter(
+            user_id=user,
+            goal_id=goal.goal_id
+        )
+        context['transactions'] = transactions
 
         context['start_date'] = goal.start_date.strftime("%-d %B %Y")
         context['end_date'] = goal.end_date.strftime("%-d %B %Y")

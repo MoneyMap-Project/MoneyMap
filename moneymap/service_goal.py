@@ -76,7 +76,8 @@ def calculate_saving_progress(goal: Goal) -> Decimal:
     progress_percentage = (goal.current_amount / goal.target_amount) * Decimal(
         '100.00')
     # 2 decimal places
-    return progress_percentage.quantize(Decimal('0.01'), rounding=ROUND_CEILING)
+    return progress_percentage.quantize(Decimal('0.01'),
+                                        rounding=ROUND_CEILING)
 
 
 def calculate_burndown_chart(total_points, start_date, end_date,
@@ -122,7 +123,8 @@ def calculate_avg_saving(user, date, goal_id):
     """Calculate the average daily saving for the specified goal."""
     try:
         goal = Goal.objects.get(goal_id=goal_id, user_id=user)
-        total_days = (date - goal.start_date).days + 1  # Include the start date
+        total_days = (
+                                 date - goal.start_date).days + 1  # Include the start date
 
         # Calculate average saving
         avg_saving = goal.current_amount / total_days
@@ -131,7 +133,8 @@ def calculate_avg_saving(user, date, goal_id):
         return avg_saving.quantize(Decimal('0.01'), rounding=ROUND_CEILING)
 
     except Goal.DoesNotExist:
-        return Decimal('0.00').quantize(Decimal('0.01'), rounding=ROUND_CEILING)  # Goal not found
+        return Decimal('0.00').quantize(Decimal('0.01'),
+                                        rounding=ROUND_CEILING)  # Goal not found
 
 
 def calculate_min_saving(user, date, goal_id):
@@ -144,15 +147,18 @@ def calculate_min_saving(user, date, goal_id):
         # Calculate total days left until the end date
         total_days_left = (goal.end_date - date).days
         if total_days_left <= 0:
-            return Decimal('0.00').quantize(Decimal('0.01'), rounding=ROUND_CEILING)  # Goal time has expired
+            return Decimal('0.00').quantize(Decimal('0.01'),
+                                            rounding=ROUND_CEILING)  # Goal time has expired
 
         # Calculate minimum saving needed per day
         min_saving = remaining_amount / total_days_left
-        return min_saving.quantize(Decimal('0.01'), rounding=ROUND_CEILING)  # Round up to 2 decimal places
+        return min_saving.quantize(Decimal('0.01'),
+                                   rounding=ROUND_CEILING)  # Round up to 2 decimal places
 
 
     except Goal.DoesNotExist:
-        return Decimal('0.00').quantize(Decimal('0.01'), rounding=ROUND_CEILING)  # Goal not found
+        return Decimal('0.00').quantize(Decimal('0.01'),
+                                        rounding=ROUND_CEILING)  # Goal not found
 
 
 def calculate_saving_shortfall(user, date, goal_id):
@@ -163,9 +169,11 @@ def calculate_saving_shortfall(user, date, goal_id):
 
         # Calculate shortfall if min_saving is greater than avg_saving
         shortfall = min_saving - avg_saving
-        return max(Decimal('0.00'), shortfall).quantize(Decimal('0.01'), rounding=ROUND_CEILING)  # Return 0 if no shortfall
+        return max(Decimal('0.00'), shortfall).quantize(Decimal('0.01'),
+                                                        rounding=ROUND_CEILING)  # Return 0 if no shortfall
     except Goal.DoesNotExist:
-        return Decimal('0.00').quantize(Decimal('0.01'), rounding=ROUND_CEILING)  # Goal not found
+        return Decimal('0.00').quantize(Decimal('0.01'),
+                                        rounding=ROUND_CEILING)  # Goal not found
 
 
 def get_all_goals(user):

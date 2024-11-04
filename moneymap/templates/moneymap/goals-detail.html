@@ -108,13 +108,16 @@
             <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[25%] text-left">Amount</div>
             <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[25%] text-left">Goal's Balance</div>
         </div>
-        {% for i in '012' %}
+        {% for transaction in transactions %}
         <!-- Transaction Rows -->
         <div class="w-full border-t border-[#DAE0EB] flex">
             <div class="px-6 py-2 text-[#1b283f] text-lg w-[15%] text-center">{{ forloop.counter }}</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[35%] text-left">Pocket Money</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">2000</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">2000</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[35%] text-left">
+                {{ transaction.description }}</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">
+                {{ transaction.current_amount }}</div> <!-- transaction Amount -->
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">
+                {{ transaction.current_amount }}</div> <!-- Goal's Balance -->
         </div>
         {% endfor %}
     </div>
