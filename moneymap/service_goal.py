@@ -4,21 +4,12 @@ from datetime import timedelta, datetime
 from django.db.models import Sum, F
 from django.utils import timezone
 from .models import Goal
+from decimal import Decimal
+
 
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-
-
-# @property
-# def total_days(self):
-#     """Calculate the total days between
-#     the start and end date for use in the trend graph."""
-#     return (self.end_date - self.start_date).days
-#
-# def days_remaining(self):
-#     """Calculate the days remaining to reach the goal."""
-#     return (self.end_date - self.start_date).days
 
 
 def calculate_days_remaining(user, date, goal_id):
@@ -76,23 +67,16 @@ def calculate_trend(user, date):
 
     return trends
 
-def calculate_saving_progress(user, date):
-    """
-    Calculate the saving progress for the goal.
 
-    Args:
-        user: The user for whom to retrieve the records.
-        date: The specific date for which to retrieve the records.
+def calculate_saving_progress(goal: Goal) -> Decimal:
+    """Calculate the saving progress as a percentage of the current amount towards the target amount."""
+    if goal.target_amount <= 0:
+        return Decimal('0.00')  # Avoid division by zero
 
-    Returns:
-        QuerySet: A list of Goal objects for the given user.
-    """
-    pass  #TODO: to be implemented later
-
-    # goals = Goal.objects.filter(user_id=user, end_date__gte=date)
-    # for goal in goals:
-    #     goal.saving_progress = goal.savingentry_set.aggregate(models.Sum('amount'))['amount__sum']
-    # return goals
+    progress_percentage = (goal.current_amount / goal.target_amount) * Decimal(
+        '100.00')
+    # 2 decimal places
+    return progress_percentage.quantize(Decimal('0.01'))
 
 
 # def calculate_burndown_chart(user, date):

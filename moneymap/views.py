@@ -281,6 +281,7 @@ class HistoryView(LoginRequiredMixin, View):
 
 
 class AddMoney(View):
+    """Temporary view to add money to goals. #TODO"""
     template_name = 'moneymap/add-money-goals.html'
 
     def get(self, request):
@@ -382,6 +383,7 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
 
         current_amount = goal.current_amount
         target_amount = goal.target_amount
+        saving_progress = calculate_saving_progress(goal)
 
         context['start_date'] = goal.start_date.strftime("%-d %B %Y")
         context['end_date'] = goal.end_date.strftime("%-d %B %Y")
@@ -389,5 +391,6 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         context['trends'] = trend_status
         context['current_amount'] = current_amount
         context['target_amount'] = target_amount
+        context['saving_progress'] = saving_progress
 
         return context
