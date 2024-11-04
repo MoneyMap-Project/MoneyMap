@@ -92,8 +92,31 @@ def delete_income_expense(request, income_expense_id):
 
 class GoalView(TemplateView):
     """View for the goals page"""
-    template_name ='moneymap/goals.html' #TODO P,Fourth Edit GoalView At Here NaKrub :D
+    template_name ='moneymap/goals.html' 
+    
+    def get(self, request, *args, **kwargs):
+            """Retrieve and display the goals for the current user."""
+            user_goals = Goal.objects.filter(user_id=request.user)
 
+            goals_data = []
+            for goal in user_goals:
+                days_remaining = max((goal.end_date - timezone.now().date()).days, 0)
+                avg_saving = goal.target_amount / goal.total_days if goal.total_days > 0 else 0
+                min_saving = (goal.target_amount - goal.current_amount) / days_remaining if days_remaining > 0 else 0
+                progress = f"{goal.current_amount} Baht / {goal.target_amount} Baht"
+
+                goals_data.append({
+                    'title': goal.title,
+                    'description': goal.description,
+                    'deadline': goal.end_date,
+                    'average_saving': avg_saving,
+                    'minimum_saving': min_saving,
+                    'progress': progress,
+                    'days_remaining': days_remaining,
+                })
+
+            context = {'goals_data': goals_data}
+            return render(request, self.template_name, context)
 
 class MoneyFlowView(LoginRequiredMixin, View):
     """
