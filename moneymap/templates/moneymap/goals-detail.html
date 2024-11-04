@@ -75,7 +75,7 @@
                 <p class="text-[#90acaa] text-lg capitalize">Average daily collection rate</p>
                 <p class="text-[#05a99d] text-xl font-bold capitalize">
                     <span class="text-xl">
-                        284 <!-- Average Saving -->
+                        {{ avg_saving }} <!-- Average Saving -->
                     </span> bath/day
                 </p>
             </div>
@@ -84,7 +84,7 @@
                 <p class="text-[#90acaa] text-lg">Amount you should save per day</p>
                 <p class="text-[#05a99d] text-xl font-bold capitalize">
                     <span class="text-xl">
-                        243 <!-- Minimum Saving -->
+                        {{ min_saving }} <!-- Minimum Saving -->
                     </span> bath/day
                 </p>
             </div>
@@ -93,7 +93,7 @@
                 <p class="text-[#90acaa] text-lg">Extra needed daily to meet goal</p>
                 <p class="text-[#05a99d] text-xl font-bold capitalize">
                     <span class="text-xl">
-                        -41 <!-- Savings Shortfall-->
+                        {{ saving_shortfall }} <!-- Savings Shortfall-->
                     </span> bath/day
                 </p>
             </div>

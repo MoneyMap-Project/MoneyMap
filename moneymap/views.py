@@ -385,6 +385,10 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         target_amount = goal.target_amount
         saving_progress = calculate_saving_progress(goal)
 
+        avg_saving = calculate_avg_saving(user, current_date, goal.goal_id)
+        min_saving = calculate_min_saving(user, current_date, goal.goal_id)
+        saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
+
         context['start_date'] = goal.start_date.strftime("%-d %B %Y")
         context['end_date'] = goal.end_date.strftime("%-d %B %Y")
         context['remaining_day'] = remaining_days if remaining_days is not None else "Goal not found"
@@ -392,5 +396,8 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         context['current_amount'] = current_amount
         context['target_amount'] = target_amount
         context['saving_progress'] = saving_progress
+        context['avg_saving'] = avg_saving
+        context['min_saving'] = min_saving
+        context['saving_shortfall'] = saving_shortfall
 
         return context
