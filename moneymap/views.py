@@ -322,8 +322,20 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         # Calculate the remaining days for the goal
         remaining_days = calculate_days_remaining(user, current_date, goal.goal_id)
 
+        # Calculate the saving trends
+        trends = calculate_trend(user, current_date)
+        # only show the trend for the current goal
+        trend_for_goal = next(
+            (trend for trend in trends if trend['goal_id'] == goal.goal_id),
+            None)
+
+        trend_status = trend_for_goal[
+            'trend'] if trend_for_goal else "No trend data"
+        print(trend_status)
+
         context['start_date'] = goal.start_date.strftime("%-d %B %Y")
         context['end_date'] = goal.end_date.strftime("%-d %B %Y")
         context['remaining_day'] = remaining_days if remaining_days is not None else "Goal not found"
+        context['trends'] = trend_status
 
         return context

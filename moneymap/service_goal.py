@@ -46,6 +46,7 @@ def calculate_days_remaining(user, date, goal_id):
     except Goal.DoesNotExist:
         return None  # Goal not found
 
+
 def calculate_trend(user, date):
     """
     Calculate the trend for the goal.
@@ -55,12 +56,25 @@ def calculate_trend(user, date):
         date: The specific date for which to retrieve the records.
 
     Returns:
-        QuerySet: A list of Goal objects for the given user.
+        list: A list of dictionaries containing goal_id and their respective trends.
     """
-    goals = Goal.objects.filter(user_id=user, start_date__lte=date, end_date__gte=date)
+    goals = Goal.objects.filter(user_id=user, start_date__lte=date,
+                                end_date__gte=date)
+    trends = []
+
     for goal in goals:
-        goal.trend = (goal.target_amount / goal.total_days) * (goal.total_days - goal.days_remaining)
-    return goals
+        total_days = (goal.end_date - goal.start_date).days
+        days_elapsed = (date - goal.start_date).days
+        daily_target = goal.target_amount / total_days if total_days > 0 else 0
+        expected_amount = daily_target * days_elapsed
+        actual_amount = goal.current_amount
+        trend_value = actual_amount - expected_amount
+
+        trend = 'Positive' if trend_value >= 0 else 'Negative'
+        trends.append({'goal_id': goal.goal_id, 'trend': trend,
+                       'trend_value': trend_value})
+
+    return trends
 
 def calculate_saving_progress(user, date):
     """

@@ -31,8 +31,9 @@
         <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#07d4c5]/20 rounded-lg">
             <img src="{% static 'goal-detail/positive.png' %}" alt="Positive Trend" class="w-12 h-12 mr-5">
             <div>
-                <h2 class="text-[#1b283f] text-xl font-bold capitalize">Positive Trend</h2>
-                <p class="text-[#90acaa] text-lg">You’ll reach your goal!</p>
+                <h2 class="text-[#1b283f] text-xl font-bold capitalize">
+                    {{ trends }} Trend</h2>
+                <p class="text-[#90acaa] text-lg">You’ll reach your goal!</p>  <!--#TODO: Negative Trend-->
             </div>
         </div>
         <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#f2f2f2] rounded-lg">
@@ -41,15 +42,15 @@
                 <h2 class="text-[#1b283f] text-xl font-bold capitalize">Progress</h2>
                 <p class="text-[#05a99d] text-lg font-bold">
                     <span>
-                        24378   <!-- Progress -->
+                        24378   <!-- (Numerator เศษ) Progress -->
                     </span>
                     <span class="mx-1">/</span>
                     <span>
-                        60700   <!-- Progress -->
+                        60700   <!-- (Denometer ส่วน)Progress -->
                     </span>
                     <span>(</span>
                     <span>
-                        40   <!-- Progress -->
+                        40   <!-- (percentage) Progress -->
                     </span>
                     <span>%)</span>
                 </p>
