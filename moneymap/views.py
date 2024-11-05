@@ -3,6 +3,7 @@ Views for the MoneyMap application.
 This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
+from datetime import date
 import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -93,7 +94,7 @@ def delete_income_expense(request, income_expense_id):
 class GoalView(TemplateView):
     """View for the goals page"""
     template_name ='moneymap/goals.html' 
-    
+
     def get(self, request, *args, **kwargs):
             """Retrieve and display the goals for the current user."""
             user_goals = Goal.objects.filter(user_id=request.user)
@@ -104,6 +105,9 @@ class GoalView(TemplateView):
                 avg_saving = goal.target_amount / goal.total_days if goal.total_days > 0 else 0
                 min_saving = (goal.target_amount - goal.current_amount) / days_remaining if days_remaining > 0 else 0
                 progress = f"{goal.current_amount} Baht / {goal.target_amount} Baht"
+                
+                # Calculate progress percentage
+                progress_percentage = (goal.current_amount / goal.target_amount) * 100 if goal.target_amount > 0 else 0
 
                 goals_data.append({
                     'title': goal.title,
@@ -113,10 +117,28 @@ class GoalView(TemplateView):
                     'minimum_saving': min_saving,
                     'progress': progress,
                     'days_remaining': days_remaining,
+                    'progress_percentage': progress_percentage,
                 })
 
             context = {'goals_data': goals_data}
             return render(request, self.template_name, context)
+    
+
+@login_required
+def delete_goal(request, goal_id):
+    """For delete a Goal object"""
+
+    # Retrieve the Goal object or return 404 if not found
+    goal = get_object_or_404(Goal, goal_id=goal_id, user_id=request.user)
+
+    # Delete the object
+    goal.delete()
+
+    # Add a success message
+    messages.success(request, 'Goal successfully deleted.')
+
+    # Redirect back to the goals view
+    return redirect('moneymap:goals')
 
 class MoneyFlowView(LoginRequiredMixin, View):
     """
