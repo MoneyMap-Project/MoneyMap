@@ -12,6 +12,8 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.views.generic import TemplateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from .service_addgoals import get_goals_data, calculate_trend
 from .service import (
     calculate_balance,
     calculate_balance_last_7_days,
@@ -92,36 +94,30 @@ def delete_income_expense(request, income_expense_id):
 
 
 class GoalView(TemplateView):
-    """View for the goals page"""
-    template_name ='moneymap/goals.html' 
+    """View for the goals page."""
+    template_name = 'moneymap/goals.html'
 
     def get(self, request, *args, **kwargs):
-            """Retrieve and display the goals for the current user."""
-            user_goals = Goal.objects.filter(user_id=request.user)
+        """Retrieve and display the goals for the current user."""
+        # Call get_context_data to prepare context with goals data
+        context = self.get_context_data()
+        return render(request, self.template_name, context)
 
-            goals_data = []
-            for goal in user_goals:
-                days_remaining = max((goal.end_date - timezone.now().date()).days, 0)
-                avg_saving = goal.target_amount / goal.total_days if goal.total_days > 0 else 0
-                min_saving = (goal.target_amount - goal.current_amount) / days_remaining if days_remaining > 0 else 0
-                progress = f"{goal.current_amount} Baht / {goal.target_amount} Baht"
-                
-                # Calculate progress percentage
-                progress_percentage = (goal.current_amount / goal.target_amount) * 100 if goal.target_amount > 0 else 0
+    def get_context_data(self, **kwargs):
+        """Retrieve and prepare context data for the goals page."""
+        context = super().get_context_data(**kwargs)
+        
+        # Retrieve goals for the current user
+        user_goals = Goal.objects.filter(user_id=self.request.user)
+        
+        # Get the processed goals data from the service function
+        context['goals_data'] = get_goals_data(user_goals)
 
-                goals_data.append({
-                    'title': goal.title,
-                    'description': goal.description,
-                    'deadline': goal.end_date,
-                    'average_saving': avg_saving,
-                    'minimum_saving': min_saving,
-                    'progress': progress,
-                    'days_remaining': days_remaining,
-                    'progress_percentage': progress_percentage,
-                })
-
-            context = {'goals_data': goals_data}
-            return render(request, self.template_name, context)
+        # Calculate trend data for each goal
+        date = timezone.now().date()
+        context['goal_trends'] = calculate_trend(self.request.user, date)
+        
+        return context
     
 
 @login_required
