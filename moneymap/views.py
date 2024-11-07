@@ -112,30 +112,9 @@ class GoalView(TemplateView):
         
         # Get the processed goals data from the service function
         context['goals_data'] = get_goals_data(user_goals, date.today())
-
-        # Calculate trend data for each goal
-        # date = timezone.now().date()
-        # context['goal_trends'] = calculate_trend(self.request.user, date)
         
         return context
     
-
-@login_required
-def delete_goal(request, goal_id):
-    """For delete a Goal object"""
-
-    # Retrieve the Goal object or return 404 if not found
-    goal = get_object_or_404(Goal, goal_id=goal_id, user_id=request.user)
-
-    # Delete the object
-    goal.delete()
-
-    # Add a success message
-    messages.success(request, 'Goal successfully deleted.')
-
-    # Redirect back to the goals view
-    return redirect('moneymap:goals')
-
 class MoneyFlowView(LoginRequiredMixin, View):
     """
     After clicking the `Income and Expense` button,

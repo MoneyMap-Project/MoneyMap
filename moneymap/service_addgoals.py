@@ -52,34 +52,3 @@ def get_goals_data(user_goals, date):
         })
 
     return goals_data
-
-# def calculate_trend(user, date):
-#     """
-#     Calculate the trend for each goal for the given user and date.
-
-#     Args:
-#         user: The user for whom to retrieve the records.
-#         date: The specific date for which to retrieve the records.
-
-#     Returns:
-#         list: A list of dictionaries containing goal_id and their respective trends.
-#     """
-#     goals = Goal.objects.filter(user_id=user, start_date__lte=date, end_date__gte=date)
-#     trends = []
-
-#     for goal in goals:
-#         total_days = (goal.end_date - goal.start_date).days
-#         days_elapsed = (date - goal.start_date).days
-#         daily_target = goal.target_amount / total_days if total_days > 0 else 0
-#         expected_amount = daily_target * days_elapsed
-#         actual_amount = goal.current_amount
-#         trend_value = actual_amount - expected_amount
-
-#         trend = 'Positive' if trend_value >= 0 else 'Negative'
-#         trends.append({
-#             'goal_id': goal.goal_id,
-#             'trend': trend,
-#             'trend_value': trend_value
-#         })
-
-#     return trends
