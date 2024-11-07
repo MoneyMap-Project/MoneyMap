@@ -13,7 +13,7 @@ from django.views import View
 from django.views.generic import TemplateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .service_addgoals import get_goals_data, calculate_trend
+from .service_addgoals import get_goals_data
 from .service import (
     calculate_balance,
     calculate_balance_last_7_days,
@@ -111,11 +111,11 @@ class GoalView(TemplateView):
         user_goals = Goal.objects.filter(user_id=self.request.user)
         
         # Get the processed goals data from the service function
-        context['goals_data'] = get_goals_data(user_goals)
+        context['goals_data'] = get_goals_data(user_goals, date.today())
 
         # Calculate trend data for each goal
-        date = timezone.now().date()
-        context['goal_trends'] = calculate_trend(self.request.user, date)
+        # date = timezone.now().date()
+        # context['goal_trends'] = calculate_trend(self.request.user, date)
         
         return context
     

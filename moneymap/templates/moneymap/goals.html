@@ -70,8 +70,15 @@
                             {{ goal.title }}
                         </div>
                         <!-- Status badge -->
-                        <div class="px-5 bg-[#05a99d] rounded-[100px] flex justify-center items-center">
-                            <div class="text-white text-sm font-normal font-['Poppins'] capitalize">positive trend</div>
+                        <div
+                            class="px-5 rounded-[100px] flex justify-center items-center {% if goal.trend == 'Positive' %}bg-[#05a99d]{% else %}bg-red-500{% endif %}">
+                            <div class="text-white text-sm font-normal font-['Poppins'] capitalize">
+                                {% if goal.trend == 'Positive' %}
+                                Positive Trend
+                                {% else %}
+                                Negative Trend
+                                {% endif %}
+                            </div>
                         </div>
                         <!-- Details section -->
                         <div class="flex flex-col gap-2">
