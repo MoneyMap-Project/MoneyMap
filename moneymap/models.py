@@ -1,9 +1,9 @@
 """Contains the models for the MoneyMap app.
 Collect the data from the user and store it in the database."""
 
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
-from decimal import Decimal
 
 class Goal(models.Model):
     """Model for a goal."""

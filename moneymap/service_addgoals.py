@@ -18,7 +18,7 @@ def calculate_progress_percentage(current_amount, target_amount):
     """Calculate the progress percentage towards the goal."""
     return (current_amount / target_amount) * 100 if target_amount > 0 else 0
 
-def get_goals_data(user_goals, date):
+def get_goals_data(user_goals, current_date):
     """Process and return a list of goal data dictionaries for the template."""
     goals_data = []
 
@@ -29,7 +29,7 @@ def get_goals_data(user_goals, date):
         progress_percentage = calculate_progress_percentage(goal.current_amount, goal.target_amount)
 
         total_days = (goal.end_date - goal.start_date).days
-        days_elapsed = (date - goal.start_date).days
+        days_elapsed = (current_date - goal.start_date).days
         daily_target = goal.target_amount / total_days if total_days > 0 else 0
         expected_amount = daily_target * days_elapsed
         actual_amount = goal.current_amount
@@ -48,7 +48,6 @@ def get_goals_data(user_goals, date):
             'progress_percentage': progress_percentage,
             'trend': trend,
             'trend_value': trend_value
-
         })
 
     return goals_data

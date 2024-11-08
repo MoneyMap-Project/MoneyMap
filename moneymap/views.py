@@ -106,15 +106,15 @@ class GoalView(TemplateView):
     def get_context_data(self, **kwargs):
         """Retrieve and prepare context data for the goals page."""
         context = super().get_context_data(**kwargs)
-        
+
         # Retrieve goals for the current user
         user_goals = Goal.objects.filter(user_id=self.request.user)
-        
+
         # Get the processed goals data from the service function
         context['goals_data'] = get_goals_data(user_goals, date.today())
-        
+
         return context
-    
+
 class MoneyFlowView(LoginRequiredMixin, View):
     """
     After clicking the `Income and Expense` button,
@@ -274,7 +274,7 @@ class HistoryView(LoginRequiredMixin, View):
 class AddMoney(TemplateView):
     template_name = 'moneymap/add-money-goals.html'
 
-    
+
 class AddGoals(TemplateView):
     template_name = 'moneymap/add_goals.html'
 
