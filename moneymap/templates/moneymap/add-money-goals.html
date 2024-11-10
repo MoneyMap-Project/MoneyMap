@@ -55,9 +55,9 @@
                 </div>
                     <!-- Container for Input Fields -->
                     <div id="percentage-inputs" class="flex flex-wrap justify-left gap-4 hidden">
-                        {% for i in '0123123' %}
+                        {% for i in '0123456' %}
                         <div onclick="toggleSelection(this)" class="w-[185px] p-2.5 bg-[#f2f2f2] rounded-[10px] flex-col flex gap-[5px] border border-[#aec2c0] cursor-pointer selectable-item">
-                            <label class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">Tuition Fee {{ forloop.index }}</label>
+                            <label class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">Tuition Fee {{ i }}</label>
                         </div>
                         {% endfor %}
                     </div>

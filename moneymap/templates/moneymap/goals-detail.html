@@ -5,8 +5,31 @@
 
 <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
     <!-- Header Section -->
-    <div class="w-full p-2.5 flex items-center">
+    <div class="w-full p-2.5 flex items-center justify-between">
         <h1 class="text-[#1b283f] text-4xl font-semibold capitalize leading-tight">Tuition Fee Overview</h1>
+        <!-- Delete Goal Button -->
+        <button id="deleteGoalButton" class="text-[#ff4d4d] text-lg font-base bg-transparent border-2 border-[#ff4d4d] px-4 py-2 rounded-lg hover:bg-[#ff4d4d] hover:text-white transition-colors">
+            Delete Goal
+        </button>
+    </div>
+
+    <!-- Overlay Section -->
+    <div id="overlay" class="fixed inset-0 z-50 flex justify-center items-center bg-[#00000080] hidden">
+        <div class="w-[890px] h-[250px] relative bg-white rounded-[10px] flex flex-col justify-center items-center">
+            <span class="text-[#05a99d] text-[3rem] font-normal leading-[1.2] ml-5 capitalize"
+                  style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
+                Are you sure?
+            </span>
+            <div class="text-center text-[#1b283f] text-base font-normal font-['Poppins'] mt-4">This means the information will be permanently deleted</div>
+            <div class="w-[376px] h-[50px] mt-6 flex justify-between">
+            <button id="cancelButton" class="w-[158px] h-[50px] rounded-[40px] border-2 border-[#AEC2C0] text-center text-[#1B283F] text-sm font-medium font-['Poppins'] transition duration-300 ease-in-out transform hover:bg-[#f4f4f4] hover:text-[#1B283F] hover:scale-105 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[#05a99d] focus:ring-offset-2">
+                CANCEL
+            </button>
+            <button id="deleteButton" class="w-[158px] h-[50px] rounded-[40px] border-2 border-[#F5A623] text-center text-[#1B283F] text-sm font-medium font-['Poppins'] transition duration-300 ease-in-out transform hover:bg-[#F5A623] hover:text-white hover:scale-105 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[#F5A623] focus:ring-offset-2">
+                DELETE
+            </button>
+            </div>
+        </div>
     </div>
 
     <!-- Summary Section -->
@@ -120,6 +143,33 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteGoalButton = document.getElementById('deleteGoalButton');
+    const overlay = document.getElementById('overlay');
+    const cancelButton = document.getElementById('cancelButton');
+    const acceptButton = document.getElementById('acceptButton');
+
+    // Show the overlay when delete button is clicked
+    deleteGoalButton.addEventListener('click', function() {
+        overlay.classList.remove('hidden');
+    });
+
+    // Hide the overlay when cancel button is clicked
+    cancelButton.addEventListener('click', function() {
+        overlay.classList.add('hidden');
+    });
+
+    // Handle the "Accept" button click (e.g., delete the goal)
+    acceptButton.addEventListener('click', function() {
+        // Here you can add the functionality to delete the goal.
+        // For now, it's just a console log simulating goal deletion.
+        console.log('Goal Deleted');
+        overlay.classList.add('hidden');  // Hide the overlay after the action
+    });
+});
+</script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Confirm Chart.js loaded
