@@ -91,18 +91,20 @@
 
             <!-- Right Column -->
             <div class="w-full lg:w-1/3 flex flex-col gap-4">
-                <!-- Summary Section -->
-                <div class="w-full p-5 rounded-[10px] border border-[#aec2c0] flex flex-col gap-5">
-                    <h2 class="text-[#1b283f] text-[28px] font-semibold font-['Poppins'] capitalize">Summary</h2>
-                    <div class="w-[72px] h-[2px] bg-[#90acaa]"></div>
-                    <div class="w-full flex flex-col gap-4">
-                        <div id="summary-description" class="text-[#1b283f] text-lg font-bold font-['Poppins'] capitalize"></div>
-                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold font-['Poppins'] capitalize"></div>
-                        <div class="w-full p-2.5 rounded-[10px] border border-[#90acaa] flex items-center">
-                            <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Type: <span id="selected-type">Savings Goal</span></div>
-                        </div>
-                    </div>
-                </div>
+<!-- Summary Section -->
+<div class="w-full p-6 bg-white rounded-lg border border-[#aec2c0] flex flex-col gap-6">
+    <h2 class="text-[#1b283f] text-2xl font-semibold">Summary</h2>
+    <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
+    <div class="w-full flex flex-col gap-4">
+        <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">Description of the project goes here.</div>
+        <div class="w-full h-[1px] bg-[#ececec]"></div>
+        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">Amount: $0.00</div>
+        <div class="w-full p-2.5 rounded-[10px] border border-[#90acaa] flex items-center">
+            <div class="text-[#1b283f] text-lg font-normal">Type: <span id="selected-type">Savings Goal</span></div>
+        </div>
+    </div>
+</div>
+
 
                 <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
                     <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add new money flow</div>
@@ -171,8 +173,8 @@
         const amount = document.getElementById('amount').value.trim();
         const selectedType = document.getElementById('money-type').value || "Savings Goal";
 
-        document.getElementById('summary-description').textContent = description || "";
-        document.getElementById('summary-amount').textContent = amount ? `${amount} baht` : "";
+        document.getElementById('summary-description').textContent = description || "No description";
+        document.getElementById('summary-amount').textContent = amount ? `${amount} baht` : "No amount";
         document.getElementById('selected-type').textContent = selectedType;
     }
 

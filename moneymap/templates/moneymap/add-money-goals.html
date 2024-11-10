@@ -54,8 +54,8 @@
                     </div>
                 </div>
                     <!-- Container for Input Fields -->
-                    <div id="percentage-inputs" class="flex flex-wrap justify-between gap-4 hidden">
-                        {% for i in '0123' %}
+                    <div id="percentage-inputs" class="flex flex-wrap justify-left gap-4 hidden">
+                        {% for i in '0123123' %}
                         <div onclick="toggleSelection(this)" class="w-[185px] p-2.5 bg-[#f2f2f2] rounded-[10px] flex-col flex gap-[5px] border border-[#aec2c0] cursor-pointer selectable-item">
                             <label class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">Tuition Fee {{ forloop.index }}</label>
                         </div>
@@ -69,7 +69,7 @@
                         <input type="checkbox" id="add-income-expense" name="add_income_expense" class="mr-5" onclick="updateSummary()">
                         <div class="flex flex-col">
                             <label for="add-income-expense" class="text-[#1b283f] text-lg font-normal font-['Poppins']">Add this money to income and expense</label>
-                            <p class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Deduction of money from income and expenses in type of saving.</p>
+                            <p class="text-[#90acaa] text-base font-normal font-['Poppins']">Deduction of money from income and expenses in type of saving.</p>
                         </div>
                     </div>
                 </div>
@@ -78,15 +78,22 @@
             <!-- Right Column -->
             <div class="w-full lg:w-1/3 flex flex-col gap-4">
                 <!-- Summary Section -->
-                <div class="w-full p-5 rounded-[10px] border border-[#aec2c0] flex flex-col gap-5">
-                    <h2 class="text-[#1b283f] text-[28px] font-semibold font-['Poppins'] capitalize">Summary</h2>
-                    <div class="w-[72px] h-[2px] bg-[#90acaa]"></div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div id="summary-description" class="text-[#1b283f] text-lg font-bold font-['Poppins'] capitalize">No description</div>
-                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold font-['Poppins'] capitalize">No amount</div>
-                        <div id="summary-distribution" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Distribute Evenly</div>
-                        <div id="summary-percentages" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize flex gap-2 flex-wrap overflow-x-auto"></div>
-                        <div id="summary-income-expense" class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize hidden">Add to income and expense</div>
+                <div class="w-full p-6 bg-white rounded-lg border border-[#aec2c0] flex flex-col gap-6">
+                    <h2 class="text-[#1b283f] text-2xl font-semibold">Summary</h2>
+                    <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
+                    <div class="w-full flex flex-col gap-4">
+                        <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">No description</div>
+                        <div class="w-full h-[1px] bg-[#ececec]"></div>
+                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">No amount</div>
+                        <div class="w-full h-[1px] bg-[#ececec]"></div>
+                        <div id="summary-distribution" class="text-[#1b283f] text-base font-normal">Distribute Evenly</div>
+                        <div id="summary-percentages" class="text-[#1b283f] text-base font-normal flex gap-2 flex-wrap overflow-x-auto"></div>
+
+                        <!-- Add to Income/Expense Section -->
+                        <div id="summary-income-expense" class="flex items-center gap-2 mt-4">
+                            <span class="text-[#1b283f] text-base">Add to income and expense:</span>
+                            <span id="income-expense-status" class="text-[#05a99d] font-semibold">No</span>
+                        </div>
                     </div>
                 </div>
 
@@ -94,14 +101,6 @@
                 <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
                     <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add New Money Flow</div>
                 </button>
-            </div>
-        </div>
-        <!-- Modal HTML -->
-        <div id="custom-alert" class="custom-alert hidden">
-            <div class="alert-content">
-                <h2 class="alert-title">Action Required</h2>
-                <p class="alert-message">Please select at least one goal before submitting your form.</p>
-                <button id="alert-close-btn" class="alert-close-btn">OK</button>
             </div>
         </div>
     </div>
@@ -134,7 +133,7 @@
         document.getElementById('summary-distribution').textContent = distribution;
 
         const selectedGoals = Array.from(document.querySelectorAll('.selectable-item.selected'))
-                                            .map(item => item.querySelector('label').textContent);
+                                                .map(item => item.querySelector('label').textContent);
         const GoalsSummary = document.getElementById('summary-percentages');
 
         if (document.getElementById('distribute-evenly').checked) {
@@ -152,9 +151,8 @@
             }
         }
 
-        const addIncomeExpense = document.getElementById('add-income-expense').checked;
-        const incomeExpenseSection = document.getElementById('summary-income-expense');
-        incomeExpenseSection.classList.toggle('hidden', !addIncomeExpense);
+        const addToIncomeExpense = document.getElementById('add-income-expense').checked;
+        document.getElementById('income-expense-status').textContent = addToIncomeExpense ? 'Yes' : 'No';
     }
 
     function toggleSelection(event) {
@@ -201,25 +199,25 @@
         item.addEventListener('click', toggleSelection);
     });
 
-function validateForm() {
-    const customPercentagesCheckbox = document.getElementById('set-custom-percentages');
-    const selectedGoals = document.querySelectorAll('.selectable-item.selected').length;
-    const errorMessage = document.getElementById('custom-goals-error');
+    function validateForm() {
+        const customPercentagesCheckbox = document.getElementById('set-custom-percentages');
+        const selectedGoals = document.querySelectorAll('.selectable-item.selected').length;
+        const errorMessage = document.getElementById('custom-goals-error');
 
-    if (customPercentagesCheckbox.checked && selectedGoals === 0) {
-        errorMessage.classList.remove('hidden');
-        return false;
-    } else {
-        errorMessage.classList.add('hidden');
+        if (customPercentagesCheckbox.checked && selectedGoals === 0) {
+            errorMessage.classList.remove('hidden');
+            return false;
+        } else {
+            errorMessage.classList.add('hidden');
+        }
+        return true;
     }
-    return true;
-}
 
-document.getElementById('add-money-form').addEventListener('submit', function(event) {
-    if (!validateForm()) {
-        event.preventDefault();
-    }
-});
+    document.getElementById('add-money-form').addEventListener('submit', function(event) {
+        if (!validateForm()) {
+            event.preventDefault();
+        }
+    });
 
 </script>
 
