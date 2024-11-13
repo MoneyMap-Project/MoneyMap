@@ -3,6 +3,7 @@ Views for the MoneyMap application.
 This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
+from datetime import date
 import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -11,6 +12,8 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.views.generic import TemplateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from .service_addgoals import get_goals_data
 from .service import (
     calculate_balance,
     calculate_balance_last_7_days,
@@ -21,7 +24,7 @@ from .service import (
     calculate_income_expense_percentage,
     get_income_expense_by_day,
 )
-from .models import IncomeExpense
+from .models import IncomeExpense, Goal
 
 # logger
 
@@ -91,9 +94,26 @@ def delete_income_expense(request, income_expense_id):
 
 
 class GoalView(TemplateView):
-    """View for the goals page"""
-    template_name ='moneymap/goals.html' #TODO P,Fourth Edit GoalView At Here NaKrub :D
+    """View for the goals page."""
+    template_name = 'moneymap/goals.html'
 
+    def get(self, request, *args, **kwargs):
+        """Retrieve and display the goals for the current user."""
+        # Call get_context_data to prepare context with goals data
+        context = self.get_context_data()
+        return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        """Retrieve and prepare context data for the goals page."""
+        context = super().get_context_data(**kwargs)
+
+        # Retrieve goals for the current user
+        user_goals = Goal.objects.filter(user_id=self.request.user)
+
+        # Get the processed goals data from the service function
+        context['goals_data'] = get_goals_data(user_goals, date.today())
+
+        return context
 
 class MoneyFlowView(LoginRequiredMixin, View):
     """
@@ -254,9 +274,45 @@ class HistoryView(LoginRequiredMixin, View):
 class AddMoney(TemplateView):
     template_name = 'moneymap/add-money-goals.html'
 
-    
+
 class AddGoals(TemplateView):
     template_name = 'moneymap/add_goals.html'
+
+    def get(self, request):
+        """Render the money flow form."""
+        return render(request, 'moneymap/add_goals.html')
+
+    def post(self, request):
+        """Handle the submitted form data."""
+        title = request.POST.get('goal_title')
+        description = request.POST.get('goal_description')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        target_amount = request.POST.get('target_amount')
+
+        try:
+            target_amount_decimal = float(target_amount)
+            print(f"Converted target amount: {target_amount_decimal}")
+
+            # Create and save a new Goal object
+            new_goal = Goal.objects.create(
+                user_id=request.user,
+                title=title,
+                description=description,
+                start_date=start_date,
+                end_date=end_date,
+                target_amount=target_amount_decimal,
+                current_amount=0,
+            )
+            print(f"New Goal object created: {new_goal}")
+            # logger.debug(request, 'Income/Expense recorded successfully!')
+            return redirect('moneymap:goals')
+        except ValueError:
+            logging.error("Invalid target amount entered. Please enter a valid number.")
+            return render(request, 'moneymap/add_goals.html', {'error': 'Invalid target amount entered.'})
+        except Exception as specific_error:
+            logging.exception("An unexpected error occurred: %s", specific_error)
+            return render(request, 'moneymap/add_goals.html', {'error': 'An unexpected error occurred.'})
 
 
 class GoalsDetail(TemplateView):

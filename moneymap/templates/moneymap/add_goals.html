@@ -38,7 +38,7 @@
                     <div class="w-full flex flex-col gap-3">
                         <label for="amount" class="text-black text-lg font-normal font-['Poppins'] capitalize">Amount</label>
                         <div class="w-full p-2.5 rounded-[10px] border border-[#1b283f] flex justify-between items-center amount-container">
-                            <input type="number" id="amount" name="amount" placeholder="Enter amount"
+                            <input type="number" id="target_amount" name="target_amount" placeholder="Enter amount"
                                    class="w-full focus:outline-none text-[#1b283f] text-lg font-normal font-['Poppins'] amount-input"
                                    oninput="formatBaht()" onkeydown="return restrictInput(event)"
                                    min="0" step="any" required />
@@ -91,7 +91,7 @@
         const descriptionInput = document.getElementById('goal-description');
         const startDateInput = document.getElementById('start-date');
         const endDateInput = document.getElementById('end-date');
-        const amountInput = document.getElementById('amount');
+        const amountInput = document.getElementById('target_amount');
 
         const summaryTitle = document.getElementById('summary-title');
         const summaryDescription = document.getElementById('summary-description');
