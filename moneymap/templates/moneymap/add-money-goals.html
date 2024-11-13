@@ -1,0 +1,295 @@
+{% extends 'moneymap/base.html' %}
+{% load static %}
+
+{% block content %}
+<form id="add-money-form" action="{% url 'moneymap:add_money_goals' %}" method="POST" onsubmit="return validateForm()">
+    {% csrf_token %}
+    <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
+        <h1 class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">Add money to your goal</h1>
+
+        <div class="w-full flex flex-col lg:flex-row justify-start items-start gap-5">
+            <!-- Left Column -->
+            <div class="w-full lg:w-2/3 p-5 rounded-[10px] border border-[#aec2c0] flex flex-col justify-start items-start gap-[35px]">
+                <div class="w-full flex flex-col gap-[30px]">
+                    <!-- Description Section -->
+                    <div class="w-full flex flex-col gap-3">
+                        <label for="goal-description" class="text-black text-lg font-normal font-['Poppins'] capitalize">Description</label>
+                        <input type="text" id="goal-description" name="goal_description" placeholder="Description about your goal"
+                               class="w-full p-2.5 rounded-[10px] border border-[#1b283f] text-[#1b283f] text-lg font-normal font-['Poppins'] focus:outline-none focus:border-[#05a99d]" required />
+                    </div>
+
+                    <!-- Amount Section -->
+                    <div class="w-full flex flex-col gap-3">
+                        <label for="goal-amount" class="text-black text-lg font-normal font-['Poppins'] capitalize">Amount</label>
+                        <div class="w-full p-2.5 rounded-[10px] border border-[#1b283f] flex justify-between items-center amount-container">
+                            <input type="number" id="goal-amount" name="goal_amount" placeholder="Enter amount"
+                                   class="w-full focus:outline-none text-[#1b283f] text-lg font-normal font-['Poppins'] amount-input"
+                                   oninput="formatBaht()" onkeydown="return restrictInput(event)"
+                                   min="0" step="any" required />
+                            <span id="currency-label" class="ml-2 text-[#1b283f] text-lg font-normal font-['Poppins']">baht</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Savings Goals -->
+                <div class="w-full p-5 rounded-[10px] border border-[#90acaa] flex flex-col gap-5">
+                    <!-- Distributing Evenly -->
+                    <div class="flex items-center mb-4">
+                        <input type="checkbox" id="distribute-evenly" name="distribute_evenly" class="mr-5" onclick="handleCheckboxToggle('distribute-evenly')">
+                        <div class="flex flex-col">
+                            <label for="distribute-evenly" class="text-[#1b283f] text-lg font-normal font-['Poppins']">Distribute evenly</label>
+                            <p class="text-[#90acaa] text-base font-normal font-['Poppins']">Automatically split your money equally across all savings goals</p>
+                        </div>
+                    </div>
+
+                <!-- Setting Custom Percentages -->
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="set-custom-percentages" name="set_custom_percentages" class="mr-4" onclick="handleCheckboxToggle('set-custom-percentages')">
+                    <div class="flex flex-col">
+                        <div class="flex items-center">
+                            <label for="set-custom-percentages" class="text-[#1b283f] text-lg font-normal font-['Poppins']">Select custom goals</label>
+                            <span id="custom-goals-error" class="error-message hidden text-red-500 text-sm ml-2">*Please select at least one goal*</span>
+                        </div>
+                        <p class="text-[#90acaa] text-base font-normal font-['Poppins']">Allocate specific goals to each saving</p>
+                    </div>
+                </div>
+                    <!-- Container for Input Fields -->
+                    <div id="percentage-inputs" class="flex flex-wrap justify-left gap-4 hidden">
+                        {% for i in '0123456' %}
+                        <div onclick="toggleSelection(this)" class="w-[185px] p-2.5 bg-[#f2f2f2] rounded-[10px] flex-col flex gap-[5px] border border-[#aec2c0] cursor-pointer selectable-item">
+                            <label class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">Tuition Fee {{ i }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- New Independent Checkbox Box -->
+                <div class="w-full p-5 rounded-[10px] border border-[#90acaa] flex flex-col gap-5">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="add-income-expense" name="add_income_expense" class="mr-5" onclick="updateSummary()">
+                        <div class="flex flex-col">
+                            <label for="add-income-expense" class="text-[#1b283f] text-lg font-normal font-['Poppins']">Add this money to income and expense</label>
+                            <p class="text-[#90acaa] text-base font-normal font-['Poppins']">Deduction of money from income and expenses in type of saving.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="w-full lg:w-1/3 flex flex-col gap-4">
+                <!-- Summary Section -->
+                <div class="w-full p-6 bg-white rounded-lg border border-[#aec2c0] flex flex-col gap-6">
+                    <h2 class="text-[#1b283f] text-2xl font-semibold">Summary</h2>
+                    <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
+                    <div class="w-full flex flex-col gap-4">
+                        <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">No description</div>
+                        <div class="w-full h-[1px] bg-[#ececec]"></div>
+                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">No amount</div>
+                        <div class="w-full h-[1px] bg-[#ececec]"></div>
+                        <div id="summary-distribution" class="text-[#1b283f] text-base font-normal">Distribute Evenly</div>
+                        <div id="summary-percentages" class="text-[#1b283f] text-base font-normal flex gap-2 flex-wrap overflow-x-auto"></div>
+
+                        <!-- Add to Income/Expense Section -->
+                        <div id="summary-income-expense" class="flex items-center gap-2 mt-4">
+                            <span class="text-[#1b283f] text-base">Add to income and expense:</span>
+                            <span id="income-expense-status" class="text-[#05a99d] font-semibold">No</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add New Money Flow Button -->
+                <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
+                    <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add New Money Flow</div>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    function formatBaht() {
+        const input = document.getElementById('goal-amount');
+        const currencyLabel = document.getElementById('currency-label');
+        currencyLabel.style.display = input.value ? 'inline' : 'none';
+    }
+
+    function restrictInput(event) {
+        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', '.'];
+        if (event.key >= 0 && event.key <= 9 || allowedKeys.includes(event.key)) {
+            return true;
+        }
+        return false;
+    }
+
+    document.getElementById('goal-description').addEventListener('input', updateSummary);
+    document.getElementById('goal-amount').addEventListener('input', updateSummary);
+
+    function updateSummary() {
+        const description = document.getElementById('goal-description').value.trim();
+        const amount = document.getElementById('goal-amount').value.trim();
+        const distribution = document.getElementById('distribute-evenly').checked ? 'Distribute Evenly' : 'Select Custom Goal';
+
+        document.getElementById('summary-description').textContent = description || 'No description';
+        document.getElementById('summary-amount').textContent = amount ? `${amount} Baht` : 'No amount';
+        document.getElementById('summary-distribution').textContent = distribution;
+
+        const selectedGoals = Array.from(document.querySelectorAll('.selectable-item.selected'))
+                                                .map(item => item.querySelector('label').textContent);
+        const GoalsSummary = document.getElementById('summary-percentages');
+
+        if (document.getElementById('distribute-evenly').checked) {
+            GoalsSummary.classList.add('hidden');
+        } else {
+            const goalBoxes = selectedGoals.map(goal => {
+                return `<div class="goal-box">${goal}</div>`;
+            }).join('');
+
+            if (selectedGoals.length > 0) {
+                GoalsSummary.innerHTML = goalBoxes;
+                GoalsSummary.classList.remove('hidden');
+            } else {
+                GoalsSummary.classList.add('hidden');
+            }
+        }
+
+        const addToIncomeExpense = document.getElementById('add-income-expense').checked;
+        document.getElementById('income-expense-status').textContent = addToIncomeExpense ? 'Yes' : 'No';
+    }
+
+    function toggleSelection(event) {
+        const item = event.currentTarget;
+        item.classList.toggle('selected');
+        updateSummary();
+    }
+
+    function handleCheckboxToggle(id) {
+        const distributeEvenlyCheckbox = document.getElementById('distribute-evenly');
+        const customPercentagesCheckbox = document.getElementById('set-custom-percentages');
+
+        if (id === 'distribute-evenly' && distributeEvenlyCheckbox.checked) {
+            customPercentagesCheckbox.checked = false;
+        } else if (id === 'set-custom-percentages' && customPercentagesCheckbox.checked) {
+            distributeEvenlyCheckbox.checked = false;
+        }
+
+        if (!distributeEvenlyCheckbox.checked && !customPercentagesCheckbox.checked) {
+            if (id === 'distribute-evenly') {
+                customPercentagesCheckbox.checked = true;
+            } else {
+                distributeEvenlyCheckbox.checked = true;
+            }
+        }
+
+        togglePercentageInputs();
+        updateSummary();
+    }
+
+    function togglePercentageInputs() {
+        const percentageInputs = document.getElementById('percentage-inputs');
+        const customPercentagesCheckbox = document.getElementById('set-custom-percentages');
+        percentageInputs.classList.toggle('hidden', !customPercentagesCheckbox.checked);
+    }
+
+    window.onload = function() {
+        document.getElementById('distribute-evenly').checked = true;
+        togglePercentageInputs();
+        updateSummary();
+    };
+
+    document.querySelectorAll('.selectable-item').forEach(item => {
+        item.addEventListener('click', toggleSelection);
+    });
+
+    function validateForm() {
+        const customPercentagesCheckbox = document.getElementById('set-custom-percentages');
+        const selectedGoals = document.querySelectorAll('.selectable-item.selected').length;
+        const errorMessage = document.getElementById('custom-goals-error');
+
+        if (customPercentagesCheckbox.checked && selectedGoals === 0) {
+            errorMessage.classList.remove('hidden');
+            return false;
+        } else {
+            errorMessage.classList.add('hidden');
+        }
+        return true;
+    }
+
+    document.getElementById('add-money-form').addEventListener('submit', function(event) {
+        if (!validateForm()) {
+            event.preventDefault();
+        }
+    });
+
+</script>
+
+<style>
+    .selectable-item {
+        transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        background-color: #f9fafb;
+        border: 2px solid #d1d5db;
+        border-radius: 10px;
+        color: #1f2937;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .selectable-item:hover {
+        background-color: #e5f7f6;
+        border-color: #38b2ac;
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .selectable-item.selected {
+        background-color: #e5f7f6;
+        border-color: #38b2ac;
+        color: #065f46;
+        transform: translateY(-2px);
+        box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    .selectable-item.selected::after {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background-color: #065f46;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border-radius: 50%;
+    }
+
+    .selectable-item:active {
+        transform: translateY(0);
+        box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .goal-box {
+        background-color: #e2e8f0;
+        border: 2px solid #cbd5e0;
+        color: #4a5568;
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        display: inline-block;
+        max-width: 100%;
+        white-space: nowrap;
+        word-wrap: break-word;
+    }
+
+.error-message {
+    color: #ff4d4d;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-left: 10px;
+    display: inline-block;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.error-message.hidden {
+    display: none;
+}
+
+</style>
+{% endblock %}

@@ -26,13 +26,13 @@
 </main>
 
 <!-- Features Section -->
-<section class="w-full bg-[#f2f2f2] py-8">
+<section class="w-full py-8">
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
             <!-- Card 1 -->
             <div class="md:col-span-4 flex flex-col h-full">
                 <a href="{% url 'moneymap:goals' %}" class="flex-grow flex justify-end items-end relative">
-                    <div class="bg-white rounded-lg p-10 flex flex-col justify-between transform transition-transform duration-300 hover:scale-105 group relative overflow-hidden">
+                    <div class="bg-white rounded-lg border border-[#f2f2f7] p-10 flex flex-col justify-between transform transition-transform duration-300 hover:scale-105 group relative overflow-hidden">
                         <!-- Background Image -->
                         <img src="{% static 'home/vector.png' %}" alt="Background Vector" class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none transform transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110 z-0" />
                         <!-- Content -->
@@ -109,9 +109,59 @@
     </div>
 </section>
 
+<div class="w-full max-w-[1352px] h-auto flex flex-col justify-between items-between mx-auto mt-10">
+    <div class="w-full h-[1px] bg-[#90acaa]"></div>
+    <h2 class="text-[#90acaa] text-lg font-normal font-['Poppins'] mt-7 text-center">
+        <a href="#scrollTarget">See what you can do with MoneyMap</a>
+    </h2>
+    <div class="text-center mt-1">
+        <svg class="w-6 h-6 text-[#90acaa] mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+    </div>
+</div>
+
+<!-- Section to Scroll To -->
+<div id="scrollTarget" class="w-full flex justify-center items-center mt-8">
+    <div class="w-full max-w-[1352px] h-auto flex flex-col md:flex-row justify-center items-center">
+        <!-- Image Section -->
+        <div class="w-full md:w-1/2 flex justify-center mb-4 md:mb-0">
+            <img src="{% static 'home/incomeexpense.png' %}" alt="Income and Expense" class="shadow-lg w-3/4 md:w-[90%] lg:w-full">
+        </div>
+
+        <!-- Description Section -->
+        <div class="w-full md:w-1/2 text-left px-4 md:px-8">
+            <h3 class="text-[#1b283f] text-3xl font-normal font-poppins mb-7">
+                Manage Your Income and Expenses
+            </h3>
+            <p class="text-[#555555] text-base md:text-lg font-normal">
+                Track and organize all your financial activities in one place. Monitor your spending and set budgets to stay on top of your financial goals.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Another Section to Scroll To -->
+<div class="w-full flex justify-center items-center mt-20">
+    <div class="w-full max-w-[1352px] h-auto flex flex-col md:flex-row justify-center items-center mb-10">
+        <div class="w-full md:w-1/2 text-left px-4 md:px-8 mb-4 md:mb-0">
+            <h3 class="text-[#1b283f] text-3xl font-normal font-poppins mb-7">
+                Set and Track Your Goals
+            </h3>
+            <p class="text-[#555555] text-base md:text-lg font-normal">
+                Define your financial goals and track your progress in real time. Achieve your dreams by setting clear targets and staying on track.
+            </p>
+        </div>
+
+        <div class="w-full md:w-1/2 flex justify-center mb-4 md:mb-0">
+            <img src="{% static 'home/goals.png' %}" alt="Goals" class="shadow-lg w-3/4 md:w-[90%] lg:w-full">
+        </div>
+    </div>
+</div>
+
 <!-- Why Choose Us Section -->
-<div class="w-full h-auto p-2.5 flex flex-col justify-center items-center gap-4 mt-10 mb-10">
-    <div class="max-w-[1354px] w-full flex flex-col md:flex-row justify-center items-center gap-4">
+<div class="w-full h-auto p-2.5 bg-[#F7F7F7] flex flex-col justify-center items-center gap-4 mt-10">
+    <div class="max-w-[1354px] w-full flex flex-col md:flex-row justify-center items-center gap-4 mb-10 mt-10">
         <div class="flex-1 min-w-[250px] order-1 md:order-none text-center mt-5 md:mt-0">
             <div class="text-[#1b283f] text-5xl font-semibold font-poppins capitalize leading-[72.07px]">
                 Why choose <br />
@@ -146,4 +196,9 @@
     </div>
 </div>
 
+<style>
+    html {
+        scroll-behavior: smooth;
+    }
+</style>
 {% endblock %}

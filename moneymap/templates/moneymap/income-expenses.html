@@ -1,4 +1,5 @@
 {% extends 'moneymap/base.html' %}
+{% load humanize %}
 {% load static %}
 
 {% block content %}
@@ -88,7 +89,7 @@
                                 <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
                                     {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
                                 </span>
-                                <span class="text-[#1b283f]">{{ item.amount }}</span>
+                                <span class="text-[#1b283f]">{{ item.amount|intcomma }}</span>
                             </span>
                         </div>
 
@@ -98,7 +99,7 @@
                                 <span class="{% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
                                     {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %}
                                 </span>
-                                <span class="text-[#1b283f]">{{ item.balance }}</span>
+                                <span class="text-[#1b283f]">{{ item.balance|intcomma }}</span>
                             </span>
                         </div>
 
@@ -167,7 +168,7 @@
                         {% else %}
                             <span class="text-[#ea3d53] text-3xl font-bold font-['Poppins']">-</span>
                         {% endif %}
-                        <span class="text-[#1b283f] text-3xl font-bold font-['Poppins']">{{ day.total_balance_amount }}</span>
+                        <span class="text-[#1b283f] text-3xl font-bold font-['Poppins']">{{ day.total_balance_amount|intcomma }}</span>
                     </div>
 
                     <!-- "See Detail" Section -->
