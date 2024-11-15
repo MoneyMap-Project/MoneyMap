@@ -38,6 +38,7 @@ def get_goals_data(user_goals, current_date):
         trend = 'Positive' if trend_value >= 0 else 'Negative'
 
         goals_data.append({
+            'id': goal.goal_id,
             'title': goal.title,
             'description': goal.description,
             'deadline': goal.end_date,

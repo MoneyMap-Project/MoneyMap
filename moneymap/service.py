@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 from .models import IncomeExpense
+from decimal import Decimal
 
 
 def calculate_balance(income_expenses):
@@ -121,3 +122,16 @@ def calculate_income_expense_percentage(month_income, month_expense):
         'income_percent': round(income_percent, 2),
         'expense_percent': round(expense_percent, 2)
     }
+
+
+def update_current_amount(self, amount_saved):
+    """Update current amount with a new saving input."""
+    self.current_amount += Decimal(amount_saved)
+    self.save()
+
+def remaining_amount(self):
+    """Calculate remaining amount to reach target."""
+    return max(Decimal('0.00'), self.target_amount - self.current_amount)
+
+def __str__(self):
+    return f"{self.description}"

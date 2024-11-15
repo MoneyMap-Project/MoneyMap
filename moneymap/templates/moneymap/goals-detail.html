@@ -39,12 +39,12 @@
                 <img src="{% static 'goal-detail/calendar.png' %}" alt="Calendar" class="w-11 h-12 mr-5">
                 <div>
                     <h2 class="text-[#1b283f] text-xl font-bold capitalize">
-                        1 January 2025   <!-- Date -->
+                        {{ end_date }} <!-- Date: deadline -->
                     </h2>
                     <p class="text-[#90acaa] text-lg capitalize">
                         <span>Remaining</span>
                         <span class="mx-1">
-                            82   <!-- Remaining days -->
+                            {{ remaining_day }}  <!-- Remaining days -->
                         </span>
                         <span>days</span>
                     </p>
@@ -54,8 +54,9 @@
         <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#07d4c5]/20 rounded-lg">
             <img src="{% static 'goal-detail/positive.png' %}" alt="Positive Trend" class="w-12 h-12 mr-5">
             <div>
-                <h2 class="text-[#1b283f] text-xl font-bold capitalize">Positive Trend</h2>
-                <p class="text-[#90acaa] text-lg">You’ll reach your goal!</p>
+                <h2 class="text-[#1b283f] text-xl font-bold capitalize">
+                    {{ trends }} Trend</h2>
+                <p class="text-[#90acaa] text-lg">You’ll reach your goal!</p>  <!--#TODO: Negative Trend-->
             </div>
         </div>
         <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#f2f2f2] rounded-lg">
@@ -64,15 +65,15 @@
                 <h2 class="text-[#1b283f] text-xl font-bold capitalize">Progress</h2>
                 <p class="text-[#05a99d] text-lg font-bold">
                     <span>
-                        24378   <!-- Progress -->
+                        {{ current_amount }}   <!-- (current_amount) Progress -->
                     </span>
                     <span class="mx-1">/</span>
                     <span>
-                        60700   <!-- Progress -->
+                        {{ target_amount }}   <!-- (target_amount) Progress -->
                     </span>
                     <span>(</span>
                     <span>
-                        40   <!-- Progress -->
+                        {{ saving_progress }}   <!-- (percentage) Progress -->
                     </span>
                     <span>%)</span>
                 </p>
@@ -97,7 +98,7 @@
                 <p class="text-[#90acaa] text-lg capitalize">Average daily collection rate</p>
                 <p class="text-[#05a99d] text-xl font-bold capitalize">
                     <span class="text-xl">
-                        284 <!-- Average Saving -->
+                        {{ avg_saving }} <!-- Average Saving -->
                     </span> bath/day
                 </p>
             </div>
@@ -106,7 +107,7 @@
                 <p class="text-[#90acaa] text-lg">Amount you should save per day</p>
                 <p class="text-[#05a99d] text-xl font-bold capitalize">
                     <span class="text-xl">
-                        243 <!-- Minimum Saving -->
+                        {{ min_saving }} <!-- Minimum Saving -->
                     </span> bath/day
                 </p>
             </div>
@@ -115,7 +116,7 @@
                 <p class="text-[#90acaa] text-lg">Extra needed daily to meet goal</p>
                 <p class="text-[#05a99d] text-xl font-bold capitalize">
                     <span class="text-xl">
-                        -41 <!-- Savings Shortfall-->
+                        {{ saving_shortfall }} <!-- Savings Shortfall-->
                     </span> bath/day
                 </p>
             </div>
@@ -130,13 +131,16 @@
             <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[25%] text-left">Amount</div>
             <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[25%] text-left">Goal's Balance</div>
         </div>
-        {% for i in '012' %}
+        {% for transaction in transactions %}
         <!-- Transaction Rows -->
         <div class="w-full border-t border-[#DAE0EB] flex">
             <div class="px-6 py-2 text-[#1b283f] text-lg w-[15%] text-center">{{ forloop.counter }}</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[35%] text-left">Pocket Money</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">2000</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">2000</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[35%] text-left">
+                {{ transaction.description }}</div>
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">
+                {{ transaction.current_amount }}</div> <!-- transaction Amount -->
+            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">
+                {{ transaction.current_amount }}</div> <!-- Goal's Balance -->
         </div>
         {% endfor %}
     </div>
