@@ -156,7 +156,6 @@ def calculate_min_saving(user, date, goal_id):
     try:
         goal = Goal.objects.get(goal_id=goal_id, user_id=user)
         # Calculate the remaining amount to reach the target
-        # remaining_amount = goal.remaining_amount()
         remaining_amount = rem_amount(goal)
 
         # Calculate total days left until the end date
