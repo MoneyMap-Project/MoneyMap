@@ -15,7 +15,8 @@
                     <div class="w-full flex flex-col gap-3">
                         <label for="description" class="text-black text-lg font-normal font-['Poppins'] capitalize">Description</label>
                         <input type="text" id="description" name="description" placeholder="Description about your money flow"
-                               class="w-full p-2.5 rounded-[10px] border border-[#1b283f] text-[#1b283f] text-lg font-normal font-['Poppins'] focus:outline-none focus:border-[#05a99d]" required />
+                               class="w-full p-2.5 rounded-[10px] border border-[#1b283f] text-[#1b283f] text-lg font-normal font-['Poppins'] focus:outline-none focus:border-[#05a99d]"
+                               value="{{ description }}" required />
                     </div>
 
                     <!-- Amount Section -->
@@ -24,7 +25,7 @@
                         <div class="w-full p-2.5 rounded-[10px] border border-[#1b283f] flex justify-between items-center amount-container">
                             <input type="number" id="amount" name="amount" placeholder="Enter amount"
                                    class="w-full focus:outline-none text-[#1b283f] text-lg font-normal font-['Poppins'] amount-input"
-                                   oninput="formatBaht()" onkeydown="return restrictInput(event)"
+                                   value="{{ amount }}" oninput="formatBaht()" onkeydown="return restrictInput(event)"
                                    min="0" step="any" required />
                             <span id="currency-label" class="ml-2 text-[#1b283f] text-lg font-normal font-['Poppins']">baht</span>
                         </div>
@@ -38,29 +39,25 @@
 
                 <!-- Tag Buttons Row with flex-wrap -->
                 <div class="flex flex-wrap items-center gap-5">
-                    {% for i in '0123' %}
-                    <div class="tag-button flex items-center gap-2.5 p-2.5 bg-[#f2f2f2] rounded-[10px] border border-[#90acaa] cursor-pointer">
-                        <div class="text-[#1b283f] text-lg font-normal font-['Poppins']">Food</div>
-                        <img src="{% static 'money-flow/delete.png' %}" alt="delete icon" class="w-5 h-5">
-                    </div>
+                    {% for tag in tags %}
+                        <form method="POST" action="{% url 'moneymap:delete_tag' %}" class="inline-block">
+                            {% csrf_token %}
+                            <input type="hidden" name="description" value="{{ request.session.description }}">
+                            <input type="hidden" name="amount" value="{{ request.session.amount }}">
+                            <input type="hidden" name="money_type" value="{{ request.session.money_type }}">
+                            <input type="hidden" name="tag_id" value="{{ tag.id }}">
+                            <div class="tag-button flex items-center gap-2.5 p-2.5 bg-[#f2f2f2] rounded-[10px] border border-[#90acaa] cursor-pointer">
+                                <div class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ tag.name }}</div>
+                                <button type="submit" class="w-5 h-5">
+                                    <img src="{% static 'money-flow/delete.png' %}" alt="delete icon" class="w-5 h-5">
+                                </button>
+                            </div>
+                        </form>
                     {% endfor %}
 
                     <!-- Add more tag button -->
                     <div id="add-more-tag" class="flex items-center gap-2.5 p-2.5 rounded-[10px] border border-[#90acaa] cursor-pointer">
                         <div class="text-[#90acaa] text-lg font-normal font-['Poppins']">+ Add more tag</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Overlay for Input Modal -->
-            <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-                <div class="bg-white p-5 rounded-lg shadow-lg w-1/3 relative z-60">
-                    <h2 class="text-xl font-semibold text-[#1b283f] mb-3">Add New Tag</h2>
-                    <input id="new-tag-input" type="text" placeholder="Enter tag name"
-                           class="w-full p-2 border border-[#1b283f] rounded-md focus:outline-none focus:border-[#05a99d]">
-                    <div class="flex justify-end gap-3 mt-4">
-                        <button id="cancel-button" class="px-4 py-2 bg-gray-300 rounded-md text-gray-700">Cancel</button>
-                        <button id="add-button" class="px-4 py-2 bg-[#05a99d] text-white rounded-md">Add Tag</button>
                     </div>
                 </div>
             </div>
@@ -96,11 +93,11 @@
                     <h2 class="text-[#1b283f] text-2xl font-semibold">Summary</h2>
                     <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
                     <div class="w-full flex flex-col gap-4">
-                        <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">Description of the project goes here.</div>
+                        <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">{{ description|default:"No description" }}</div>
                         <div class="w-full h-[1px] bg-[#ececec]"></div>
-                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">Amount: $0.00</div>
+                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">{{ amount|default:"No amount" }} baht</div>
                         <div class="w-full p-2.5 rounded-[10px] border border-[#90acaa] flex items-center">
-                            <div class="text-[#1b283f] text-lg font-normal">Type: <span id="selected-type">Savings Goal</span></div>
+                            <div class="text-[#1b283f] text-lg font-normal">Type: <span id="selected-type">{{ money_type|default:"Not selected" }}</span></div>
                         </div>
                     </div>
                 </div>
@@ -112,8 +109,26 @@
     </div>
 
     <!-- Hidden Input for Money Type -->
-    <input type="hidden" id="money-type" name="money_type" value="" />
+    <input type="hidden" id="money-type" name="money_type" value="{{ money_type }}" />
 </form>
+
+<!-- Overlay for Input Modal -->
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <form id="tag-form" method="POST" action="{% url 'moneymap:add_tag' %}" class="bg-white p-5 rounded-lg shadow-lg w-1/3 relative z-60">
+        {% csrf_token %}
+        <input type="hidden" id="description-hidden" name="description">
+        <input type="hidden" id="amount-hidden" name="amount">
+        <input type="hidden" id="money_type-hidden" name="money_type">
+
+        <h2 class="text-xl font-semibold text-[#1b283f] mb-3">Add New Tag</h2>
+        <input id="new-tag-input" name="tag_name" type="text" placeholder="Enter tag name"
+            class="w-full p-2 border border-[#1b283f] rounded-md focus:outline-none focus:border-[#05a99d]">
+        <div class="flex justify-end gap-3 mt-4">
+            <button type="button" id="cancel-button" class="px-4 py-2 bg-gray-300 rounded-md text-gray-700 hover:bg-gray-400">Cancel</button>
+            <button type="submit" id="add-button" class="px-4 py-2 bg-[#05a99d] text-white rounded-md hover:bg-[#009b86]">Add Tag</button>
+        </div>
+    </form>
+</div>
 
 <style>
     /* Responsive adjustments */
@@ -149,22 +164,49 @@
 </style>
 
 <script>
-    function formatBaht() {
-        const input = document.getElementById('amount');
-        const currencyLabel = document.getElementById('currency-label');
-        currencyLabel.style.display = input.value ? 'inline' : 'none';
-    }
+    const addMoreTagButton = document.getElementById('add-more-tag');
+    const overlay = document.getElementById('overlay');
+    const newTagInput = document.getElementById('new-tag-input');
+    const cancelButton = document.getElementById('cancel-button');
+    const addButton = document.getElementById('add-button');
+    const tagForm = document.getElementById('tag-form');
 
-    function restrictInput(event) {
-        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', '.'];
-        if (event.key >= 0 && event.key <= 9 || allowedKeys.includes(event.key)) {
-            return true;
+    addMoreTagButton.addEventListener('click', () => {
+        const description = document.getElementById('description').value;
+        const amount = document.getElementById('amount').value;
+        const moneyType = document.getElementById('money-type').value;
+
+        document.getElementById('description-hidden').value = description;
+        document.getElementById('amount-hidden').value = amount;
+        document.getElementById('money_type-hidden').value = moneyType;
+
+        overlay.classList.remove('hidden');
+        newTagInput.focus();
+    });
+
+    cancelButton.addEventListener('click', () => {
+        overlay.classList.add('hidden');
+        newTagInput.value = '';
+    });
+
+    addButton.addEventListener('click', (event) => {
+        const tagName = newTagInput.value.trim();
+
+        if (!tagName) {
+            alert("Tag name cannot be empty.");
+            event.preventDefault();
+        } else {
+            console.log("New tag added:", tagName);
         }
-        return false;
-    }
+    });
 
-    document.getElementById('description').addEventListener('input', updateSummary);
-    document.getElementById('amount').addEventListener('input', updateSummary);
+    tagForm.addEventListener('submit', (event) => {
+        const tagName = newTagInput.value.trim();
+        if (!tagName) {
+            alert("Tag name cannot be empty.");
+            event.preventDefault();
+        }
+    });
 
     function updateSummary() {
         const description = document.getElementById('description').value.trim();
@@ -175,6 +217,9 @@
         document.getElementById('summary-amount').textContent = amount ? `${amount} baht` : "No amount";
         document.getElementById('selected-type').textContent = selectedType;
     }
+
+    document.getElementById('description').addEventListener('input', updateSummary);
+    document.getElementById('amount').addEventListener('input', updateSummary);
 
     function selectType(type) {
         const incomeButton = document.querySelector('.income-button');
@@ -200,44 +245,23 @@
         updateSummary();
     }
 
+    function formatBaht() {
+        const input = document.getElementById('amount');
+        const currencyLabel = document.getElementById('currency-label');
+        currencyLabel.style.display = input.value ? 'inline' : 'none';
+    }
+
+    function restrictInput(event) {
+        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', '.'];
+        return event.key >= 0 && event.key <= 9 || allowedKeys.includes(event.key);
+    }
+
+    document.getElementById('amount').addEventListener('input', formatBaht);
+    document.getElementById('amount').addEventListener('keydown', restrictInput);
+
     document.addEventListener('DOMContentLoaded', function() {
         selectType('income');
         updateSummary();
-    });
-    const addMoreTagButton = document.getElementById('add-more-tag');
-    const overlay = document.getElementById('overlay');
-    const cancelButton = document.getElementById('cancel-button');
-    const addButton = document.getElementById('add-button');
-    const newTagInput = document.getElementById('new-tag-input');
-
-    addMoreTagButton.addEventListener('click', () => {
-        overlay.classList.remove('hidden');
-        newTagInput.focus();
-    });
-
-    cancelButton.addEventListener('click', () => {
-        overlay.classList.add('hidden');
-        newTagInput.value = '';
-    });
-
-    addButton.addEventListener('click', () => {
-        const tagName = newTagInput.value.trim();
-        if (tagName) {
-            console.log("New tag added:", tagName);
-            overlay.classList.add('hidden');
-            newTagInput.value = '';
-        }
-    });
-    const tagButtons = document.querySelectorAll('.tag-button');
-
-    tagButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const isActive = this.classList.contains('bg-green-100');
-            tagButtons.forEach(btn => btn.classList.remove('bg-green-100', 'border-[#05a99d]'));
-            if (!isActive) {
-                this.classList.add('bg-green-100', 'border-[#05a99d]');
-            }
-        });
     });
 </script>
 

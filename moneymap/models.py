@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.db import models
 from django.conf import settings
 
+
 class Goal(models.Model):
     """Model for a goal."""
     # goal id as a primary key from database
@@ -67,3 +68,11 @@ class SavingEntry(models.Model):
 
     def __str__(self):
         return f"{self.amount} saved on {self.date} at {self.goal_id}"
+
+
+class Tag(models.Model):
+    """Model to store tag names independently."""
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name

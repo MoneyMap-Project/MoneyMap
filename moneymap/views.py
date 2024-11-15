@@ -24,7 +24,7 @@ from .service import (
     calculate_income_expense_percentage,
     get_income_expense_by_day,
 )
-from .models import IncomeExpense, Goal
+from .models import IncomeExpense, Goal, Tag
 
 # logger
 
@@ -115,15 +115,23 @@ class GoalView(TemplateView):
 
         return context
 
-class MoneyFlowView(LoginRequiredMixin, View):
-    """
-    After clicking the `Income and Expense` button,
-    this view will be called.
-    """
 
+class MoneyFlowView(LoginRequiredMixin, View):
     def get(self, request):
         """Render the money flow form."""
-        return render(request, 'moneymap/money-flow.html')
+        tags = Tag.objects.all()
+
+        description = request.session.get('description', '')
+        amount = request.session.get('amount', '')
+        money_type = request.session.get('money_type', '')
+
+        return render(request, 'moneymap/money-flow.html',
+                      context={
+                          "tags": tags,
+                          "description": description,
+                          "amount": amount,
+                          "money_type": money_type
+                      })
 
     def post(self, request):
         """Handle the submitted form data."""
@@ -144,6 +152,9 @@ class MoneyFlowView(LoginRequiredMixin, View):
                 date=timezone.now(),
                 description=description,
             )
+            request.session.pop('description', None)
+            request.session.pop('amount', None)
+            request.session.pop('money_type', None)
             print(f"New IncomeExpense object created: {new_income_expense}")
             # logger.debug(request, 'Income/Expense recorded successfully!')
             return redirect('moneymap:income-expenses')
@@ -152,8 +163,13 @@ class MoneyFlowView(LoginRequiredMixin, View):
         except Exception as specific_error:
             logging.exception("An unexpected error occurred: %s", specific_error)
 
-        # Render the form again with any errors (optional)
-        return render(request, 'moneymap/money-flow.html')
+        # Render the form again with the session data
+        return render(request, 'moneymap/money-flow.html', {
+            "tags": Tag.objects.all(),
+            "description": description,
+            "amount": amount,
+            "money_type": selected_type
+        })
 
 
 class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
@@ -317,3 +333,44 @@ class AddGoals(TemplateView):
 
 class GoalsDetail(TemplateView):
     template_name = 'moneymap/goals-detail.html'
+
+
+class BaseTagView(View):
+    def save_session_data(self, request):
+        """Helper method to save and return form data in the session."""
+        description = request.POST.get('description', '')
+        amount = request.POST.get('amount', '')
+        money_type = request.POST.get('money_type', '')
+
+        request.session['description'] = description
+        request.session['amount'] = amount
+        request.session['money_type'] = money_type
+
+        return description, amount, money_type
+
+
+class AddTagView(BaseTagView):
+    def post(self, request):
+        tag_name = request.POST.get('tag_name').lower()
+
+        # Save the form data in session
+        self.save_session_data(request)
+
+        if tag_name:
+            new_tag = Tag.objects.create(name=tag_name)
+            new_tag.save()
+
+        return redirect('moneymap:money-flow')
+
+
+class DeleteTagView(BaseTagView):
+    def post(self, request):
+        tag_id = request.POST.get('tag_id')
+
+        # Retrieve and save form data in session
+        self.save_session_data(request)
+
+        if tag_id:
+            Tag.objects.filter(id=tag_id).delete()
+
+        return redirect('moneymap:money-flow')

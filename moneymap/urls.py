@@ -4,12 +4,15 @@ from django.urls import path
 
 from . import views
 
-app_name = "moneymap"   # pylint: disable=C0103
-
+app_name = "moneymap"  # pylint: disable=C0103
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
     path('income-expenses/', views.IncomeAndExpensesView.as_view(),
          name='income-expenses'),
+    path('income-expenses/add-tag', views.AddTagView.as_view(),
+         name='add_tag'),
+    path('income-expenses/delete-tag', views.DeleteTagView.as_view(),
+         name='delete_tag'),
     path('goals/', views.GoalView.as_view(), name='goals'),
     path('goals/add-money', views.AddMoney.as_view(), name='add_money_goals'),
     path('goals/detail', views.GoalsDetail.as_view(), name='goal_detail'),
