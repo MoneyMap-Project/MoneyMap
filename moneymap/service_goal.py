@@ -150,7 +150,6 @@ def calculate_min_saving(user, date, goal_id):
             return Decimal('0.00').quantize(Decimal('0.01'),
                                             rounding=ROUND_CEILING)  # Goal time has expired
 
-        # Calculate minimum saving needed per day
         min_saving = remaining_amount / total_days_left
         return min_saving.quantize(Decimal('0.01'),
                                    rounding=ROUND_CEILING)  # Round up to 2 decimal places
