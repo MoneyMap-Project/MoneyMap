@@ -117,8 +117,28 @@ class GoalView(TemplateView):
 
 
 class MoneyFlowView(LoginRequiredMixin, View):
+    """
+    View to handle the Money Flow page functionality.
+
+    This view provides methods to display the money flow form (GET request) and
+    handle form submissions (POST request). It supports managing session data
+    for temporary input storage, creating IncomeExpense objects, and associating
+    tags with the created records.
+    """
     def get(self, request):
-        """Render the money flow form."""
+        """
+        Handle GET requests for the money flow form.
+
+        This method retrieves user-specific tags and any previously saved
+        session data (description, amount, and money type). It renders the
+        money flow form with the retrieved context.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            HttpResponse: Rendered money flow form with context data.
+        """
         tags = Tag.objects.filter(user_id=request.user)
 
         description = request.session.get('description', '')
@@ -134,7 +154,21 @@ class MoneyFlowView(LoginRequiredMixin, View):
                       })
 
     def post(self, request):
-        """Handle the submitted form data."""
+        """
+        Handle POST requests to process the money flow form.
+
+        This method processes the form data submitted by the user. It validates
+        the input, creates an `IncomeExpense` object, associates selected tags,
+        and clears session data upon successful form submission. If errors
+        occur, it re-renders the form with the entered data and tags.
+
+        Args:
+            request (HttpRequest): The HTTP request object containing form data.
+
+        Returns:
+            HttpResponse: A redirect to the income-expenses page on success,
+                          or re-renders the form with errors otherwise.
+        """
         selected_type = request.POST.get('money_type')
         amount = request.POST.get('amount')
         description = request.POST.get('description')
@@ -152,8 +186,6 @@ class MoneyFlowView(LoginRequiredMixin, View):
                 description=description,
             )
 
-            # Handle tag selection (if any tag is selected)
-            # Get the selected tag from the form (you'll need to modify the template to pass this)
             selected_tag_id = request.POST.get('selected_tag')
             if selected_tag_id:
                 try:

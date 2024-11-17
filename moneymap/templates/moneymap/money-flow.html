@@ -310,9 +310,9 @@
             if (this.classList.contains('bg-light-green')) {
                 // If selected, unselect it
                 this.classList.remove('bg-light-green');
-                document.getElementById('selected-tag-input').value = ''; // Changed ID here
+                document.getElementById('selected-tag-input').value = '';
                 document.getElementById('tag-box').classList.add('hidden');
-                document.getElementById('selected-tag-display').textContent = 'No tag selected'; // Changed ID here
+                document.getElementById('selected-tag-display').textContent = 'No tag selected';
             } else {
                 // Deselect all tags
                 document.querySelectorAll('.tag-button').forEach(t => {
@@ -320,9 +320,9 @@
                 });
                 // Select the clicked tag
                 this.classList.add('bg-light-green');
-                document.getElementById('selected-tag-input').value = tagId; // Changed ID here
+                document.getElementById('selected-tag-input').value = tagId;
                 document.getElementById('tag-box').classList.remove('hidden');
-                document.getElementById('selected-tag-display').textContent = tagName; // Changed ID here
+                document.getElementById('selected-tag-display').textContent = tagName;
             }
             updateSummary();
         });
