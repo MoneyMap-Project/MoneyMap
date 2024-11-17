@@ -38,7 +38,7 @@
                 </div>
 
                 <!-- Tag Buttons Row -->
-                <div class="flex flex-wrap items-center gap-5">
+                <div class="flex flex-wrap items-center gap-5 mb-5">
                     {% for tag in tags %}
                         <div class="tag-button flex items-center gap-2.5 p-2.5 bg-[#f2f2f2] rounded-[10px] border border-[#90acaa] cursor-pointer">
                             <div class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ tag.name }}</div>
@@ -79,28 +79,37 @@
 
             <!-- Right Column -->
             <div class="w-full lg:w-1/3 flex flex-col gap-4">
-                <!-- Summary Section -->
-                <div class="w-full p-6 bg-white rounded-lg border border-[#aec2c0] flex flex-col gap-6">
-                    <h2 class="text-[#1b283f] text-2xl font-semibold">Summary</h2>
-                    <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
-                    <div class="w-full flex flex-col gap-4">
-                        <!-- Summary Description -->
-                        <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">
-                            {{ description|default:"No description" }}
-                        </div>
-                        <div class="w-full h-[1px] bg-[#ececec]"></div>
-                        <!-- Summary Amount -->
-                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">
-                            {{ amount|default:"No amount" }} baht
-                        </div>
-                        <!-- Money Type -->
-                        <div class="w-full p-2.5 rounded-[10px] border border-[#90acaa] flex items-center">
-                            <div class="text-[#1b283f] text-lg font-normal">Type:
-                                <span id="selected-type">{{ money_type|default:"Not selected" }}</span>
-                            </div>
-                        </div>
-                    </div>
+<!-- Summary Section -->
+<div class="w-full p-6 bg-white rounded-lg border border-[#aec2c0] flex flex-col gap-6">
+    <h2 class="text-[#1b283f] text-2xl font-semibold">Summary</h2>
+    <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
+    <div class="w-full flex flex-col gap-4">
+        <!-- Summary Description with Tag -->
+        <div class="flex items-center gap-2">
+            <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">
+                {{ description|default:"No description" }}
+            </div>
+            <div id="selected-tag-summary" class="text-[#90acaa] text-lg">
+                <!-- Tag Box -->
+                <div id="tag-box" class="hidden flex items-center gap-2.5 px-2.5 py-0.5 rounded-[10px] border border-[#90acaa] bg-[#f2f2f2]">
+                    <div id="selected-tag" class="text-[#1b283f] text-lg font-normal font-['Poppins']">No tag selected</div>
                 </div>
+            </div>
+        </div>
+        <div class="w-full h-[1px] bg-[#ececec]"></div>
+        <!-- Summary Amount -->
+        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">
+            {{ amount|default:"No amount" }} baht
+        </div>
+        <!-- Money Type -->
+        <div class="w-full p-2.5 rounded-[10px] border border-[#90acaa] flex items-center">
+            <div class="text-[#1b283f] text-lg font-normal">Type:
+                <span id="selected-type">{{ money_type|default:"Not selected" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
                 <!-- Submit Button -->
                 <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
                     <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add new money flow</div>
@@ -170,6 +179,11 @@
     .check-icon {
         display: none;
     }
+
+    .bg-light-green {
+        background-color: #c7f3e1;
+    }
+
 </style>
 
 <script>
@@ -215,34 +229,31 @@
         newTagInput.value = '';
     });
 
-    addButton.addEventListener('click', (event) => {
-        const tagName = newTagInput.value.trim();
+function updateSummary() {
+    const description = document.getElementById('description').value.trim();
+    const amount = document.getElementById('amount').value.trim();
+    const selectedType = document.getElementById('money-type').value || "Not selected";
 
-        if (!tagName) {
-            alert("Tag name cannot be empty.");
-            event.preventDefault();
-        } else {
-            console.log("New tag added:", tagName);
-        }
-    });
+    // Get the selected tag, if any
+    const selectedTag = document.querySelector('.tag-button.bg-light-green');
+    const tagName = selectedTag ? selectedTag.querySelector('div').textContent : "No tag selected";
 
-    tagForm.addEventListener('submit', (event) => {
-        const tagName = newTagInput.value.trim();
-        if (!tagName) {
-            alert("Tag name cannot be empty.");
-            event.preventDefault();
-        }
-    });
+    // Update the summary section
+    document.getElementById('summary-description').textContent = description || "No description";
+    document.getElementById('summary-amount').textContent = amount ? `${amount} baht` : "No amount";
+    document.getElementById('selected-type').textContent = selectedType;
 
-    function updateSummary() {
-        const description = document.getElementById('description').value.trim();
-        const amount = document.getElementById('amount').value.trim();
-        const selectedType = document.getElementById('money-type').value || "Savings Goal";
+    // Update the tag section
+    const tagBox = document.getElementById('tag-box');
+    const selectedTagText = document.getElementById('selected-tag');
 
-        document.getElementById('summary-description').textContent = description || "No description";
-        document.getElementById('summary-amount').textContent = amount ? `${amount} baht` : "No amount";
-        document.getElementById('selected-type').textContent = selectedType;
+    if (tagName !== "No tag selected") {
+        selectedTagText.textContent = tagName;
+        tagBox.classList.remove('hidden');
+    } else {
+        tagBox.classList.add('hidden');
     }
+}
 
     document.getElementById('description').addEventListener('input', updateSummary);
     document.getElementById('amount').addEventListener('input', updateSummary);
@@ -288,6 +299,25 @@
     document.addEventListener('DOMContentLoaded', function() {
         selectType('income');
         updateSummary();
+    });
+
+    document.querySelectorAll('.tag-button').forEach(tag => {
+        tag.addEventListener('click', function() {
+            // Check if this tag is already selected
+            if (this.classList.contains('bg-light-green')) {
+                // If selected, unselect it (remove the light green background)
+                this.classList.remove('bg-light-green');
+                updateSummary(); // Update the summary when unselected
+            } else {
+                // If not selected, deselect all tags
+                document.querySelectorAll('.tag-button').forEach(t => {
+                    t.classList.remove('bg-light-green');
+                });
+                // Then select the clicked tag
+                this.classList.add('bg-light-green');
+                updateSummary(); // Update the summary when selected
+            }
+        });
     });
 </script>
 

@@ -340,8 +340,21 @@ class GoalsDetail(TemplateView):
 
 
 class BaseTagView(View):
+    """
+    A base view for handling tag-related functionality, such as saving form data
+    in the session for later use.
+    """
     def save_session_data(self, request):
-        """Helper method to save and return form data in the session."""
+        """
+        Helper method to save and return form data (description, amount, money_type)
+        in the session.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object.
+
+        Returns:
+            tuple: A tuple containing the description, amount, and money_type.
+        """
         description = request.POST.get('description', '')
         amount = request.POST.get('amount', '')
         money_type = request.POST.get('money_type', '')
@@ -354,26 +367,57 @@ class BaseTagView(View):
 
 
 class AddTagView(BaseTagView):
+    """
+    A view for adding a new tag. It handles the POST request to create a new tag
+    and validates the tag name before saving it.
+    """
     def post(self, request):
-        tag_name = request.POST.get('tag_name').lower()
+        """
+        Handles the POST request to create a new tag. It validates the tag name
+        (ensuring it's not empty and does not already exist) and saves it to the database.
+        Displays appropriate messages to the user for success or errors.
 
-        # Save the form data in session
+        Args:
+            request (HttpRequest): The incoming HTTP request object.
+
+        Returns:
+            HttpResponse: A redirect to the 'money-flow' page after processing the request.
+        """
+        tag_name = request.POST.get('tag_name').strip()
         self.save_session_data(request)
 
-        if tag_name:
+        if not tag_name:
+            messages.error(request, "Tag name cannot be empty.")
+        elif Tag.objects.filter(name=tag_name, user_id=request.user).exists():
+            messages.error(request, "Tag name already exists.")
+        else:
             new_tag = Tag.objects.create(
                 name=tag_name,
-                user_id=request.user)
+                user_id=request.user
+            )
             new_tag.save()
+            messages.success(request, "Tag added successfully.")
 
         return redirect('moneymap:money-flow')
 
 
 class DeleteTagView(BaseTagView):
+    """
+    A view for deleting an existing tag. It handles the POST request to remove
+    a tag by its ID from the database.
+    """
     def post(self, request):
-        tag_id = request.POST.get('tag_id')
+        """
+        Handles the POST request to delete a tag. It deletes the tag with the
+        provided ID from the database.
 
-        # Retrieve and save form data in session
+        Args:
+            request (HttpRequest): The incoming HTTP request object.
+
+        Returns:
+            HttpResponse: A redirect to the 'money-flow' page after deleting the tag.
+        """
+        tag_id = request.POST.get('tag_id')
         self.save_session_data(request)
 
         if tag_id:
