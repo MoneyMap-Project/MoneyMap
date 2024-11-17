@@ -119,8 +119,7 @@ class GoalView(TemplateView):
 class MoneyFlowView(LoginRequiredMixin, View):
     def get(self, request):
         """Render the money flow form."""
-        tags = Tag.objects.filter(
-            user_id=request.user)
+        tags = Tag.objects.filter(user_id=request.user)
 
         description = request.session.get('description', '')
         amount = request.session.get('amount', '')
@@ -140,13 +139,10 @@ class MoneyFlowView(LoginRequiredMixin, View):
         amount = request.POST.get('amount')
         description = request.POST.get('description')
 
-        print(f"-{selected_type, amount, description}")
-
         try:
             amount_decimal = float(amount)
-            print(f"Converted amount: {amount_decimal}")
 
-            # Create and save a new IncomeExpense object
+            # Create and save the IncomeExpense object
             new_income_expense = IncomeExpense.objects.create(
                 user_id=request.user,
                 saved_to_income_expense=True,
@@ -155,21 +151,32 @@ class MoneyFlowView(LoginRequiredMixin, View):
                 date=timezone.now(),
                 description=description,
             )
+
+            # Handle tag selection (if any tag is selected)
+            # Get the selected tag from the form (you'll need to modify the template to pass this)
+            selected_tag_id = request.POST.get('selected_tag')
+            if selected_tag_id:
+                try:
+                    tag = Tag.objects.get(id=selected_tag_id, user_id=request.user)
+                    new_income_expense.tags.add(tag)
+                except Tag.DoesNotExist:
+                    logging.warning(f"Selected tag {selected_tag_id} does not exist or doesn't belong to user")
+
+            # Clear session data
             request.session.pop('description', None)
             request.session.pop('amount', None)
             request.session.pop('money_type', None)
-            print(f"New IncomeExpense object created: {new_income_expense}")
-            # logger.debug(request, 'Income/Expense recorded successfully!')
+
             return redirect('moneymap:income-expenses')
+
         except ValueError:
             logging.error("Invalid amount entered. Please enter a valid number.")
         except Exception as specific_error:
             logging.exception("An unexpected error occurred: %s", specific_error)
 
-        # Render the form again with the session data
+        tags = Tag.objects.filter(user_id=request.user)
         return render(request, 'moneymap/money-flow.html', {
-            "tags": Tag.objects.filter(
-                user_id=request.user),
+            "tags": tags,
             "description": description,
             "amount": amount,
             "money_type": selected_type

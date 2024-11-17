@@ -36,7 +36,6 @@
                 <div class="flex items-center gap-2.5">
                     <div class="text-[#1b283f] text-lg font-normal font-['Poppins']">Tag</div>
                 </div>
-
                 <!-- Tag Buttons Row -->
                 <div class="flex flex-wrap items-center gap-5 mb-5">
                     {% for tag in tags %}
@@ -51,6 +50,7 @@
                         <div class="text-[#90acaa] text-lg font-normal font-['Poppins']">+ Add more tag</div>
                     </div>
                 </div>
+                <input type="hidden" id="selected-tag-input" name="selected_tag" value="">
 
                 <!-- Income and Expenses Section -->
                 <div class="w-full flex flex-col lg:flex-row justify-start items-center gap-5">
@@ -79,36 +79,36 @@
 
             <!-- Right Column -->
             <div class="w-full lg:w-1/3 flex flex-col gap-4">
-<!-- Summary Section -->
-<div class="w-full p-6 bg-white rounded-lg border border-[#aec2c0] flex flex-col gap-6">
-    <h2 class="text-[#1b283f] text-2xl font-semibold">Summary</h2>
-    <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
-    <div class="w-full flex flex-col gap-4">
-        <!-- Summary Description with Tag -->
-        <div class="flex items-center gap-2">
-            <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">
-                {{ description|default:"No description" }}
-            </div>
-            <div id="selected-tag-summary" class="text-[#90acaa] text-lg">
-                <!-- Tag Box -->
-                <div id="tag-box" class="hidden flex items-center gap-2.5 px-2.5 py-0.5 rounded-[10px] border border-[#90acaa] bg-[#f2f2f2]">
-                    <div id="selected-tag" class="text-[#1b283f] text-lg font-normal font-['Poppins']">No tag selected</div>
+                <!-- Summary Section -->
+                <div class="w-full p-6 bg-white rounded-lg border border-[#aec2c0] flex flex-col gap-6">
+                    <h2 class="text-[#1b283f] text-2xl font-semibold">Summary</h2>
+                    <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
+                    <div class="w-full flex flex-col gap-4">
+                        <!-- Summary Description with Tag -->
+                        <div class="flex items-center gap-2">
+                            <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">
+                                {{ description|default:"No description" }}
+                            </div>
+                            <div id="selected-tag-summary" class="text-[#90acaa] text-lg">
+                            <!-- Tag Box -->
+                            <div id="tag-box" class="hidden flex items-center gap-2.5 px-2.5 py-0.5 rounded-[10px] border border-[#90acaa] bg-[#f2f2f2]">
+                                <div id="selected-tag-display" class="text-[#1b283f] text-lg font-normal font-['Poppins']">No tag selected</div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-[1px] bg-[#ececec]"></div>
+                        <!-- Summary Amount -->
+                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">
+                            {{ amount|default:"No amount" }} baht
+                        </div>
+                        <!-- Money Type -->
+                        <div class="w-full p-2.5 rounded-[10px] border border-[#90acaa] flex items-center">
+                            <div class="text-[#1b283f] text-lg font-normal">Type:
+                                <span id="selected-type">{{ money_type|default:"Not selected" }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="w-full h-[1px] bg-[#ececec]"></div>
-        <!-- Summary Amount -->
-        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">
-            {{ amount|default:"No amount" }} baht
-        </div>
-        <!-- Money Type -->
-        <div class="w-full p-2.5 rounded-[10px] border border-[#90acaa] flex items-center">
-            <div class="text-[#1b283f] text-lg font-normal">Type:
-                <span id="selected-type">{{ money_type|default:"Not selected" }}</span>
-            </div>
-        </div>
-    </div>
-</div>
 
                 <!-- Submit Button -->
                 <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
@@ -229,31 +229,31 @@
         newTagInput.value = '';
     });
 
-function updateSummary() {
-    const description = document.getElementById('description').value.trim();
-    const amount = document.getElementById('amount').value.trim();
-    const selectedType = document.getElementById('money-type').value || "Not selected";
+    function updateSummary() {
+        const description = document.getElementById('description').value.trim();
+        const amount = document.getElementById('amount').value.trim();
+        const selectedType = document.getElementById('money-type').value || "Not selected";
 
-    // Get the selected tag, if any
-    const selectedTag = document.querySelector('.tag-button.bg-light-green');
-    const tagName = selectedTag ? selectedTag.querySelector('div').textContent : "No tag selected";
+        // Get the selected tag, if any
+        const selectedTag = document.querySelector('.tag-button.bg-light-green');
+        const tagName = selectedTag ? selectedTag.querySelector('div').textContent.trim() : "No tag selected";
 
-    // Update the summary section
-    document.getElementById('summary-description').textContent = description || "No description";
-    document.getElementById('summary-amount').textContent = amount ? `${amount} baht` : "No amount";
-    document.getElementById('selected-type').textContent = selectedType;
+        // Update the summary section
+        document.getElementById('summary-description').textContent = description || "No description";
+        document.getElementById('summary-amount').textContent = amount ? `${amount} baht` : "No amount";
+        document.getElementById('selected-type').textContent = selectedType;
 
-    // Update the tag section
-    const tagBox = document.getElementById('tag-box');
-    const selectedTagText = document.getElementById('selected-tag');
+        // Update the tag section
+        const tagBox = document.getElementById('tag-box');
+        const selectedTagDisplay = document.getElementById('selected-tag-display');
 
-    if (tagName !== "No tag selected") {
-        selectedTagText.textContent = tagName;
-        tagBox.classList.remove('hidden');
-    } else {
-        tagBox.classList.add('hidden');
+        if (tagName !== "No tag selected") {
+            selectedTagDisplay.textContent = tagName;
+            tagBox.classList.remove('hidden');
+        } else {
+            tagBox.classList.add('hidden');
+        }
     }
-}
 
     document.getElementById('description').addEventListener('input', updateSummary);
     document.getElementById('amount').addEventListener('input', updateSummary);
@@ -303,20 +303,28 @@ function updateSummary() {
 
     document.querySelectorAll('.tag-button').forEach(tag => {
         tag.addEventListener('click', function() {
-            // Check if this tag is already selected
+            // Get the tag ID from the delete button's data attribute
+            const tagId = this.querySelector('.delete-tag-button').getAttribute('data-tag-id');
+            const tagName = this.querySelector('div').textContent.trim();
+
             if (this.classList.contains('bg-light-green')) {
-                // If selected, unselect it (remove the light green background)
+                // If selected, unselect it
                 this.classList.remove('bg-light-green');
-                updateSummary(); // Update the summary when unselected
+                document.getElementById('selected-tag-input').value = ''; // Changed ID here
+                document.getElementById('tag-box').classList.add('hidden');
+                document.getElementById('selected-tag-display').textContent = 'No tag selected'; // Changed ID here
             } else {
-                // If not selected, deselect all tags
+                // Deselect all tags
                 document.querySelectorAll('.tag-button').forEach(t => {
                     t.classList.remove('bg-light-green');
                 });
-                // Then select the clicked tag
+                // Select the clicked tag
                 this.classList.add('bg-light-green');
-                updateSummary(); // Update the summary when selected
+                document.getElementById('selected-tag-input').value = tagId; // Changed ID here
+                document.getElementById('tag-box').classList.remove('hidden');
+                document.getElementById('selected-tag-display').textContent = tagName; // Changed ID here
             }
+            updateSummary();
         });
     });
 </script>
