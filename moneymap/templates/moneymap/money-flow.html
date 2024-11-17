@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<form id="money-flow-form" action="{% url 'moneymap:money-flow' %}" method="POST">
+<form id="money-flow-form" action="{% url 'moneymap:money-flow' %}" method="POST" xmlns="">
     {% csrf_token %}
     <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
         <h1 class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">Add new income or expenses</h1>
@@ -37,30 +37,20 @@
                     <div class="text-[#1b283f] text-lg font-normal font-['Poppins']">Tag</div>
                 </div>
 
-                <!-- Tag Buttons Row with flex-wrap -->
+                <!-- Tag Buttons Row -->
                 <div class="flex flex-wrap items-center gap-5">
                     {% for tag in tags %}
-                        <form method="POST" action="{% url 'moneymap:delete_tag' %}" class="inline-block">
-                            {% csrf_token %}
-                            <input type="hidden" name="description" value="{{ request.session.description }}">
-                            <input type="hidden" name="amount" value="{{ request.session.amount }}">
-                            <input type="hidden" name="money_type" value="{{ request.session.money_type }}">
-                            <input type="hidden" name="tag_id" value="{{ tag.id }}">
-                            <div class="tag-button flex items-center gap-2.5 p-2.5 bg-[#f2f2f2] rounded-[10px] border border-[#90acaa] cursor-pointer">
-                                <div class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ tag.name }}</div>
-                                <button type="submit" class="w-5 h-5">
-                                    <img src="{% static 'money-flow/delete.png' %}" alt="delete icon" class="w-5 h-5">
-                                </button>
-                            </div>
-                        </form>
+                        <div class="tag-button flex items-center gap-2.5 p-2.5 bg-[#f2f2f2] rounded-[10px] border border-[#90acaa] cursor-pointer">
+                            <div class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ tag.name }}</div>
+                            <button type="button" class="w-5 h-5 delete-tag-button" data-tag-id="{{ tag.id }}">
+                                <img src="{% static 'money-flow/delete.png' %}" alt="delete icon" class="w-5 h-5">
+                            </button>
+                        </div>
                     {% endfor %}
-
-                    <!-- Add more tag button -->
                     <div id="add-more-tag" class="flex items-center gap-2.5 p-2.5 rounded-[10px] border border-[#90acaa] cursor-pointer">
                         <div class="text-[#90acaa] text-lg font-normal font-['Poppins']">+ Add more tag</div>
                     </div>
                 </div>
-            </div>
 
                 <!-- Income and Expenses Section -->
                 <div class="w-full flex flex-col lg:flex-row justify-start items-center gap-5">
@@ -85,6 +75,7 @@
                     </div>
                 </div>
             </div>
+        </div>
 
             <!-- Right Column -->
             <div class="w-full lg:w-1/3 flex flex-col gap-4">
@@ -93,21 +84,30 @@
                     <h2 class="text-[#1b283f] text-2xl font-semibold">Summary</h2>
                     <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
                     <div class="w-full flex flex-col gap-4">
-                        <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">{{ description|default:"No description" }}</div>
+                        <!-- Summary Description -->
+                        <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">
+                            {{ description|default:"No description" }}
+                        </div>
                         <div class="w-full h-[1px] bg-[#ececec]"></div>
-                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">{{ amount|default:"No amount" }} baht</div>
+                        <!-- Summary Amount -->
+                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">
+                            {{ amount|default:"No amount" }} baht
+                        </div>
+                        <!-- Money Type -->
                         <div class="w-full p-2.5 rounded-[10px] border border-[#90acaa] flex items-center">
-                            <div class="text-[#1b283f] text-lg font-normal">Type: <span id="selected-type">{{ money_type|default:"Not selected" }}</span></div>
+                            <div class="text-[#1b283f] text-lg font-normal">Type:
+                                <span id="selected-type">{{ money_type|default:"Not selected" }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!-- Submit Button -->
                 <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
                     <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add new money flow</div>
                 </button>
             </div>
         </div>
     </div>
-
     <!-- Hidden Input for Money Type -->
     <input type="hidden" id="money-type" name="money_type" value="{{ money_type }}" />
 </form>
@@ -116,9 +116,9 @@
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
     <form id="tag-form" method="POST" action="{% url 'moneymap:add_tag' %}" class="bg-white p-5 rounded-lg shadow-lg w-1/3 relative z-60">
         {% csrf_token %}
-        <input type="hidden" id="description-hidden" name="description">
-        <input type="hidden" id="amount-hidden" name="amount">
-        <input type="hidden" id="money_type-hidden" name="money_type">
+        <input type="hidden" id="add-description-hidden" name="description">
+        <input type="hidden" id="add-amount-hidden" name="amount">
+        <input type="hidden" id="add-money-type-hidden" name="money_type">
 
         <h2 class="text-xl font-semibold text-[#1b283f] mb-3">Add New Tag</h2>
         <input id="new-tag-input" name="tag_name" type="text" placeholder="Enter tag name"
@@ -129,6 +129,15 @@
         </div>
     </form>
 </div>
+
+<!-- Hidden form for deleting tag -->
+<form id="delete-tag-form" method="POST" action="{% url 'moneymap:delete_tag' %}">
+    {% csrf_token %}
+    <input type="hidden" id="delete-description-hidden" name="description">
+    <input type="hidden" id="delete-amount-hidden" name="amount">
+    <input type="hidden" id="delete-money-type-hidden" name="money_type">
+    <input type="hidden" id="delete-tag-id-hidden" name="tag_id">
+</form>
 
 <style>
     /* Responsive adjustments */
@@ -176,12 +185,29 @@
         const amount = document.getElementById('amount').value;
         const moneyType = document.getElementById('money-type').value;
 
-        document.getElementById('description-hidden').value = description;
-        document.getElementById('amount-hidden').value = amount;
-        document.getElementById('money_type-hidden').value = moneyType;
+        document.getElementById('add-description-hidden').value = description;
+        document.getElementById('add-amount-hidden').value = amount;
+        document.getElementById('add-money-type-hidden').value = moneyType;
 
         overlay.classList.remove('hidden');
         newTagInput.focus();
+    });
+
+
+    document.querySelectorAll('.delete-tag-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const tagId = this.getAttribute('data-tag-id');
+            const description = document.getElementById('description').value;
+            const amount = document.getElementById('amount').value;
+            const moneyType = document.getElementById('money-type').value;
+
+            document.getElementById('delete-description-hidden').value = description;
+            document.getElementById('delete-amount-hidden').value = amount;
+            document.getElementById('delete-money-type-hidden').value = moneyType;
+            document.getElementById('delete-tag-id-hidden').value = tagId;
+
+            document.getElementById('delete-tag-form').submit();
+        });
     });
 
     cancelButton.addEventListener('click', () => {

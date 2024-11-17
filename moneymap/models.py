@@ -73,6 +73,9 @@ class SavingEntry(models.Model):
 class Tag(models.Model):
     """Model to store tag names independently."""
     name = models.CharField(max_length=100, unique=True)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                on_delete=models.CASCADE,
+                                related_name='tag')
 
     def __str__(self):
         return self.name

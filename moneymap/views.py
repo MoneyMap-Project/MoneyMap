@@ -119,7 +119,8 @@ class GoalView(TemplateView):
 class MoneyFlowView(LoginRequiredMixin, View):
     def get(self, request):
         """Render the money flow form."""
-        tags = Tag.objects.all()
+        tags = Tag.objects.filter(
+            user_id=request.user)
 
         description = request.session.get('description', '')
         amount = request.session.get('amount', '')
@@ -138,6 +139,8 @@ class MoneyFlowView(LoginRequiredMixin, View):
         selected_type = request.POST.get('money_type')
         amount = request.POST.get('amount')
         description = request.POST.get('description')
+
+        print(f"-{selected_type, amount, description}")
 
         try:
             amount_decimal = float(amount)
@@ -165,7 +168,8 @@ class MoneyFlowView(LoginRequiredMixin, View):
 
         # Render the form again with the session data
         return render(request, 'moneymap/money-flow.html', {
-            "tags": Tag.objects.all(),
+            "tags": Tag.objects.filter(
+                user_id=request.user),
             "description": description,
             "amount": amount,
             "money_type": selected_type
@@ -357,7 +361,9 @@ class AddTagView(BaseTagView):
         self.save_session_data(request)
 
         if tag_name:
-            new_tag = Tag.objects.create(name=tag_name)
+            new_tag = Tag.objects.create(
+                name=tag_name,
+                user_id=request.user)
             new_tag.save()
 
         return redirect('moneymap:money-flow')
