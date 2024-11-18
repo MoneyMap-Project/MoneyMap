@@ -24,7 +24,7 @@ from .service import (
     calculate_income_expense_percentage,
     get_income_expense_by_day,
 )
-from .models import IncomeExpense, Goal
+from .models import IncomeExpense, Goal, Tag
 
 # logger
 
@@ -115,27 +115,68 @@ class GoalView(TemplateView):
 
         return context
 
+
 class MoneyFlowView(LoginRequiredMixin, View):
     """
-    After clicking the `Income and Expense` button,
-    this view will be called.
-    """
+    View to handle the Money Flow page functionality.
 
+    This view provides methods to display the money flow form (GET request) and
+    handle form submissions (POST request). It supports managing session data
+    for temporary input storage, creating IncomeExpense objects, and associating
+    tags with the created records.
+    """
     def get(self, request):
-        """Render the money flow form."""
-        return render(request, 'moneymap/money-flow.html')
+        """
+        Handle GET requests for the money flow form.
+
+        This method retrieves user-specific tags and any previously saved
+        session data (description, amount, and money type). It renders the
+        money flow form with the retrieved context.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            HttpResponse: Rendered money flow form with context data.
+        """
+        tags = Tag.objects.filter(user_id=request.user)
+
+        description = request.session.get('description', '')
+        amount = request.session.get('amount', '')
+        money_type = request.session.get('money_type', '')
+
+        return render(request, 'moneymap/money-flow.html',
+                      context={
+                          "tags": tags,
+                          "description": description,
+                          "amount": amount,
+                          "money_type": money_type
+                      })
 
     def post(self, request):
-        """Handle the submitted form data."""
+        """
+        Handle POST requests to process the money flow form.
+
+        This method processes the form data submitted by the user. It validates
+        the input, creates an `IncomeExpense` object, associates selected tags,
+        and clears session data upon successful form submission. If errors
+        occur, it re-renders the form with the entered data and tags.
+
+        Args:
+            request (HttpRequest): The HTTP request object containing form data.
+
+        Returns:
+            HttpResponse: A redirect to the income-expenses page on success,
+                          or re-renders the form with errors otherwise.
+        """
         selected_type = request.POST.get('money_type')
         amount = request.POST.get('amount')
         description = request.POST.get('description')
 
         try:
             amount_decimal = float(amount)
-            print(f"Converted amount: {amount_decimal}")
 
-            # Create and save a new IncomeExpense object
+            # Create and save the IncomeExpense object
             new_income_expense = IncomeExpense.objects.create(
                 user_id=request.user,
                 saved_to_income_expense=True,
@@ -144,16 +185,34 @@ class MoneyFlowView(LoginRequiredMixin, View):
                 date=timezone.now(),
                 description=description,
             )
-            print(f"New IncomeExpense object created: {new_income_expense}")
-            # logger.debug(request, 'Income/Expense recorded successfully!')
+
+            selected_tag_id = request.POST.get('selected_tag')
+            if selected_tag_id:
+                try:
+                    tag = Tag.objects.get(id=selected_tag_id, user_id=request.user)
+                    new_income_expense.tags.add(tag)
+                except Tag.DoesNotExist:
+                    logging.warning(f"Selected tag {selected_tag_id} does not exist or doesn't belong to user")
+
+            # Clear session data
+            request.session.pop('description', None)
+            request.session.pop('amount', None)
+            request.session.pop('money_type', None)
+
             return redirect('moneymap:income-expenses')
+
         except ValueError:
             logging.error("Invalid amount entered. Please enter a valid number.")
         except Exception as specific_error:
             logging.exception("An unexpected error occurred: %s", specific_error)
 
-        # Render the form again with any errors (optional)
-        return render(request, 'moneymap/money-flow.html')
+        tags = Tag.objects.filter(user_id=request.user)
+        return render(request, 'moneymap/money-flow.html', {
+            "tags": tags,
+            "description": description,
+            "amount": amount,
+            "money_type": selected_type
+        })
 
 
 class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
@@ -317,3 +376,94 @@ class AddGoals(TemplateView):
 
 class GoalsDetail(TemplateView):
     template_name = 'moneymap/goals-detail.html'
+
+
+class BaseTagView(View):
+    """
+    A base view for handling tag-related functionality, such as saving form data
+    in the session for later use.
+    """
+    def save_session_data(self, request):
+        """
+        Helper method to save and return form data (description, amount, money_type)
+        in the session.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object.
+
+        Returns:
+            tuple: A tuple containing the description, amount, and money_type.
+        """
+        description = request.POST.get('description', '')
+        amount = request.POST.get('amount', '')
+        money_type = request.POST.get('money_type', '')
+
+        request.session['description'] = description
+        request.session['amount'] = amount
+        request.session['money_type'] = money_type
+
+        return description, amount, money_type
+
+
+class AddTagView(BaseTagView):
+    """
+    A view for adding a new tag. It handles the POST request to create a new tag
+    and validates the tag name before saving it.
+    """
+
+    def post(self, request):
+        """
+        Handles the POST request to create a new tag. It validates the tag name
+        (ensuring it's not empty, not too long, and does not already exist)
+        and saves it to the database. Displays appropriate messages to the user
+        for success or errors.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object.
+
+        Returns:
+            HttpResponse: A redirect to the 'money-flow' page after processing the request.
+        """
+        tag_name = request.POST.get('tag_name').strip()
+        self.save_session_data(request)
+
+        if not tag_name:
+            messages.error(request, "Tag name cannot be empty.")
+        elif len(tag_name) > 100:
+            messages.error(request, "Tag name cannot be longer than 100 characters.")
+        elif Tag.objects.filter(name=tag_name, user_id=request.user).exists():
+            messages.error(request, "Tag name already exists.")
+        else:
+            new_tag = Tag.objects.create(
+                name=tag_name,
+                user_id=request.user
+            )
+            new_tag.save()
+            messages.success(request, "Tag added successfully.")
+
+        return redirect('moneymap:money-flow')
+
+
+class DeleteTagView(BaseTagView):
+    """
+    A view for deleting an existing tag. It handles the POST request to remove
+    a tag by its ID from the database.
+    """
+    def post(self, request):
+        """
+        Handles the POST request to delete a tag. It deletes the tag with the
+        provided ID from the database.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object.
+
+        Returns:
+            HttpResponse: A redirect to the 'money-flow' page after deleting the tag.
+        """
+        tag_id = request.POST.get('tag_id')
+        self.save_session_data(request)
+
+        if tag_id:
+            Tag.objects.filter(id=tag_id).delete()
+
+        return redirect('moneymap:money-flow')

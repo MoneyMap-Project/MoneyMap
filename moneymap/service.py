@@ -10,6 +10,10 @@ def calculate_balance(income_expenses):
     check = 0
     income_expense_with_balance = []
 
+    # Ensure income_expenses is prefetched with tags
+    if hasattr(income_expenses, 'prefetch_related'):
+        income_expenses = income_expenses.prefetch_related('tags')
+
     for item in income_expenses:
         # Update balance based on the type of transaction
         if item.type == 'Income':
@@ -19,11 +23,14 @@ def calculate_balance(income_expenses):
             balance -= item.amount
             check -= item.amount
 
+        tags = list(item.tags.all())
+
         # Add each record along with the updated balance to the list
         income_expense_with_balance.append({
             'date': item.date,
             'IncomeExpense_id': item.IncomeExpense_id,
             'description': item.description,
+            'tags': tags,
             'amount': item.amount,
             'balance': abs(balance),
             'type': item.type,
