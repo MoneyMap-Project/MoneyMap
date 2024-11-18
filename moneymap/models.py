@@ -56,14 +56,3 @@ class IncomeExpense(models.Model):
 
     def __str__(self):
         return f"{self.description}"
-
-
-class SavingEntry(models.Model):
-    """ Model for saving entries."""
-    saving_id = models.AutoField(primary_key=True)
-    goal_id = models.ForeignKey('Goal', on_delete=models.CASCADE)
-    date = models.DateField()
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return f"{self.amount} saved on {self.date} at {self.goal_id}"

@@ -3,14 +3,17 @@ Views for the MoneyMap application.
 This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
-from datetime import date
+from datetime import date, datetime
 import logging
+from decimal import Decimal
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, CreateView
+from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .service_addgoals import get_goals_data
@@ -271,8 +274,104 @@ class HistoryView(LoginRequiredMixin, View):
         })
 
 
-class AddMoney(TemplateView):
+class AddSavingMoney(TemplateView):
+    """View to add saving records associated with goals that user want."""
     template_name = 'moneymap/add-money-goals.html'
+
+    def get(self, request):
+        """Render the Add Money form with the user's goals."""
+        if request.user.is_authenticated:
+            # Retrieve the user's goals
+            user_goals = Goal.objects.filter(user_id=request.user)
+            return render(request, self.template_name, {'goals': user_goals})
+        else:
+            # Redirect to login if the user is not authenticated
+            return redirect('login')
+
+    def post(self, request):
+        """Handle the submitted form data for adding money."""
+        amount = request.POST.get('goal_amount')
+        date = request.POST.get('date')
+        distribute_evenly = request.POST.get('distribute_evenly')
+        select_custom_goals = request.POST.get('select_custom_goals')
+        selected_goals = request.POST.getlist('selected_goals[]')
+        add_to_income_expense = request.POST.get(
+            'add_income_expense')
+        print(distribute_evenly)
+        print(select_custom_goals)
+        print(selected_goals)
+
+        try:
+            # Validate amount
+            amount_decimal = Decimal(amount)
+
+            # Validate and parse date
+            if not date:
+                raise ValueError("Date is required.")
+            parsed_date = datetime.strptime(date, '%Y-%m-%d').date()
+
+            if distribute_evenly == 'on' and select_custom_goals is None:
+                # Retrieve the selected goals based on selected goal IDs
+                goals = Goal.objects.filter(user_id=request.user)
+            elif distribute_evenly is None and select_custom_goals == 'on':
+                # Retrieve the selected goals based on selected goal IDs
+                goals = Goal.objects.filter(goal_id__in=selected_goals, user_id=request.user)
+
+            if len(goals) == 0:
+                raise ValueError("No goals selected.")
+
+            # Distribute the amount evenly across the selected goals
+            amount_per_goal = amount_decimal / len(goals)
+
+            # Process each selected goal
+            for goal in goals:
+                # Update goal's current amount
+                goal.current_amount += amount_per_goal
+                goal.save()
+
+                # Optionally create an IncomeExpense record
+                if add_to_income_expense:
+                    IncomeExpense.objects.create(
+                        user_id=request.user,
+                        type='saving',
+                        amount=amount_per_goal,
+                        date=parsed_date,
+                        description=f'Saving money to {goal.title}',
+                        saved_to_income_expense=True,
+                    )
+
+            # Redirect to the goals or income-expenses page
+            return redirect('moneymap:goals')
+
+        except Goal.DoesNotExist:
+            logging.error("One or more selected goals do not exist.")
+            return render(request, self.template_name, {
+                'error': 'One or more selected goals do not exist.'})
+        except ValueError as e:
+            logging.error(str(e))
+            return render(request, self.template_name, {'error': str(e)})
+        except Exception as specific_error:
+            logging.exception("An unexpected error occurred: %s",
+                              specific_error)
+            return render(request, self.template_name,
+                          {'error': 'An unexpected error occurred.'})
+    @staticmethod
+    def _update_goal_and_record(user, goal, amount, add_to_income_expense):
+        """Helper function to update goal and create an income/expense record."""
+        # Update the goal's current amount
+        goal.current_amount += amount
+        goal.save()
+
+        # Optionally create an IncomeExpense record
+        if add_to_income_expense:
+            IncomeExpense.objects.create(
+                user_id=user,
+                type='saving',
+                amount=amount,
+                date=timezone.now(),
+                description=f'Saving money to {goal.title}',
+                saved_to_income_expense=True,
+            )
 
 
 class AddGoals(TemplateView):

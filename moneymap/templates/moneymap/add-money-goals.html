@@ -4,6 +4,8 @@
 {% block content %}
 <form id="add-money-form" action="{% url 'moneymap:add_money_goals' %}" method="POST" onsubmit="return validateForm()">
     {% csrf_token %}
+    <label for="date" style="display:none;">Date:</label>
+    <input type="date" id="date" name="date" required style="display:none;">
     <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
         <h1 class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">Add money to your goal</h1>
 
@@ -36,22 +38,25 @@
                         </div>
                     </div>
 
-                <!-- Setting Custom Percentages -->
-                <div class="flex items-center gap-3">
-                    <input type="checkbox" id="set-custom-percentages" name="set_custom_percentages" class="mr-4" onclick="handleCheckboxToggle('set-custom-percentages')">
-                    <div class="flex flex-col">
-                        <div class="flex items-center">
-                            <label for="set-custom-percentages" class="text-[#1b283f] text-lg font-normal font-['Poppins']">Select custom goals</label>
-                            <span id="custom-goals-error" class="error-message hidden text-red-500 text-sm ml-2">*Please select at least one goal*</span>
+                    <!-- Select custom goals -->
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="select-custom-goals" name="select_custom_goals" class="mr-4" onclick="handleCheckboxToggle('select-custom-goals')">
+                        <div class="flex flex-col">
+                            <div class="flex items-center">
+                                <label for="select-custom-goals" class="text-[#1b283f] text-lg font-normal font-['Poppins']">Select custom goals</label>
+                                <span id="custom-goals-error" class="error-message hidden text-red-500 text-sm ml-2">*Please select at least one goal*</span>
+                            </div>
+                            <p class="text-[#90acaa] text-base font-normal font-['Poppins']">Allocate specific goals to each saving</p>
                         </div>
-                        <p class="text-[#90acaa] text-base font-normal font-['Poppins']">Allocate specific goals to each saving</p>
                     </div>
-                </div>
                     <!-- Container for Input Fields -->
                     <div id="percentage-inputs" class="flex flex-wrap justify-left gap-4 hidden">
-                        {% for i in '0123456' %}
-                        <div onclick="toggleSelection(this)" class="w-[185px] p-2.5 bg-[#f2f2f2] rounded-[10px] flex-col flex gap-[5px] border border-[#aec2c0] cursor-pointer selectable-item">
-                            <label class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">Tuition Fee {{ i }}</label>
+                        {% for goal in goals %}
+                        <div onclick="toggleSelection(this, '{{ goal.goal_id }}')"
+                             class="w-[185px] p-2.5 bg-[#f2f2f2] rounded-[10px] flex-col flex gap-[5px] border border-[#aec2c0] cursor-pointer selectable-item">
+                            <label class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">
+                                {{ goal.title }}
+                            </label>
                         </div>
                         {% endfor %}
                     </div>
@@ -118,11 +123,14 @@
         const amount = document.getElementById('goal-amount').value.trim();
         const distribution = document.getElementById('distribute-evenly').checked ? 'Distribute Evenly' : 'Select Custom Goal';
 
-        document.getElementById('summary-amount').textContent = amount ? `${amount} Baht` : 'No amount';
+        // Update distribution text
         document.getElementById('summary-distribution').textContent = distribution;
+        // Update amount summary
+        document.getElementById('summary-amount').textContent = amount ? `${amount} Baht` : 'No amount';
 
+        // Handling selected goals for custom selection
         const selectedGoals = Array.from(document.querySelectorAll('.selectable-item.selected'))
-                                                .map(item => item.querySelector('label').textContent);
+                                    .map(item => item.querySelector('label').textContent);
         const GoalsSummary = document.getElementById('summary-percentages');
 
         if (document.getElementById('distribute-evenly').checked) {
@@ -140,30 +148,58 @@
             }
         }
 
+        // Add income/expense status logic here
         const addToIncomeExpense = document.getElementById('add-income-expense').checked;
         document.getElementById('income-expense-status').textContent = addToIncomeExpense ? 'Yes' : 'No';
     }
 
-    function toggleSelection(event) {
-        const item = event.currentTarget;
-        item.classList.toggle('selected');
-        updateSummary();
+    function toggleSelection(item, goalId) {
+    item.classList.toggle('selected');
+
+    // Find or create the hidden input field
+    const form = document.querySelector('form');
+    let hiddenInput = form.querySelector(`input[name="selected_goals[]"][value="${goalId}"]`);
+
+    if (item.classList.contains('selected')) {
+        // Add hidden input if not already present
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'selected_goals[]';
+            hiddenInput.value = goalId;
+            form.appendChild(hiddenInput);
+        }
+    } else {
+        // Remove hidden input if deselected
+        if (hiddenInput) {
+            hiddenInput.remove();
+        }
     }
+
+    updateSummary();
+}
+
 
     function handleCheckboxToggle(id) {
         const distributeEvenlyCheckbox = document.getElementById('distribute-evenly');
-        const customPercentagesCheckbox = document.getElementById('set-custom-percentages');
+        const selectCustomGoalsCheckbox = document.getElementById('select-custom-goals');
 
-        if (id === 'distribute-evenly' && distributeEvenlyCheckbox.checked) {
-            customPercentagesCheckbox.checked = false;
-        } else if (id === 'set-custom-percentages' && customPercentagesCheckbox.checked) {
-            distributeEvenlyCheckbox.checked = false;
+        // If 'Distribute Evenly' is clicked
+        if (id === 'distribute-evenly') {
+            if (distributeEvenlyCheckbox.checked) {
+                selectCustomGoalsCheckbox.checked = false; // Uncheck the other option
+            } else {
+                // Ensure 'Select Custom Goals' is checked if 'Distribute Evenly' is unchecked
+                selectCustomGoalsCheckbox.checked = true;
+            }
         }
 
-        if (!distributeEvenlyCheckbox.checked && !customPercentagesCheckbox.checked) {
-            if (id === 'distribute-evenly') {
-                customPercentagesCheckbox.checked = true;
+        // If 'Select Custom Goals' is clicked
+        if (id === 'select-custom-goals') {
+            if (selectCustomGoalsCheckbox.checked) {
+                distributeEvenlyCheckbox.checked = false; // Uncheck the other option
             } else {
+                // Ensure 'Distribute Evenly' is checked if 'Select Custom Goals' is unchecked
                 distributeEvenlyCheckbox.checked = true;
             }
         }
@@ -174,16 +210,18 @@
 
     function togglePercentageInputs() {
         const percentageInputs = document.getElementById('percentage-inputs');
-        const customPercentagesCheckbox = document.getElementById('set-custom-percentages');
-        percentageInputs.classList.toggle('hidden', !customPercentagesCheckbox.checked);
+        const selectCustomGoalsCheckbox = document.getElementById('select-custom-goals');
+        percentageInputs.classList.toggle('hidden', !selectCustomGoalsCheckbox.checked);
     }
 
     window.onload = function() {
+        // Default setting: Distribute evenly and hide custom percentages inputs
         document.getElementById('distribute-evenly').checked = true;
         togglePercentageInputs();
         updateSummary();
     };
 
+    // Ensure event listeners are attached to selectable items
     document.querySelectorAll('.selectable-item').forEach(item => {
         item.addEventListener('click', toggleSelection);
     });
@@ -208,7 +246,15 @@
         }
     });
 
+    // Set today's date to the date input field when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        dateInput.value = today; // Set the value to today's date
+    });
+
 </script>
+
 
 <style>
     .selectable-item {
