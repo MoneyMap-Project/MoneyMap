@@ -79,14 +79,29 @@ class IncomeAndExpensesView(TemplateView):
 
 @login_required
 def delete_income_expense(request, income_expense_id):
-    """For delete an IncomeExpense object"""
+    """Delete an IncomeExpense object and update the related goal if necessary."""
 
     # Retrieve the IncomeExpense object or return 404 if not found
     income_expense = get_object_or_404(IncomeExpense,
                                        IncomeExpense_id=income_expense_id,
                                        user_id=request.user)
 
-    # Delete the object
+    # Check if the record type is 'saving'
+    if income_expense.type == 'saving':
+        # Retrieve the related goal
+        goal = Goal.objects.filter(
+            user_id=request.user,
+            title=income_expense.description.split(" to ")[-1]  # the description follows the format "Saving money to <goal_title>"
+        ).first()
+
+        # Update the goal's current amount
+        if goal:
+            goal.current_amount -= Decimal(income_expense.amount)
+            if goal.current_amount < 0:
+                goal.current_amount = Decimal('0.00')  # Ensure the amount does not go below zero
+            goal.save()
+
+    # Delete the IncomeExpense object
     income_expense.delete()
 
     # Add a success message
@@ -94,7 +109,6 @@ def delete_income_expense(request, income_expense_id):
 
     # Redirect back to the income and expenses view
     return redirect('moneymap:income-expenses')
-
 
 class GoalView(TemplateView):
     """View for the goals page."""
@@ -290,8 +304,10 @@ class AddSavingMoney(TemplateView):
 
     def post(self, request):
         """Handle the submitted form data for adding money."""
+        local_time = timezone.localtime(timezone.now())
+
         amount = request.POST.get('goal_amount')
-        date = request.POST.get('date')
+        date = str(local_time.date())
         distribute_evenly = request.POST.get('distribute_evenly')
         select_custom_goals = request.POST.get('select_custom_goals')
         selected_goals = request.POST.getlist('selected_goals[]')
