@@ -318,6 +318,11 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
             # Validate amount
             amount_decimal = Decimal(amount)
 
+            # Check if the amount is zero or negative
+            if amount_decimal <= 0:
+                raise ValueError(
+                    "Amount must be a positive number greater than zero.")
+
             # Validate and parse date
             if not date:
                 raise ValueError("Date is required.")
@@ -342,8 +347,16 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
 
             # If the amount to be saved exceeds the total available space across all goals
             if amount_decimal > total_available_space:
-                raise ValueError(
-                    "Saving amount exceeds the target amount of the selected goals.")
+                # Add an error message with a specific tag (e.g., 'saving_error')
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    "Saving amount exceeds the target amount of the selected goals.",
+                    extra_tags='saving_error'
+                )
+
+                # Redirect the user back to the add money goals page
+                return redirect('moneymap:add_money_goals')
 
             # Now proceed to update each goal's current amount
             amount_per_goal = amount_decimal / len(goals)
