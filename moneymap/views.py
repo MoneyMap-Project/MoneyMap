@@ -110,7 +110,7 @@ def delete_income_expense(request, income_expense_id):
     # Redirect back to the income and expenses view
     return redirect('moneymap:income-expenses')
 
-class GoalView(TemplateView):
+class GoalView(LoginRequiredMixin, TemplateView):
     """View for the goals page."""
     template_name = 'moneymap/goals.html'
 
@@ -288,7 +288,7 @@ class HistoryView(LoginRequiredMixin, View):
         })
 
 
-class AddSavingMoney(TemplateView):
+class AddSavingMoney(LoginRequiredMixin, TemplateView):
     """View to add saving records associated with goals that user want."""
     template_name = 'moneymap/add-money-goals.html'
 
@@ -333,14 +333,29 @@ class AddSavingMoney(TemplateView):
                 # Retrieve the selected goals based on selected goal IDs
                 goals = Goal.objects.filter(goal_id__in=selected_goals, user_id=request.user)
 
-            if len(goals) == 0:
-                raise ValueError("No goals selected.")
-
-            # Distribute the amount evenly across the selected goals
-            amount_per_goal = amount_decimal / len(goals)
+            if not goals.exists():
+                raise ValueError("No goals selected or you have no goals.")
 
             # Process each selected goal
+            # Check if the saving amount exceeds the available space for each goal
+            total_available_space = 0
             for goal in goals:
+                available_space = goal.target_amount - goal.current_amount
+                total_available_space += available_space
+
+            # If the amount to be saved exceeds the total available space across all goals
+            if amount_decimal > total_available_space:
+                raise ValueError(
+                    "Saving amount exceeds the target amount of the selected goals.")
+
+            # Now proceed to update each goal's current amount
+            amount_per_goal = amount_decimal / len(goals)
+            for goal in goals:
+                available_space = goal.target_amount - goal.current_amount
+                if amount_per_goal > available_space:
+                    raise ValueError(
+                        f"Saving amount for {goal.title} exceeds its available space.")
+
                 # Update goal's current amount
                 goal.current_amount += amount_per_goal
                 goal.save()
@@ -390,7 +405,7 @@ class AddSavingMoney(TemplateView):
             )
 
 
-class AddGoals(TemplateView):
+class AddGoals(LoginRequiredMixin, TemplateView):
     template_name = 'moneymap/add_goals.html'
 
     def get(self, request):
