@@ -313,9 +313,6 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
         selected_goals = request.POST.getlist('selected_goals[]')
         add_to_income_expense = request.POST.get(
             'add_income_expense')
-        print(distribute_evenly)
-        print(select_custom_goals)
-        print(selected_goals)
 
         try:
             # Validate amount
