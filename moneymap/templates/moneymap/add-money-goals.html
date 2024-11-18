@@ -21,6 +21,9 @@
                                     {% if 'saving_error' in message.tags %}
                                         <li class="error-message">{{ message }}</li>
                                     {% endif %}
+                                    {% if 'goal_error' in message.tags %}
+                                        <li class="error-message">{{ message }}</li>
+                                    {% endif %}
                                 {% endfor %}
                             </ul>
                         {% endif %}

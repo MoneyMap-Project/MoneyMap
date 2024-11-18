@@ -338,7 +338,6 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
             if not goals.exists():
                 raise ValueError("No goals selected or you have no goals.")
 
-            # Process each selected goal
             # Check if the saving amount exceeds the available space for each goal
             total_available_space = 0
             for goal in goals:
@@ -347,7 +346,7 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
 
             # If the amount to be saved exceeds the total available space across all goals
             if amount_decimal > total_available_space:
-                # Add an error message with a specific tag (e.g., 'saving_error')
+                # Add an error message with a specific tag
                 messages.add_message(
                     request,
                     messages.ERROR,
@@ -363,8 +362,14 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
             for goal in goals:
                 available_space = goal.target_amount - goal.current_amount
                 if amount_per_goal > available_space:
-                    raise ValueError(
-                        f"Saving amount for {goal.title} exceeds its available space.")
+                    # Add an error message with a specific tag
+                    messages.error(
+                        request,
+                        f"Saving amount for {goal.title} exceeds its available space.",
+                        extra_tags='goal_error'  # Specific tag
+                    )
+                    # Redirect back to the add_money_goals page
+                    return redirect('moneymap:add_money_goals')
 
                 # Update goal's current amount
                 goal.current_amount += amount_per_goal
