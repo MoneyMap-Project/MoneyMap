@@ -410,11 +410,13 @@ class AddTagView(BaseTagView):
     A view for adding a new tag. It handles the POST request to create a new tag
     and validates the tag name before saving it.
     """
+
     def post(self, request):
         """
         Handles the POST request to create a new tag. It validates the tag name
-        (ensuring it's not empty and does not already exist) and saves it to the database.
-        Displays appropriate messages to the user for success or errors.
+        (ensuring it's not empty, not too long, and does not already exist)
+        and saves it to the database. Displays appropriate messages to the user
+        for success or errors.
 
         Args:
             request (HttpRequest): The incoming HTTP request object.
@@ -427,6 +429,8 @@ class AddTagView(BaseTagView):
 
         if not tag_name:
             messages.error(request, "Tag name cannot be empty.")
+        elif len(tag_name) > 100:
+            messages.error(request, "Tag name cannot be longer than 100 characters.")
         elif Tag.objects.filter(name=tag_name, user_id=request.user).exists():
             messages.error(request, "Tag name already exists.")
         else:
