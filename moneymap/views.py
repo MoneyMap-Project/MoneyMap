@@ -17,6 +17,13 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .service_addgoals import get_goals_data
+from .service_addsavingmoney import (
+    validate_amount,
+    get_goals,
+    check_goals_availability,
+    distribute_savings,
+    handle_goal_error,
+)
 from .service import (
     calculate_balance,
     calculate_balance_last_7_days,
@@ -311,120 +318,43 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
         distribute_evenly = request.POST.get('distribute_evenly')
         select_custom_goals = request.POST.get('select_custom_goals')
         selected_goals = request.POST.getlist('selected_goals[]')
-        add_to_income_expense = request.POST.get(
-            'add_income_expense')
+        add_to_income_expense = request.POST.get('add_income_expense')
 
         try:
             # Validate amount
-            amount_decimal = Decimal(amount)
-
-            # Check if the amount is zero or negative
-            if amount_decimal <= 0:
-                raise ValueError(
-                    "Amount must be a positive number greater than zero.")
+            amount_decimal = validate_amount(amount, request)
 
             # Validate and parse date
             if not date:
                 raise ValueError("Date is required.")
             parsed_date = datetime.strptime(date, '%Y-%m-%d').date()
 
-            if distribute_evenly == 'on' and select_custom_goals is None:
-                # Retrieve the selected goals based on selected goal IDs
-                goals = Goal.objects.filter(user_id=request.user)
-            elif distribute_evenly is None and select_custom_goals == 'on':
-                # Retrieve the selected goals based on selected goal IDs
-                goals = Goal.objects.filter(goal_id__in=selected_goals, user_id=request.user)
+            goals = get_goals(request.user, distribute_evenly, selected_goals, select_custom_goals)
 
             if not goals.exists():
-                # Add an error message with a specific tag
-                messages.error(
-                    request,
-                    "No goals selected or you have no goals.",
-                    extra_tags='no_goals_error'  # Specific tag for this error
-                )
-                # Redirect back to the add_money_goals page
-                return redirect('moneymap:add_money_goals')
+                return handle_goal_error(request, "No goals selected or you have no goals.",
+                                         'moneymap:add_money_goals',
+                                         'no_goals_error')
 
-            # Check if the saving amount exceeds the available space for each goal
-            total_available_space = 0
-            for goal in goals:
-                available_space = goal.target_amount - goal.current_amount
-                total_available_space += available_space
+            # Check if the saving amount exceeds the available space for the selected goals
+            redirect_url = check_goals_availability(goals, amount_decimal, request)
+            if redirect_url:
+                return redirect_url
 
-            # If the amount to be saved exceeds the total available space across all goals
-            if amount_decimal > total_available_space:
-                # Add an error message with a specific tag
-                messages.add_message(
-                    request,
-                    messages.ERROR,
-                    "Saving amount exceeds the target amount of the selected goals.",
-                    extra_tags='saving_error' # Specific tag for this error
-                )
-
-                # Redirect the user back to the add money goals page
-                return redirect('moneymap:add_money_goals')
-
-            # Now proceed to update each goal's current amount
-            amount_per_goal = amount_decimal / len(goals)
-            for goal in goals:
-                available_space = goal.target_amount - goal.current_amount
-                if amount_per_goal > available_space:
-                    # Add an error message with a specific tag
-                    messages.error(
-                        request,
-                        f"Saving amount for {goal.title} exceeds its available space.",
-                        extra_tags='goal_error'  # Specific tag for this error
-                    )
-                    # Redirect back to the add_money_goals page
-                    return redirect('moneymap:add_money_goals')
-
-                # Update goal's current amount
-                goal.current_amount += amount_per_goal
-                goal.save()
-
-                # Optionally create an IncomeExpense record
-                if add_to_income_expense:
-                    IncomeExpense.objects.create(
-                        user_id=request.user,
-                        type='saving',
-                        amount=amount_per_goal,
-                        date=parsed_date,
-                        description=f'Saving money to {goal.title}',
-                        saved_to_income_expense=True,
-                    )
+            # Distribute savings to goals
+            redirect_url = distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date, request.user, request)
+            if redirect_url:
+                return redirect_url
 
             # Redirect to the goals or income-expenses page
             return redirect('moneymap:goals')
 
-        except Goal.DoesNotExist:
-            logging.error("One or more selected goals do not exist.")
-            return render(request, self.template_name, {
-                'error': 'One or more selected goals do not exist.'})
         except ValueError as e:
             logging.error(str(e))
             return render(request, self.template_name, {'error': str(e)})
         except Exception as specific_error:
-            logging.exception("An unexpected error occurred: %s",
-                              specific_error)
-            return render(request, self.template_name,
-                          {'error': 'An unexpected error occurred.'})
-    @staticmethod
-    def _update_goal_and_record(user, goal, amount, add_to_income_expense):
-        """Helper function to update goal and create an income/expense record."""
-        # Update the goal's current amount
-        goal.current_amount += amount
-        goal.save()
-
-        # Optionally create an IncomeExpense record
-        if add_to_income_expense:
-            IncomeExpense.objects.create(
-                user_id=user,
-                type='saving',
-                amount=amount,
-                date=timezone.now(),
-                description=f'Saving money to {goal.title}',
-                saved_to_income_expense=True,
-            )
+            logging.exception("An unexpected error occurred: %s", specific_error)
+            return render(request, self.template_name, {'error': 'An unexpected error occurred.'})
 
 
 class AddGoals(LoginRequiredMixin, TemplateView):

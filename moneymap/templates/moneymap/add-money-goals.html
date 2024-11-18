@@ -18,6 +18,9 @@
                         {% if messages %}
                             <ul>
                                 {% for message in messages %}
+                                    {% if 'amount_error' in message.tags %}
+                                        <li class="error-message">{{ message }}</li>
+                                    {% endif %}
                                     {% if 'no_goals_error' in message.tags %}
                                         <li class="error-message">{{ message }}</li>
                                     {% endif %}
