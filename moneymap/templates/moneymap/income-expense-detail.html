@@ -5,17 +5,15 @@
 {% block content %}
 
 <!-- Title Section -->
-<div class="flex flex-col items-start gap-2.5 mt-10 mx-auto max-w-[1350px]">
-    <div class="h-[72px] w-full">
-        <div class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">
-            Income and Expense Report
-        </div>
+<div class="flex flex-col items-start gap-2.5 mt-10 mx-auto max-w-[1350px] px-4">
+    <div class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">
+        Income and Expense Report
     </div>
-    <div class="pb-[30px] flex items-center gap-2.5">
+    <div class="pb-[30px] flex items-center gap-2.5 mt-2">
         <div class="w-[29px] h-[29px] relative">
             <img src="{% static 'income-expense-detail/calendar.png' %}" alt="Calendar Icon" class="w-[29px] h-[29px]" />
         </div>
-        <div class="text-[#1b283f] text-xl font-bold capitalize">
+        <div class="text-[#1b283f] text-xl font-semibold capitalize">
             <span>{{ selected_date|date:"d/m/Y" }}</span>
         </div>
     </div>
@@ -29,16 +27,16 @@
         <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
             <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]"></div>
             <div class="flex-1 flex justify-center items-center py-2.5">
-                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">#</div>
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">#</div>
             </div>
             <div class="flex-1 flex justify-center items-center py-2.5">
-                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Description</div>
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">Description</div>
             </div>
             <div class="flex-1 flex justify-center items-center py-2.5">
-                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Amount</div>
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">Amount</div>
             </div>
             <div class="flex-1 flex justify-center items-center py-2.5">
-                <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Balance</div>
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">Balance</div>
             </div>
         </div>
 
@@ -60,17 +58,17 @@
 
                         <!-- Row Number -->
                         <div class="flex-1 py-2.5 flex justify-center items-center">
-                            <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ forloop.counter }}</span>
+                            <span class="text-[#1b283f] text-base font-normal font-['Poppins']">{{ forloop.counter }}</span>
                         </div>
 
                         <!-- Description -->
                         <div class="flex-1 py-2.5 flex justify-center items-center">
-                            <span class="text-[#1b283f] text-lg font-normal font-['Poppins']">{{ item.description }}</span>
+                            <span class="text-[#1b283f] text-base font-normal font-['Poppins']">{{ item.description }}</span>
                         </div>
 
                         <!-- Amount -->
                         <div class="flex-1 py-2.5 flex justify-center items-center">
-                            <span class="text-lg font-normal font-['Poppins']">
+                            <span class="text-base font-normal font-['Poppins']">
                                 <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
                                     {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
                                 </span>
@@ -82,7 +80,7 @@
 
                         <!-- Today's Balance -->
                         <div class="flex-1 py-2.5 flex justify-center items-center">
-                            <span class="text-lg font-normal font-['Poppins']">
+                            <span class="text-base font-normal font-['Poppins']">
                                 <span class="{% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
                                     {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %}
                                 </span>
@@ -95,13 +93,13 @@
             {% else %}
                 <div class="flex justify-center items-center py-10">
                     <img src="{% static 'income-expenses/no.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
-                    <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">No income or expenses recorded on this day.</p>
+                    <p class="text-[#1b283f] text-base font-normal font-['Poppins']">No income or expenses recorded on this day.</p>
                 </div>
             {% endif %}
         {% else %}
             <div class="flex justify-center items-center py-10">
                 <img src="{% static 'income-expenses/alert.png' %}" alt="Alert Icon" class="w-8 h-8 mr-2" />
-                <p class="text-[#1b283f] text-lg font-normal font-['Poppins']">Login required to add your money flow.</p>
+                <p class="text-[#1b283f] text-base font-normal font-['Poppins']">Login required to add your money flow.</p>
             </div>
         {% endif %}
 
@@ -111,12 +109,12 @@
 </div>
 
 <!-- Title Section -->
-<div class="flex flex-col items-center mt-10 mb-10 mx-auto max-w-[1350px]">
+<div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10 px-4 sm:px-6 lg:px-0">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         <!-- Daily Overview Card -->
         <div class="w-full p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start gap-5 h-auto md:h-[350px]">
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
-                <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
+                <div class="text-[#1b283f] text-base font-semibold font-['Poppins']">
                     <span>On this day (</span>
                     <span>{{ selected_date|date:"d/m/Y" }}</span>
 
@@ -124,8 +122,8 @@
                 </div>
             </div>
             <div class="flex flex-col flex-grow">
-                <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
-                <div class="text-[#1b283f] text-3xl font-bold font-['Poppins'] capitalize mt-2">
+                <div class="text-[#90acaa] text-base font-semibold font-['Poppins'] capitalize">Total Amount</div>
+                <div class="text-[#1b283f] text-3xl font-semibold font-['Poppins'] capitalize mt-2">
                     <span class="mr-2">
                         {{ latest_balance|intcomma }}
                     </span>
@@ -135,12 +133,12 @@
             </div>
             <div class="flex flex-col">
                 <div class="flex items-center gap-5 mb-2">
-                    <div class="w-8 h-8">
+                    <div class="w-7 h-7">
                         <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
                     </div>
                     <div class="flex flex-col">
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
-                        <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">
+                        <div class="text-[#05a99d] text-xl font-semibold font-['Poppins'] capitalize">
                             <span class="mr-2">
                                 {{ day_income|intcomma }}
                             </span>
@@ -149,12 +147,12 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-5">
-                    <div class="w-8 h-8">
+                    <div class="w-7 h-7">
                         <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
                     </div>
                     <div class="flex flex-col">
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
-                        <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
+                        <div class="text-[#ff5757] text-xl font-semibold font-['Poppins'] capitalize">
                             <span class="mr-2">
                                 {{ day_expense|intcomma }}
                             </span>
@@ -168,15 +166,15 @@
         <!-- Monthly Overview Card -->
         <div class="w-full max-w-[1353px] p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start gap-5 h-auto md:h-[350px]">
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
-                <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
+                <div class="text-[#1b283f] text-base font-semibold font-['Poppins']">
                     <span>Overall this month (</span>
                     <span>{{ selected_date|date:"F Y" }}</span>
                     <span>)</span>
                 </div>
             </div>
             <div class="flex flex-col flex-grow">
-                <div class="text-[#90acaa] text-base font-bold font-['Poppins'] capitalize">Total Amount</div>
-                <div class="text-[#1b283f] text-3xl font-bold font-['Poppins'] capitalize mt-2">
+                <div class="text-[#90acaa] text-base font-semibold font-['Poppins'] capitalize">Total Amount</div>
+                <div class="text-[#1b283f] text-3xl font-semibold font-['Poppins'] capitalize mt-2">
                     <span class="mr-2">
                         {{ month_balance|intcomma }}
                     </span>
@@ -186,12 +184,12 @@
             </div>
             <div class="flex flex-col">
                 <div class="flex items-center gap-5 mb-2">
-                    <div class="w-8 h-8">
+                    <div class="w-7 h-7">
                         <img src="{% static 'income-expense-detail/plus.png' %}" alt="Income Icon" class="w-full h-full" />
                     </div>
                     <div class="flex flex-col">
                         <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Income</div>
-                        <div class="text-[#05a99d] text-2xl font-bold font-['Poppins'] capitalize">
+                        <div class="text-[#05a99d] text-xl font-semibold font-['Poppins'] capitalize">
                             <span class="mr-2">
                                 {{ month_income|intcomma }}
                             </span>
@@ -200,12 +198,12 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-5">
-                    <div class="w-8 h-8">
+                    <div class="w-7 h-7">
                         <img src="{% static 'income-expense-detail/minus.png' %}" alt="Expense Icon" class="w-full h-full" />
                     </div>
                     <div class="flex flex-col">
-                        <div class="text-[#90acaa] text-base font-normal font-['Poppins'] capitalize">Expense</div>
-                        <div class="text-[#ff5757] text-2xl font-bold font-['Poppins'] capitalize">
+                        <div class="text-[#90acaa] text-base font-seminormal font-['Poppins'] capitalize">Expense</div>
+                        <div class="text-[#ff5757] text-xl font-semibold font-['Poppins'] capitalize">
                             <span class="mr-2">
                                 {{ month_expense|intcomma }}
                             </span>
@@ -218,7 +216,7 @@
         <!-- Pie Chart Card -->
         <div class="w-full max-w-[1353px] p-5 bg-white rounded-lg border border-[#90acaa] flex flex-col justify-between items-start md:h-[350px]">
             <div class="p-2.5 bg-[#bbe6e3] rounded-lg flex justify-center items-center w-full">
-                <div class="text-[#1b283f] text-base font-normal font-['Poppins']">
+                <div class="text-[#1b283f] text-base font-semibold font-['Poppins']">
                     <span>Overall this month (</span>
                     <span>{{ selected_date|date:"F Y" }}</span>
                     <span>)</span>

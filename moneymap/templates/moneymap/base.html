@@ -46,39 +46,59 @@
                     <img src="{% static 'base/logo.png' %}" alt="Logo" class="h-10 md:h-12 object-contain" />
                 </a>
             </div>
+        <!-- Full Menu Dropdown for Small Screens -->
+        <div class="relative md:hidden">
+            <button id="dropdownButton" class="flex items-center px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all duration-300">
+                <img src="{% static 'base/list.png' %}" alt="Menu" class="h-4 w-4">
+            </button>
 
-            <div class="flex-1 flex justify-center">
-                <!-- Links for larger screens (centered) -->
-                <div class="hidden md:flex gap-4">
-                    <a href="{% url 'moneymap:income-expenses' %}" class="whitespace-nowrap px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all duration-300">
-                        <div class="text-[#1b283f] text-sm md:text-base font-normal capitalize">Income & Expenses</div>
-                    </a>
-                    <a href="{% url 'moneymap:goals' %}" class="whitespace-nowrap px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all duration-300">
-                        <div class="text-[#1b283f] text-sm md:text-base font-normal capitalize">Goals</div>
-                    </a>
-                </div>
+            <!-- Full Dropdown Menu -->
+            <div id="dropdownMenu" class="hidden absolute right-0 mt-2 bg-white rounded-md border border-[#aec2c0] z-10 w-auto p-4">
+                <!-- Links Section -->
+                <a href="{% url 'moneymap:income-expenses' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-[#05a99d] hover:text-white text-center transition-colors duration-300">
+                    Income & Expenses
+                </a>
 
-                <!-- Dropdown button for small screens -->
-                <div class="relative md:hidden">
-                    <button id="dropdownButton" class="flex items-center px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all duration-300">
-                        <img src="{% static 'base/list.png' %}" alt="Menu" class="h-4 w-4 mr-2">
-                        <div class="text-[#1b283f] text-sm font-normal capitalize">Menu</div>
-                    </button>
+                <div class="border-t border-gray-200 my-2"></div>
 
-                    <!-- Styled dropdown menu -->
-                    <div id="dropdownMenu" class="hidden absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white rounded-md border border-[#aec2c0] z-10">
-                        <a href="{% url 'moneymap:income-expenses' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-[#05a99d] hover:text-white text-center transition-colors duration-300">
-                            Income & Expenses
-                        </a>
-                        <a href="{% url 'moneymap:goals' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-[#05a99d] hover:text-white text-center transition-colors duration-300">
-                            Goals
-                        </a>
+                <a href="{% url 'moneymap:goals' %}" class="block px-4 py-2 text-sm text-[#1b283f] hover:bg-[#05a99d] hover:text-white text-center transition-colors duration-300">
+                    Goals
+                </a>
+
+                <div class="border-t border-gray-200 my-2"></div>
+
+                {% if user.is_authenticated %}
+                    <div class="block px-4 py-2 text-sm text-[grey] text-center">
+                        {{ user.username }}
                     </div>
-                </div>
-            </div>
+                {% endif %}
 
-            <!-- User Account Actions -->
-            <div class="flex items-center gap-4">
+                <!-- Authentication Actions Section -->
+                {% if user.is_authenticated %}
+                    <a href="/accounts/logout/" class="block px-4 py-2 text-sm text-white bg-[#05a99d] rounded-md text-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                        Logout
+                    </a>
+                {% else %}
+                    <a href="/accounts/login/" class="block px-4 py-2 text-sm text-white bg-[#05a99d] rounded-md text-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                        Login
+                    </a>
+                    <a href="/accounts/signup/" class="block px-4 py-2 text-sm text-white bg-[#05a99d] rounded-md text-center transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                        Signup
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+            <!-- Links for larger screens -->
+            <div class="hidden md:flex items-center justify-center flex-grow gap-4">
+                <a href="{% url 'moneymap:income-expenses' %}" class="whitespace-nowrap px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all duration-300">
+                    <div class="text-[#1b283f] text-sm md:text-base font-normal capitalize">Income & Expenses</div>
+                </a>
+                <a href="{% url 'moneymap:goals' %}" class="whitespace-nowrap px-4 py-2 rounded-full border-2 border-[#aec2c0] hover:border-[#05A99D] transition-all duration-300">
+                    <div class="text-[#1b283f] text-sm md:text-base font-normal capitalize">Goals</div>
+                </a>
+            </div>
+            <!-- User section (right-aligned on large screens) -->
+            <div class="hidden md:flex items-center ml-auto">
                 {% if user.is_authenticated %}
                     <div class="flex items-center px-4 py-2 rounded-full border-2 border-[#aec2c0]">
                         <div class="text-[#1b283f] text-sm md:text-base font-normal capitalize mr-2">
@@ -89,7 +109,7 @@
                         </a>
                     </div>
                 {% else %}
-                    <a href="/accounts/login/" class="text-white bg-[#05a99d] rounded-full px-4 py-2 transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
+                    <a href="/accounts/login/" class="text-white bg-[#05a99d] rounded-full px-4 py-2 mr-5 transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
                         Login
                     </a>
                     <a href="/accounts/signup/" class="text-white bg-[#05a99d] rounded-full px-4 py-2 transition-colors duration-300 hover:bg-[#aec2c0] hover:text-[#1b283f]">
@@ -99,8 +119,29 @@
             </div>
         </div>
     </header>
-
-    <!-- Main Content Block -->
+{% if messages %}
+<div id="messages-container" class="fixed z-50 flex flex-col w-3/4 max-w-96 top-10 right-10 space-y-4">
+    {% for message in messages %}
+    <div class="w-full bg-white p-4 rounded-lg shadow-lg flex items-start space-x-4 relative">
+        <div class="w-full">
+            <p class="text-base font-semibold font-['Poppins']
+                {% if message.tags == 'error' %} text-red-500 {% else %} text-[#05a99d] {% endif %} capitalize">
+                {{ message.tags|capfirst }}
+            </p>
+            <p class="text-zinc-400 text-base font-normal font-['Poppins'] leading-5 break-all max-h-10 overflow-hidden">
+                {{ message }}
+            </p>
+        </div>
+        <!-- Close Button -->
+        <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 focus:outline-none" onclick="this.parentElement.style.display='none'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
     <main>
         {% block content %}
         {% endblock %}
@@ -122,7 +163,6 @@
         });
     </script>
 
-    <!-- Footer Section -->
     <footer class="w-full bg-[#05a99d] text-white py-4">
         <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-12 text-sm md:text-base">
             <div class="font-normal">
