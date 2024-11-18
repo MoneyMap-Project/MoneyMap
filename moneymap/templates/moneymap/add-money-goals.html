@@ -4,7 +4,7 @@
 {% block content %}
 <form id="add-money-form" action="{% url 'moneymap:add_money_goals' %}" method="POST" onsubmit="return validateForm()">
     {% csrf_token %}
-    <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
+    <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10 px-4 sm:px-6 lg:px-0">
         <h1 class="w-full text-[#1b283f] text-4xl font-semibold font-['Poppins'] leading-[64px]">Add money to your goal</h1>
 
         <div class="w-full flex flex-col lg:flex-row justify-start items-start gap-5">

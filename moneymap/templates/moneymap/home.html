@@ -11,15 +11,15 @@
         <!-- Text Section -->
         <div class="flex flex-col justify-center items-center w-full md:w-1/2 lg:w-2/3 px-4 md:px-8 lg:px-16 relative z-10 mt-8 md:mt-12 lg:mt-16 mb-12 md:mb-12 lg:mb-20">
             <div class="flex items-center mb-2">
-                <span class="text-[#1b283f] text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-semibold font-poppins leading-tight mr-4">
+                <span class="text-[#1b283f] text-6xl md:text-7xl lg:text-8xl font-semibold font-poppins leading-tight mr-4">
                     Better
                 </span>
-                <span class="text-[#05a99d] text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] font-normal" style="font-family: 'Gochi Hand', cursive;">
+                <span class="text-[#05a99d] text-7xl md:text-8xl lg:text-9xl font-normal" style="font-family: 'Gochi Hand', cursive;">
                     Plan
                 </span>
             </div>
-            <div class="self-stretch text-[#1b283f] text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-semibold font-poppins leading-tight">
-                with MoneyMap.
+            <div class="self-stretch text-[#1b283f] text-5xl md:text-6xl lg:text-7xl font-semibold font-poppins leading-tight">
+                with MoneyMap
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
             <!-- Card 1 -->
             <div class="md:col-span-4 flex flex-col h-full">
                 <a href="{% url 'moneymap:goals' %}" class="flex-grow flex justify-end items-end relative">
-                    <div class="bg-white rounded-lg border border-[#f2f2f7] p-10 flex flex-col justify-between transform transition-transform duration-300 hover:scale-105 group relative overflow-hidden">
+                    <div class="bg-white rounded-lg border border-[#f2f2f7] p-6 flex flex-col justify-between transform transition-transform duration-300 hover:scale-105 group relative overflow-hidden">
                         <!-- Background Image -->
                         <img src="{% static 'home/vector.png' %}" alt="Background Vector" class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none transform transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110 z-0" />
                         <!-- Content -->
@@ -40,8 +40,8 @@
                             <div class="px-4 py-1 rounded-full border border-[#1b283f] inline-block mb-4">
                                 <span class="text-black text-lg md:text-xl font-normal capitalize">Goals</span>
                             </div>
-                            <h3 class="text-[#1b283f] text-2xl md:text-3xl lg:text-4xl font-semibold capitalize mb-2">
-                                Setup your<br class="hidden md:block" /> <span class="font-bold">GOALS</span>
+                            <h3 class="text-[#1b283f] text-2xl md:text-3xl lg:text-4xl font-normal capitalize mb-2">
+                                Setup your<br class="hidden md:block" /> <span class="font-semibold">GOALS</span>
                             </h3>
                             <p class="text-[#555555] text-base md:text-lg">
                                 Define and track your financial goals effortlessly with MoneyMap.
@@ -64,10 +64,10 @@
                         <!-- Content -->
                         <div class="relative z-10">
                             <div class="px-4 py-1 rounded-full border border-[#f2f2f2] inline-block mb-4">
-                                <span class="text-[#f2f2f2] text-lg md:text-xl font-normal capitalize">Income and Expenses</span>
+                                <span class="text-[#f2f2f2] text-base md:text-xl font-normal capitalize">Income and Expenses</span>
                             </div>
-                            <h3 class="text-[#f2f2f2] text-2xl md:text-3xl lg:text-4xl font-semibold capitalize mb-2">
-                                Jot down your<br class="hidden md:block" /> <span class="font-bold">INCOME AND EXPENSES</span>
+                            <h3 class="text-[#f2f2f2] text-2xl md:text-3xl lg:text-4xl font-normal capitalize mb-2">
+                                Jot down your<br class="hidden md:block" /> <span class="font-semibold">INCOME AND EXPENSES</span>
                             </h3>
                             <p class="text-[#e0f8f7] text-base md:text-lg">
                                 Keep track of every penny with detailed income and expense logging.
@@ -85,7 +85,7 @@
             <!-- Card 3 -->
             <div class="md:col-span-4 flex flex-col h-full">
                 <a href="{% url 'moneymap:history' %}" class="flex-grow flex justify-end items-end group">
-                    <div class="bg-white rounded-lg p-4 flex flex-row justify-between items-center h-50 border-2 border-[#1b283f] transform transition-transform duration-300 hover:scale-105">
+                    <div class="bg-white rounded-lg p-6 flex flex-row justify-between items-center h-50 border-2 border-[#1b283f] transform transition-transform duration-300 hover:scale-105">
                         <div class="flex-grow">
                             <div class="px-4 py-1 rounded-full border border-[#1b283f] inline-block mb-2">
                                 <span class="text-[#1b283f] text-lg md:text-xl font-normal capitalize">Financial History</span>
@@ -141,23 +141,24 @@
     </div>
 </div>
 
-<!-- Another Section to Scroll To -->
 <div class="w-full flex justify-center items-center mt-20">
-    <div class="w-full max-w-[1352px] h-auto flex flex-col md:flex-row justify-center items-center mb-10">
+    <div class="w-full max-w-[1352px] h-auto flex flex-col-reverse md:flex-row justify-center items-center mb-10">
+
+
         <div class="w-full md:w-1/2 text-left px-4 md:px-8 mb-4 md:mb-0">
-            <h3 class="text-[#1b283f] text-3xl font-normal font-poppins mb-7">
+            <h3 class="text-[#1b283f] text-3xl font-normal font-poppins mb-4">
                 Set and Track Your Goals
             </h3>
             <p class="text-[#555555] text-base md:text-lg font-normal">
-                Define your financial goals and track your progress in real time. Achieve your dreams by setting clear targets and staying on track.
+                Define your financial goals and track your progress in real time. Achieve your goals by setting clear targets and staying on track.
             </p>
         </div>
-
         <div class="w-full md:w-1/2 flex justify-center mb-4 md:mb-0">
             <img src="{% static 'home/goals.png' %}" alt="Goals" class="shadow-lg w-3/4 md:w-[90%] lg:w-full">
         </div>
     </div>
 </div>
+
 
 <!-- Why Choose Us Section -->
 <div class="w-full h-auto p-2.5 bg-[#F7F7F7] flex flex-col justify-center items-center gap-4 mt-10">
@@ -174,9 +175,9 @@
 
         <!-- Feature 1 -->
         <div class="flex-1 min-w-[250px] order-3 md:order-none text-center md:text-left">
-            <div class="h-auto p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-transparent hover:translate-y-[-10px] transition-transform duration-300">
-                <img src="{% static 'home/pointer.png' %}" alt="Pointer" class="mb-2 w-10 md:w-[15%]" />
-                <div class="text-center text-[#1b283f] text-2xl font-bold font-poppins capitalize">Goal-Focused Savings</div>
+            <div class="h-auto p-5 flex flex-col justify-center items-center gap-1.5 bg-transparent">
+                <img src="{% static 'home/focus.png' %}" alt="focus" class="mb-2 w-10 md:w-[15%]" />
+                <div class="text-center text-[#1b283f] text-xl font-semibold font-poppins capitalize">Goal-Focused Savings</div>
                 <div class="text-center text-[#1b283f] text-base md:text-xl font-normal font-poppins">
                     Helps users save for specific goals with deadlines, adjusting daily targets to keep them on track.
                 </div>
@@ -185,9 +186,9 @@
 
         <!-- Feature 2 -->
         <div class="flex-1 min-w-[250px] order-4 md:order-none text-center md:text-right">
-            <div class="h-auto p-5 rounded-[10px] flex flex-col justify-center items-center gap-1.5 bg-transparent hover:translate-y-[-10px] transition-transform duration-300">
-                <img src="{% static 'home/pointer.png' %}" alt="Pointer" class="mb-2 w-10 md:w-[15%]" />
-                <div class="text-center text-[#1b283f] text-2xl font-bold font-poppins capitalize">Real-Time Progress</div>
+            <div class="h-auto p-5 flex flex-col justify-center items-center gap-1.5 bg-transparent">
+                <img src="{% static 'home/realtime.png' %}" alt="Realtime" class="mb-2 w-10 md:w-[15%]" />
+                <div class="text-center text-[#1b283f] text-xl font-semibold font-poppins capitalize">Real-Time Progress</div>
                 <div class="text-center text-[#1b283f] text-base md:text-xl font-normal font-poppins">
                     Dynamic tracking and adjusts savings plans if users fall behind, ensuring goals are met.
                 </div>
