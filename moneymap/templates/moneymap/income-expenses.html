@@ -9,12 +9,10 @@
     <div class="flex flex-col items-center justify-center text-center z-10 mt-5">
         <div class="flex items-end">
             <span class="text-[#1b283f] text-5xl sm:text-6xl md:text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2]">Hello</span>
-
             <span class="text-[#05a99d] text-[4rem] sm:text-[5rem] md:text-[6rem] font-normal leading-[1.2] ml-3 md:ml-5 capitalize"
                   style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
                 {{ user_id_display }}
             </span>
-
             <span class="text-[#1b283f] text-5xl sm:text-6xl md:text-7xl font-semibold font-['Poppins'] capitalize leading-[1.2] ml-2 md:ml-4">!</span>
         </div>
         <span class="text-[#1b283f] text-lg sm:text-xl md:text-[35px] font-semibold font-['Poppins'] leading-[1.2] whitespace-nowrap mt-1">
@@ -24,61 +22,58 @@
     <!-- Add Money Flow Buttons -->
     <div class="flex items-center justify-center mt-16 mb-10">
         <div class="flex w-auto h-auto bg-white rounded-full border-2 border-[#ffbb56] items-center shadow-[0_2px_10px_rgba(255,187,86,0.5)]">
-        <div class="flex w-auto h-[45px] py-4 pr-2 pl-2 text-[#1b283f] text-base font-normal font-['Poppins'] rounded-tl-full rounded-bl-full items-center">
-            <!-- Icon -->
-            <div class="w-[30px] h-[30px] flex-shrink-0">
-                <img src="{% static 'income-expenses/plus.png' %}" alt="Plus Icon" class="w-full h-full object-contain"/>
+            <div class="flex w-auto h-[45px] py-4 pr-2 pl-2 text-[#1b283f] text-base font-normal font-['Poppins'] rounded-tl-full rounded-bl-full items-center">
+                <div class="w-[30px] h-[30px] flex-shrink-0">
+                    <img src="{% static 'income-expenses/plus.png' %}" alt="Plus Icon" class="w-full h-full object-contain" />
+                </div>
+                <div class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize ml-2">
+                    Add your
+                </div>
             </div>
-            <!-- Text -->
-            <div class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize ml-2">
-                Add your
-            </div>
-        </div>
-        <div class="w-[1px] h-[30px] bg-[#ececec]"></div>
-        <!-- Income Button -->
-        <a href="{% url 'moneymap:money-flow' %}?moneytype=income"
-           class="flex w-auto h-[45px] py-2 px-2 text-[#1b283f] text-base font-normal font-['Poppins'] items-center hover:bg-[#f2f2f2]">
-            income
-        </a>
-        <div class="w-[1px] h-[30px] bg-[#ececec]"></div>
-        <!-- Text -->
-        <a href="{% url 'moneymap:money-flow' %}?moneytype=expense"
-           class="flex w-auto h-[45px] py-2 pl-2 pr-3 text-[#1b283f] text-base font-normal font-['Poppins'] items-center hover:bg-[#f2f2f2]">
+            <div class="w-[1px] h-[30px] bg-[#ececec]"></div>
+            <!-- Income Button -->
+            <a href="{% url 'moneymap:money-flow' %}?moneytype=income"
+               class="flex w-auto h-[45px] py-2 px-2 text-[#1b283f] text-base font-normal font-['Poppins'] items-center hover:bg-[#f2f2f2]">
+                income
+            </a>
+            <div class="w-[1px] h-[30px] bg-[#ececec]"></div>
+            <!-- Expense Button -->
+            <a href="{% url 'moneymap:money-flow' %}?moneytype=expense"
+               class="flex w-auto h-[45px] py-2 pl-2 pr-3 text-[#1b283f] text-base font-normal font-['Poppins'] items-center hover:bg-[#f2f2f2]">
                 expense
-        </a>
-        <div class="w-[1px] h-[30px] bg-[#ececec]"></div>
-        <!-- Expense Button -->
-        <div class="flex w-auto h-[45px] py-2 pl-2 pr-3 text-[#1b283f] text-base font-normal font-['Poppins'] rounded-tr-full rounded-br-full items-center">
-            for today
+            </a>
+            <div class="w-[1px] h-[30px] bg-[#ececec]"></div>
+            <div class="flex w-auto h-[45px] py-2 pl-2 pr-3 text-[#1b283f] text-base font-normal font-['Poppins'] rounded-tr-full rounded-br-full items-center">
+                for today
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Table Section -->
 <div class="hidden md:block">
-    <div class="flex justify-center items-center w-full ">
+    <div class="flex justify-center items-center w-full">
         <div class="w-full max-w-screen-xl flex justify-center">
             <div class="w-full max-w-[1353px] flex flex-col rounded-[10px] mb-2 ml-2 mr-2">
-            <!-- Header Row -->
-            <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
-                <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]"></div>
-                <div class="flex-1 flex justify-center items-center py-2.5">
-                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">#</div>
+                <!-- Header Row -->
+                <div class="flex bg-[#bbe6e3] rounded-t-[10px]">
+                    <div class="w-[30px] py-2.5 flex justify-center items-center border-b border-[#bbe6e3]"></div>
+                    <div class="flex-1 flex justify-center items-center py-2.5">
+                        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">#</div>
+                    </div>
+                    <div class="flex-1 flex justify-center items-center py-2.5">
+                        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Description</div>
+                    </div>
+                    <div class="flex-1 flex justify-center items-center py-2.5">
+                        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Amount</div>
+                    </div>
+                    <div class="flex-1 flex justify-center items-center py-2.5">
+                        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Today's Balance</div>
+                    </div>
+                    <div class="flex-1 flex justify-center items-center py-2.5">
+                        <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Delete</div>
+                    </div>
                 </div>
-                <div class="flex-1 flex justify-center items-center py-2.5">
-                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Description</div>
-                </div>
-                <div class="flex-1 flex justify-center items-center py-2.5">
-                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Amount</div>
-                </div>
-                <div class="flex-1 flex justify-center items-center py-2.5">
-                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Today's Balance</div>
-                </div>
-                <!-- New Delete Column with equal width -->
-                <div class="flex-1 flex justify-center items-center py-2.5">
-                    <div class="text-[#1b283f] text-lg font-normal font-['Poppins'] capitalize">Delete</div>
-                </div>
-            </div>
 
             <!-- Data Rows -->
             {% if user.is_authenticated %}
@@ -257,9 +252,9 @@
 <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start mx-auto mt-10 mb-10 px-4 sm:px-6 lg:px-0">
     <div class="flex items-center justify-between w-full mb-4">
         <div class="flex items-center flex-wrap">
-            <span class="text-[#1b283f] text-base font-semibold font-['Poppins'] capitalize">Explore Your</span>
+            <span class="text-[#1b283f] text-lg font-semibold font-['Poppins'] capitalize">Explore Your</span>
             <span class="text-[#ffbb56] text-3xl font-normal capitalize mx-3 inline-block sm:inline" style="font-family: 'Gochi Hand', sans-serif;">7-Day</span>
-            <span class="text-[#1b283f] text-base font-semibold font-['Poppins'] capitalize w-full sm:w-auto">Financial Journey</span>
+            <span class="text-[#1b283f] text-lg font-semibold font-['Poppins'] capitalize w-full sm:w-auto">Financial Journey</span>
         </div>
         <a href="{% url 'moneymap:history' %}"
             class="ml-4 px-4 py-2 bg-[#05a99d] text-white text-base rounded-lg hover:bg-[#048f83] transition duration-300 ease-in-out flex items-center justify-center">

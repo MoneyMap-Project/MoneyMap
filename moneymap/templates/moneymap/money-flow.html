@@ -1,5 +1,6 @@
 {% extends 'moneymap/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 <form id="money-flow-form" action="{% url 'moneymap:money-flow' %}" method="POST" xmlns="">
@@ -85,8 +86,8 @@
                     <div class="w-[80px] h-[2px] bg-[#90acaa] mb-4"></div>
                     <div class="w-full flex flex-col gap-4">
                         <!-- Summary Description with Tag -->
-                        <div class="flex items-center gap-2">
-                            <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize">
+                        <div class="flex items-start gap-2">
+                            <div id="summary-description" class="text-[#1b283f] text-xl font-medium capitalize break-words w-full">
                                 {{ description|default:"No description" }}
                             </div>
                             <div id="selected-tag-summary" class="text-[#90acaa] text-lg">
@@ -97,10 +98,11 @@
                             </div>
                         </div>
                         <div class="w-full h-[1px] bg-[#ececec]"></div>
-                        <!-- Summary Amount -->
-                        <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">
-                            {{ amount|default:"No amount" }} baht
-                        </div>
+<!-- Summary Amount -->
+<div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize break-words w-full">
+    {{ amount|default:"No amount"|intcomma }} baht
+</div>
+
                         <!-- Money Type -->
                         <div class="w-full p-2.5 rounded-[10px] border border-[#90acaa] flex items-center">
                             <div class="text-[#1b283f] text-lg font-normal">Type:
@@ -258,29 +260,29 @@
     document.getElementById('description').addEventListener('input', updateSummary);
     document.getElementById('amount').addEventListener('input', updateSummary);
 
-function selectType(type) {
-    const incomeButton = document.querySelector('.income-button');
-    const expensesButton = document.querySelector('.expenses-button');
-    const checkIconIncome = incomeButton.querySelector('.check-icon');
-    const checkIconExpenses = expensesButton.querySelector('.check-icon');
+    function selectType(type) {
+        const incomeButton = document.querySelector('.income-button');
+        const expensesButton = document.querySelector('.expenses-button');
+        const checkIconIncome = incomeButton.querySelector('.check-icon');
+        const checkIconExpenses = expensesButton.querySelector('.check-icon');
 
-    incomeButton.classList.remove('selected');
-    expensesButton.classList.remove('selected');
-    checkIconIncome.style.display = 'none';
-    checkIconExpenses.style.display = 'none';
+        incomeButton.classList.remove('selected');
+        expensesButton.classList.remove('selected');
+        checkIconIncome.style.display = 'none';
+        checkIconExpenses.style.display = 'none';
 
-    if (type === 'income') {
-        incomeButton.classList.add('selected');
-        checkIconIncome.style.display = 'inline';
-        document.getElementById('money-type').value = 'Income';
-    } else {
-        expensesButton.classList.add('selected');
-        checkIconExpenses.style.display = 'inline';
-        document.getElementById('money-type').value = 'Expenses';
+        if (type === 'income') {
+            incomeButton.classList.add('selected');
+            checkIconIncome.style.display = 'inline';
+            document.getElementById('money-type').value = 'Income';
+        } else {
+            expensesButton.classList.add('selected');
+            checkIconExpenses.style.display = 'inline';
+            document.getElementById('money-type').value = 'Expenses';
+        }
+
+        updateSummary();
     }
-
-    updateSummary();
-}
 
     function formatBaht() {
         const input = document.getElementById('amount');
@@ -296,25 +298,23 @@ function selectType(type) {
     document.getElementById('amount').addEventListener('input', formatBaht);
     document.getElementById('amount').addEventListener('keydown', restrictInput);
 
-function getUrlParameter(name) {
-    name = name.replace(/\[/, '\\[').replace(/\]/, '\\]');
-    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    const results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Get the moneytype from URL parameter
-    const moneytype = getUrlParameter('moneytype');
-
-    // Set default based on URL parameter, defaulting to 'income' if not specified
-    if (moneytype === 'expense') {
-        selectType('expenses');  // Note: Your function uses 'expenses' not 'expense'
-    } else {
-        selectType('income');
+    function getUrlParameter(name) {
+        name = name.replace(/\[/, '\\[').replace(/\]/, '\\]');
+        const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        const results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
-    updateSummary();
-});
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const moneytype = getUrlParameter('moneytype');
+
+        if (moneytype === 'expense') {
+            selectType('expenses');
+        } else {
+            selectType('income');
+        }
+        updateSummary();
+    });
 
     document.querySelectorAll('.tag-button').forEach(tag => {
         tag.addEventListener('click', function() {
