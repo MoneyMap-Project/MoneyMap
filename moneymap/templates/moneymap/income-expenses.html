@@ -21,17 +21,36 @@
             What did you spend your money on today?
         </span>
     </div>
-    <!-- Add Money Flow Button -->
-    <div class="flex items-center justify-center mt-16">
-        <a href="{% url 'moneymap:money-flow' %}"
-           class="flex w-auto min-w-[300px] h-[50px] pl-3 pr-5 py-2.5 bg-white rounded-[40px] border-2 border-[#ffbb56] items-center gap-[15px] shadow-[0_2px_10px_rgba(255,187,86,0.5)] transition-all duration-300 group hover:text-white">
-            <div class="w-[30px] h-[30px] flex-shrink-0 transition-transform duration-300 group-hover:translate-x-2">
-                <img src="{% static 'income-expenses/plus.png' %}" alt="Plus Icon" class="w-full h-full object-contain transition-transform duration-300 group-hover:rotate-90"/>
+    <!-- Add Money Flow Buttons -->
+    <div class="flex items-center justify-center mt-16 mb-10">
+        <div class="flex w-auto h-auto bg-white rounded-full border-2 border-[#ffbb56] items-center shadow-[0_2px_10px_rgba(255,187,86,0.5)]">
+        <div class="flex w-auto h-[45px] py-4 pr-2 pl-2 text-[#1b283f] text-base font-normal font-['Poppins'] rounded-tl-full rounded-bl-full items-center">
+            <!-- Icon -->
+            <div class="w-[30px] h-[30px] flex-shrink-0">
+                <img src="{% static 'income-expenses/plus.png' %}" alt="Plus Icon" class="w-full h-full object-contain"/>
             </div>
-            <div class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize transition-transform duration-300 group-hover:translate-x-2">
-                Add your money flow of the day
+            <!-- Text -->
+            <div class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize ml-2">
+                Add your
             </div>
+        </div>
+        <div class="w-[1px] h-[30px] bg-[#ececec]"></div>
+        <!-- Income Button -->
+        <a href="{% url 'moneymap:money-flow' %}?moneytype=income"
+           class="flex w-auto h-[45px] py-2 px-2 text-[#1b283f] text-base font-normal font-['Poppins'] items-center hover:bg-[#f2f2f2]">
+            income
         </a>
+        <div class="w-[1px] h-[30px] bg-[#ececec]"></div>
+        <!-- Text -->
+        <a href="{% url 'moneymap:money-flow' %}?moneytype=expense"
+           class="flex w-auto h-[45px] py-2 pl-2 pr-3 text-[#1b283f] text-base font-normal font-['Poppins'] items-center hover:bg-[#f2f2f2]">
+                expense
+        </a>
+        <div class="w-[1px] h-[30px] bg-[#ececec]"></div>
+        <!-- Expense Button -->
+        <div class="flex w-auto h-[45px] py-2 pl-2 pr-3 text-[#1b283f] text-base font-normal font-['Poppins'] rounded-tr-full rounded-br-full items-center">
+            for today
+        </div>
     </div>
 </div>
 

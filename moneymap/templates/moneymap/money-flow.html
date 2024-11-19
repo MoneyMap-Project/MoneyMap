@@ -258,29 +258,29 @@
     document.getElementById('description').addEventListener('input', updateSummary);
     document.getElementById('amount').addEventListener('input', updateSummary);
 
-    function selectType(type) {
-        const incomeButton = document.querySelector('.income-button');
-        const expensesButton = document.querySelector('.expenses-button');
-        const checkIconIncome = incomeButton.querySelector('.check-icon');
-        const checkIconExpenses = expensesButton.querySelector('.check-icon');
+function selectType(type) {
+    const incomeButton = document.querySelector('.income-button');
+    const expensesButton = document.querySelector('.expenses-button');
+    const checkIconIncome = incomeButton.querySelector('.check-icon');
+    const checkIconExpenses = expensesButton.querySelector('.check-icon');
 
-        incomeButton.classList.remove('selected');
-        expensesButton.classList.remove('selected');
-        checkIconIncome.style.display = 'none';
-        checkIconExpenses.style.display = 'none';
+    incomeButton.classList.remove('selected');
+    expensesButton.classList.remove('selected');
+    checkIconIncome.style.display = 'none';
+    checkIconExpenses.style.display = 'none';
 
-        if (type === 'income') {
-            incomeButton.classList.add('selected');
-            checkIconIncome.style.display = 'inline';
-            document.getElementById('money-type').value = 'Income';
-        } else {
-            expensesButton.classList.add('selected');
-            checkIconExpenses.style.display = 'inline';
-            document.getElementById('money-type').value = 'Expenses';
-        }
-
-        updateSummary();
+    if (type === 'income') {
+        incomeButton.classList.add('selected');
+        checkIconIncome.style.display = 'inline';
+        document.getElementById('money-type').value = 'Income';
+    } else {
+        expensesButton.classList.add('selected');
+        checkIconExpenses.style.display = 'inline';
+        document.getElementById('money-type').value = 'Expenses';
     }
+
+    updateSummary();
+}
 
     function formatBaht() {
         const input = document.getElementById('amount');
@@ -296,10 +296,25 @@
     document.getElementById('amount').addEventListener('input', formatBaht);
     document.getElementById('amount').addEventListener('keydown', restrictInput);
 
-    document.addEventListener('DOMContentLoaded', function() {
+function getUrlParameter(name) {
+    name = name.replace(/\[/, '\\[').replace(/\]/, '\\]');
+    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    const results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the moneytype from URL parameter
+    const moneytype = getUrlParameter('moneytype');
+
+    // Set default based on URL parameter, defaulting to 'income' if not specified
+    if (moneytype === 'expense') {
+        selectType('expenses');  // Note: Your function uses 'expenses' not 'expense'
+    } else {
         selectType('income');
-        updateSummary();
-    });
+    }
+    updateSummary();
+});
 
     document.querySelectorAll('.tag-button').forEach(tag => {
         tag.addEventListener('click', function() {
