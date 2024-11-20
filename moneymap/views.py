@@ -3,17 +3,26 @@ Views for the MoneyMap application.
 This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
-from datetime import date
+from datetime import date, datetime
 import logging
+from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, CreateView
+from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .service_addgoals import get_goals_data
+from .service_addsavingmoney import (
+    validate_amount,
+    get_goals,
+    check_goals_availability,
+    distribute_savings,
+    handle_goal_error,
+)
 from .service import (
     calculate_balance,
     calculate_balance_last_7_days,
@@ -86,14 +95,27 @@ class IncomeAndExpensesView(TemplateView):
 
 @login_required
 def delete_income_expense(request, income_expense_id):
-    """For delete an IncomeExpense object"""
+    """Delete an IncomeExpense object and update the related goal if necessary."""
 
     # Retrieve the IncomeExpense object or return 404 if not found
     income_expense = get_object_or_404(IncomeExpense,
                                        IncomeExpense_id=income_expense_id,
                                        user_id=request.user)
 
-    # Delete the object
+    # Check if the record type is 'saving'
+    if income_expense.type == 'saving':
+        # Retrieve the related goal
+        goal = Goal.objects.filter(
+            user_id=request.user,
+            title=income_expense.description.split(" to ")[-1]  # the description follows the format "Saving money to <goal_title>"
+        ).first()
+        # Update the goal's current amount
+        if goal:
+            goal.current_amount -= Decimal(income_expense.amount)
+            if goal.current_amount < 0:
+                goal.current_amount = Decimal('0.00')  # Ensure the amount does not go below zero
+            goal.save()
+    # Delete the IncomeExpense object
     income_expense.delete()
 
     # Add a success message
@@ -281,11 +303,58 @@ class HistoryView(LoginRequiredMixin, View):
         })
 
 
-class AddMoney(TemplateView):
+class AddSavingMoney(LoginRequiredMixin, TemplateView):
+    """View to add saving records associated with goals that user want."""
     template_name = 'moneymap/add-money-goals.html'
 
+    def get(self, request):
+        """Render the Add Money form with the user's goals."""
+        if request.user.is_authenticated:
+            # Retrieve the user's goals
+            user_goals = Goal.objects.filter(user_id=request.user)
+            return render(request, self.template_name, {'goals': user_goals})
+        else:
+            # Redirect to login if the user is not authenticated
+            return redirect('login')
+    def post(self, request):
+        """Handle the submitted form data for adding money."""
+        local_time = timezone.localtime(timezone.now())
+        amount = request.POST.get('goal_amount')
+        date = str(local_time.date())
+        distribute_evenly = request.POST.get('distribute_evenly')
+        select_custom_goals = request.POST.get('select_custom_goals')
+        selected_goals = request.POST.getlist('selected_goals[]')
+        add_to_income_expense = request.POST.get('add_income_expense')
+        try:
+            # Validate amount
+            amount_decimal = validate_amount(amount, request)
+            # Validate and parse date
+            if not date:
+                raise ValueError("Date is required.")
+            parsed_date = datetime.strptime(date, '%Y-%m-%d').date()
+            goals = get_goals(request.user, distribute_evenly, selected_goals, select_custom_goals)
+            if not goals.exists():
+                return handle_goal_error(request, "No goals selected or you have no goals.",
+                                         'moneymap:add_money_goals',
+                                         'no_goals_error')
+            # Check if the saving amount exceeds the available space for the selected goals
+            redirect_url = check_goals_availability(goals, amount_decimal, request)
+            if redirect_url:
+                return redirect_url
+            # Distribute savings to goals
+            redirect_url = distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date, request.user, request)
+            if redirect_url:
+                return redirect_url
+            # Redirect to the goals or income-expenses page
+            return redirect('moneymap:goals')
+        except ValueError as e:
+            logging.error(str(e))
+            return render(request, self.template_name, {'error': str(e)})
+        except Exception as specific_error:
+            logging.exception("An unexpected error occurred: %s", specific_error)
+            return render(request, self.template_name, {'error': 'An unexpected error occurred.'})
 
-class AddGoals(TemplateView):
+class AddGoals(LoginRequiredMixin, TemplateView):
     template_name = 'moneymap/add_goals.html'
 
     def get(self, request):
