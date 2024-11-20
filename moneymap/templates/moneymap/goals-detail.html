@@ -6,12 +6,20 @@
 <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
     <!-- Header Section -->
     <div class="w-full p-2.5 flex items-center justify-between">
-        <h1 class="text-[#1b283f] text-4xl font-semibold capitalize leading-tight">Tuition Fee Overview</h1>
+        <h1 class="text-[#1b283f] text-4xl font-semibold capitalize leading-tight">{{ goal.title }} Overview</h1>
         <!-- Delete Goal Button -->
-        <button id="deleteGoalButton" class="text-[#ff4d4d] text-lg font-base bg-transparent border-2 border-[#ff4d4d] px-4 py-2 rounded-lg hover:bg-[#ff4d4d] hover:text-white transition-colors">
-            Delete Goal
-        </button>
+{#        <button id="deleteGoalButton" data-goal-id="{{ goal.id }}" class="text-[#ff4d4d] text-lg font-base bg-transparent border-2 border-[#ff4d4d] px-4 py-2 rounded-lg hover:bg-[#ff4d4d] hover:text-white transition-colors">#}
+{#            Delete Goal#}
+{#        </button>#}
+{#    </div>#}
+        <form method="POST" action="{% url 'moneymap:delete_goal' goal.goal_id %}">
+            {% csrf_token %}
+            <button type="submit" class="text-[#ff4d4d] text-lg font-base bg-transparent border-2 border-[#ff4d4d] px-4 py-2 rounded-lg hover:bg-[#ff4d4d] hover:text-white transition-colors">
+                Delete Goal
+            </button>
+        </form>
     </div>
+</div>
 
     <!-- Overlay Section -->
     <div id="overlay" class="fixed inset-0 z-50 flex justify-center items-center bg-[#00000080] hidden">
@@ -20,7 +28,7 @@
                   style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
                 Are you sure?
             </span>
-            <div class="text-center text-[#1b283f] text-base font-normal font-['Poppins'] mt-4">This means the information will be permanently deleted</div>
+            <div class="text-center text-[#1b283f] text-base font-normal font-['Poppins'] mt-4">This means the information will be permanently deleted.</div>
             <div class="w-[376px] h-[50px] mt-6 flex justify-between">
             <button id="cancelButton" class="w-[158px] h-[50px] rounded-[40px] border-2 border-[#AEC2C0] text-center text-[#1B283F] text-sm font-medium font-['Poppins'] transition duration-300 ease-in-out transform hover:bg-[#f4f4f4] hover:text-[#1B283F] hover:scale-105 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[#05a99d] focus:ring-offset-2">
                 CANCEL
@@ -142,11 +150,33 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.classList.add('hidden');
     });
 
-    // Handle the "Accept" button click (e.g., delete the goal)
+    // Handle the "DELETE" button click (delete the goal)
     acceptButton.addEventListener('click', function() {
-        // Here you can add the functionality to delete the goal.
-        // For now, it's just a console log simulating goal deletion.
-        console.log('Goal Deleted');
+        // console.log('Goal Deleted');
+        const goalId = deleteGoalButton.dataset.goalId; // Get dynamic goal ID
+
+        fetch(`/moneymap/goals/${goalId}/delete`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+    }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Goal Deleted');
+            window.location.href = '/moneymap/goals';
+        } else {
+            console.error('Error:', data);
+            alert('Failed to delete goal. Try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Fetch Error:', error);
+        alert('An error occurred while deleting the goal.');
+    });
+
         overlay.classList.add('hidden');  // Hide the overlay after the action
     });
 });

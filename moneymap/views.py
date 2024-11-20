@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.views.generic import TemplateView, DetailView, CreateView
 from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .service_addgoals import get_goals_data
@@ -123,7 +124,6 @@ def delete_income_expense(request, income_expense_id):
 
     # Redirect back to the income and expenses view
     return redirect('moneymap:income-expenses')
-
 
 class GoalView(LoginRequiredMixin, TemplateView):
     """View for the goals page."""
@@ -457,5 +457,22 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         context['avg_saving'] = avg_saving
         context['min_saving'] = min_saving
         context['saving_shortfall'] = saving_shortfall
+        context['goal'] = self.get_object()
+        context['goal_id'] = goal.goal_id
 
         return context
+
+
+@login_required
+def delete_goal(request, goal_id):
+    """Delete a goal object."""
+    if request.method == 'POST':
+        goal = get_object_or_404(Goal, goal_id=goal_id)
+        # delete all transactions related to that goal
+        IncomeExpense.objects.filter(description__contains=goal.title).delete()
+        # delete the goal
+        goal.delete()
+        messages.success(request, 'Goal successfully deleted.')
+        # Redirect to the goals page
+        return redirect('moneymap:goals')
+    return HttpResponseForbidden('Invalid request method.')
