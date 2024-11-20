@@ -428,9 +428,6 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         trend_for_goal = next(
             (trend for trend in trends if trend['goal_id'] == goal.goal_id),
             None)
-        logging.info(
-            f"Goal ID: {goal.goal_id}, Trend Goal ID: {trend_for_goal['goal_id'] if trend_for_goal else 'None'}")
-
         trend_status = trend_for_goal[
             'trend'] if trend_for_goal else "No trend data"
 

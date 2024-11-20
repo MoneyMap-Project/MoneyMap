@@ -2,9 +2,11 @@ from datetime import date
 from django.utils import timezone
 from .models import Goal
 
+#TODO: Since these mostly similar to the service_detailgoals.py, you can combine them into one file. (Refactor).
+
 def calculate_days_remaining(end_date):
     """Calculate the days remaining until the goal deadline."""
-    return max((end_date - timezone.now().date()).days, 0)
+    return max((end_date - timezone.now().date()).days, 0)  #TODO: We also have `days_remaining` method in the Goal model.
 
 def calculate_average_saving(target_amount, total_days):
     """Calculate the average saving per day to reach the goal."""

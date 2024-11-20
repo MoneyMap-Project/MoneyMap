@@ -4,7 +4,7 @@ from datetime import timedelta, datetime
 from django.db.models import Sum, F
 from django.utils import timezone
 from .models import Goal
-from decimal import Decimal, ROUND_CEILING
+from decimal import Decimal, ROUND_CEILING, InvalidOperation
 from django.db.models import Avg, Min
 
 import pandas as pd
@@ -13,7 +13,7 @@ import logging
 from datetime import datetime, timedelta
 
 
-def calculate_days_remaining(user, date, goal_id):
+def calculate_days_remaining(user, date, goal_id):   #TODO: We also have `days_remaining` method in the Goal model.
     """
     Calculate the days remaining to reach a specific goal for a user.
 
@@ -51,46 +51,69 @@ def calculate_trend(user, date):
         list: A list of dictionaries containing goal_id and their respective trends.
     """
     # logging.info(f"Calculating trend for user {user.id} on date {date}")
+    try:
+        goals = Goal.objects.filter(
+            user_id=user,
+            start_date__lte=date,
+            end_date__gte=date)
 
-    goals = Goal.objects.filter(
-        user_id=user,
-        start_date__lte=date,
-        end_date__gte=date)
+        if not goals.exists():
+            logging.warning(f"No active goals found for user {user.id} on {date}")
+            return []
 
-    # logging.info(f"Number of goals found: {goals.count()}")
+        trends = []
 
-    trends = []
+        for goal in goals:
 
-    for goal in goals:
-        # logging.info(f"Processing goal: {goal.goal_id}")
+            if goal.start_date > goal.end_date:
+                logging.warning(f"Invalid date range for goal {goal.goal_id}")
+                continue
 
-        total_days = (goal.end_date - goal.start_date).days  # total days
+            # logging.info(f"Processing goal: {goal.goal_id}")
 
-        if total_days <= 0:
-            continue  # Skip goals with invalid or zero duration
+            total_days = (goal.end_date - goal.start_date).days  # total days
 
-        # how many days have passed since the goal started
-        days_elapsed = max(0, (date - goal.start_date).days)  # max to avoid negative days
+            if total_days <= 0:
+                continue  # Skip goals with invalid or zero duration
 
-        # Special handling for day 0 (goal creation day)
-        if days_elapsed == 0:
-            trend_value = 0  # No progress expected on the first day
-            trend = 'Neutral'
-        else:
-            daily_target = Decimal(goal.target_amount) / total_days if total_days > 0 else 0
-            expected_amount = daily_target * min(days_elapsed, total_days)
-            actual_amount = Decimal(goal.current_amount)
-            trend_value = actual_amount - expected_amount
-            trend = 'Positive' if trend_value >= 0 else 'Negative'
+            # how many days have passed since the goal started
+            days_elapsed = max(0, (date - goal.start_date).days)  # max to avoid negative days
 
-        logging.info(f"Goal {goal.goal_id} trend: {trend} ({trend_value})")
-        trends.append({'goal_id': goal.goal_id,
-                       'trend': trend,
-                       'trend_value': float(trend_value)
-                       })
+            # Special handling for day 0 (goal creation day)
+            if days_elapsed == 0:
+                trend_value = 0  # No progress expected on the first day
+                trend = 'Neutral'
+            else:
+                try:
+                    daily_target = Decimal(
+                        goal.target_amount) / total_days if total_days > 0 else 0
+                except (ZeroDivisionError, InvalidOperation):
+                    logging.error(f"Invalid calculation for goal {goal.goal_id}")
+                    continue
+                expected_amount = daily_target * min(days_elapsed, total_days)
 
-    logging.info(f"Total trends calculated: {len(trends)}")
-    return trends
+                try:
+                    actual_amount = Decimal(goal.current_amount)
+                except (TypeError, ValueError):
+                    logging.error(
+                        f"Invalid current_amount for goal {goal.goal_id}")
+                    actual_amount = Decimal('0')
+
+                trend_value = actual_amount - expected_amount
+                trend = 'Positive' if trend_value >= 0 else 'Negative'
+
+            # logging.info(f"Goal {goal.goal_id} trend: {trend} ({trend_value})")
+            trends.append({'goal_id': goal.goal_id,
+                           'trend': trend,
+                           'trend_value': float(trend_value)
+                           })
+
+        # logging.info(f"Total trends calculated: {len(trends)}")
+        return trends
+
+    except Goal.DoesNotExist:
+        # logging.error(f"Goal not found for user {user.id}")
+        return []
 
 
 def calculate_saving_progress(goal: Goal) -> Decimal:
@@ -183,16 +206,17 @@ def calculate_min_saving(user, date, goal_id):
         # Calculate the remaining amount to reach the target
         remaining_amount = rem_amount(goal)
 
+
         # Calculate total days left until the end date
-        total_days_left = (goal.end_date - date).days
+        total_days_left = calculate_days_remaining(user, date, goal_id)
+
         if total_days_left <= 0:
             return Decimal('0.00').quantize(Decimal('0.01'),
                                             rounding=ROUND_CEILING)  # Goal time has expired
 
-        min_saving = remaining_amount / total_days_left
+        min_saving = goal.target_amount / total_days_left if total_days_left > 0 else Decimal('0.00')
         return min_saving.quantize(Decimal('0.01'),
                                    rounding=ROUND_CEILING)  # Round up to 2 decimal places
-
 
     except Goal.DoesNotExist:
         return Decimal('0.00').quantize(Decimal('0.01'),
@@ -210,7 +234,8 @@ def calculate_saving_shortfall(user, date, goal_id):
         avg_saving = calculate_avg_saving(user, date, goal_id)
         min_saving = calculate_min_saving(user, date, goal_id)
 
-        # Calculate shortfall if min_saving is greater than avg_saving
+        # Calculate shortfall "extra saving needed per day"
+        # saving_today =
         shortfall = min_saving - avg_saving
         return max(Decimal('0.00'), shortfall).quantize(Decimal('0.01'),
                                                         rounding=ROUND_CEILING)  # Return 0 if no shortfall
