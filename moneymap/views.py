@@ -417,7 +417,7 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         goal = self.object  # `self.object` is set by DetailView
 
         user = self.request.user
-        current_date = timezone.now().date()  # Get today's date
+        current_date = timezone.localtime(timezone.now()).date()  # Get today's date
 
         # Calculate the remaining days for the goal
         remaining_days = calculate_days_remaining(user, current_date, goal.goal_id)
@@ -428,6 +428,8 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         trend_for_goal = next(
             (trend for trend in trends if trend['goal_id'] == goal.goal_id),
             None)
+        logging.info(
+            f"Goal ID: {goal.goal_id}, Trend Goal ID: {trend_for_goal['goal_id'] if trend_for_goal else 'None'}")
 
         trend_status = trend_for_goal[
             'trend'] if trend_for_goal else "No trend data"
@@ -439,13 +441,6 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         avg_saving = calculate_avg_saving(user, current_date, goal.goal_id)
         min_saving = calculate_min_saving(user, current_date, goal.goal_id)
         saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
-
-        # retrieved all transactions for the goal  #TODO: It's returning all goal, must be transaction!
-        transactions = Goal.objects.filter(
-            user_id=user,
-            goal_id=goal.goal_id
-        )
-        context['transactions'] = transactions
 
         context['start_date'] = goal.start_date.strftime("%-d %B %Y")
         context['end_date'] = goal.end_date.strftime("%-d %B %Y")
