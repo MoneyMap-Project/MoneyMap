@@ -109,11 +109,15 @@
         // Format date to YYYY-MM-DD for input fields
         const formatToInputDate = (date) => date.toISOString().split('T')[0];
 
-        // Set `min` for end-date to tomorrow
-        endDateInput.min = formatToInputDate(tomorrow);
+        // Set `min` for start-date and end-date
+        const today = formatToInputDate(bangkokDate);
+        startDateInput.min = today; // Start date cannot be in the past
+        endDateInput.min = formatToInputDate(tomorrow); // End date must be tomorrow or later
 
-        // Set start-date value to today (if needed)
-        startDateInput.value = bangkokDate.toISOString().split('T')[0];
+        // Set start-date value to today (optional, if you want a default value)
+        startDateInput.value = today;
+
+        
 
         function formatDateToDDMMYY(dateString) {
             if (!dateString) return "";
