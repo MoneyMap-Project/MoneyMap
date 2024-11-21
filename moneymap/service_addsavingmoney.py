@@ -77,6 +77,15 @@ def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date
                 description=f'Saving money to {goal.title}',
                 saved_to_income_expense=True,
             )
+        else:
+            IncomeExpense.objects.create(
+                user_id=user,
+                type='saving',
+                amount=amount_per_goal,
+                date=parsed_date,
+                description=f'Saving money to {goal.title}',
+                saved_to_income_expense=False,
+            )
 
     return None  # Return None if everything is fine
 

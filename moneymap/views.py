@@ -60,6 +60,7 @@ class IncomeAndExpensesView(TemplateView):
             # Retrieve income/expense records for today
             income_expenses_today = IncomeExpense.objects.filter(
                 user_id=self.request.user,
+                saved_to_income_expense=True,
                 date=today
             ).order_by('date')
 
@@ -255,6 +256,7 @@ class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
         # Retrieve IncomeExpense records for the selected date and the logged-in user
         income_expenses = IncomeExpense.objects.filter(
             user_id=request.user,
+            saved_to_income_expense=True,
             date=selected_date
         ).order_by('date')
 
