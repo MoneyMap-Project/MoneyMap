@@ -43,6 +43,8 @@ class Tag(models.Model):
         return self.name
 
 
+
+
 class IncomeExpense(models.Model):
     IncomeExpense_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -63,6 +65,8 @@ class IncomeExpense(models.Model):
     date = models.DateField()
     description = models.CharField(max_length=255)
     saved_to_income_expense = models.BooleanField(default=False)
+
+    goal = models.ManyToManyField('Goal', blank=True)
 
     # currency_id = pass will be added later
 

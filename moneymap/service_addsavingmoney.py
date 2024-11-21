@@ -69,7 +69,7 @@ def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date
 
         # create an IncomeExpense record
         if add_to_income_expense:
-            IncomeExpense.objects.create(
+            income_expense = IncomeExpense.objects.create(
                 user_id=user,
                 type='saving',
                 amount=amount_per_goal,
@@ -78,7 +78,7 @@ def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date
                 saved_to_income_expense=True,
             )
         else:
-            IncomeExpense.objects.create(
+            income_expense = IncomeExpense.objects.create(
                 user_id=user,
                 type='saving',
                 amount=amount_per_goal,
@@ -86,6 +86,7 @@ def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date
                 description=f'Saving money to {goal.title}',
                 saved_to_income_expense=False,
             )
+        income_expense.goal.add(goal)
 
     return None  # Return None if everything is fine
 
