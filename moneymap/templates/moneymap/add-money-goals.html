@@ -15,24 +15,6 @@
                     <!-- Amount Section -->
                     <div class="w-full flex flex-col gap-3">
                         <label for="goal-amount" class="text-black text-lg font-normal font-['Poppins'] capitalize">Amount</label>
-                        {% if messages %}
-                            <ul>
-                                {% for message in messages %}
-                                    {% if 'amount_error' in message.tags %}
-                                        <li class="error-message">{{ message }}</li>
-                                    {% endif %}
-                                    {% if 'no_goals_error' in message.tags %}
-                                        <li class="error-message">{{ message }}</li>
-                                    {% endif %}
-                                    {% if 'saving_error' in message.tags %}
-                                        <li class="error-message">{{ message }}</li>
-                                    {% endif %}
-                                    {% if 'goal_error' in message.tags %}
-                                        <li class="error-message">{{ message }}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
 
                         <div class="w-full p-2.5 rounded-[10px] border border-[#1b283f] flex justify-between items-center amount-container">
                             <input type="number" id="goal-amount" name="goal_amount" placeholder="Enter amount"

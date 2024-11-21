@@ -1,7 +1,30 @@
+from django.utils import timezone
 from django.contrib import messages
 from decimal import Decimal
 from django.shortcuts import redirect
 from .models import Goal, IncomeExpense
+
+
+def validate_goal_end_dates(goals, request):
+    """
+    Validate that the goals' end dates are not in the past.
+    """
+    local_time = timezone.localtime(timezone.now())
+    current_date = local_time.date()
+    invalid_goals = goals.filter(end_date__lt=current_date)
+
+    if invalid_goals.exists():
+        # Collect the titles of invalid goals for the error message
+        invalid_goal_titles = ', '.join(
+            invalid_goals.values_list('title', flat=True))
+        messages.error(
+            request,
+            f"The following goals have expired and cannot accept savings: {invalid_goal_titles}.",
+            extra_tags='expired_goal'  # Specific tag for this error
+        )
+        return redirect('moneymap:add_money_goals')
+
+    return None  # Return None if all goals are valid
 
 def validate_amount(amount, request):
     """Validate the amount to ensure it is a positive number greater than zero."""
@@ -12,7 +35,7 @@ def validate_amount(amount, request):
         messages.error(
             request,
             "Amount must be a positive number greater than zero.",
-            extra_tags='amount_error'  # Specific tag for this error
+            extra_tags='amount'  # Specific tag for this error
         )
         return redirect('moneymap:add_money_goals')
     return amount_decimal
@@ -41,7 +64,7 @@ def check_goals_availability(goals, amount_decimal, request):
         messages.error(
             request,
             "Saving amount exceeds the target amount of the selected goals.",
-            extra_tags='saving_error'
+            extra_tags='saving'
         )
         return redirect('moneymap:add_money_goals')
     return None  # Return None if everything is fine
@@ -58,7 +81,7 @@ def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date
             messages.error(
                 request,
                 f"Saving amount for {goal.title} exceeds its available space.",
-                extra_tags='goal_error'  # Specific tag for this error
+                extra_tags='goal'  # Specific tag for this error
             )
             # Redirect back to the add_money_goals page
             return redirect('moneymap:add_money_goals')

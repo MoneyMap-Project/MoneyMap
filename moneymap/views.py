@@ -18,6 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .service_addgoals import get_goals_data
 from .service_addsavingmoney import (
+    validate_goal_end_dates,
     validate_amount,
     get_goals,
     check_goals_availability,
@@ -396,6 +397,11 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
                 return handle_goal_error(request, "No goals selected or you have no goals.",
                                          'moneymap:add_money_goals',
                                          'no_goals_error')
+
+            # Validate goal end dates
+            redirect_url = validate_goal_end_dates(goals, request)
+            if redirect_url:
+                return redirect_url
 
             # Check if the saving amount exceeds the available space for the selected goals
             redirect_url = check_goals_availability(goals, amount_decimal, request)
