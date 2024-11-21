@@ -103,6 +103,18 @@
         const bangkokDate = new Date(new Date().getTime() + (bangkokOffset - new Date().getTimezoneOffset()) * 60000);
         startDateInput.value = bangkokDate.toISOString().split('T')[0];
 
+        const tomorrow = new Date(bangkokDate);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        // Format date to YYYY-MM-DD for input fields
+        const formatToInputDate = (date) => date.toISOString().split('T')[0];
+
+        // Set `min` for end-date to tomorrow
+        endDateInput.min = formatToInputDate(tomorrow);
+
+        // Set start-date value to today (if needed)
+        startDateInput.value = bangkokDate.toISOString().split('T')[0];
+
         function formatDateToDDMMYY(dateString) {
             if (!dateString) return "";
             const [year, month, day] = dateString.split("-");
