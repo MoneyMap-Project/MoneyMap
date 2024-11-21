@@ -103,22 +103,51 @@
         const bangkokDate = new Date(new Date().getTime() + (bangkokOffset - new Date().getTimezoneOffset()) * 60000);
         startDateInput.value = bangkokDate.toISOString().split('T')[0];
 
+        // Format date to YYYY-MM-DD for input fields
+        const formatToInputDate = (date) => date.toISOString().split('T')[0];
+        
+        // Initialize today and tomorrow for validation
+        const today = formatToInputDate(bangkokDate);
         const tomorrow = new Date(bangkokDate);
         tomorrow.setDate(tomorrow.getDate() + 1);
 
-        // Format date to YYYY-MM-DD for input fields
-        const formatToInputDate = (date) => date.toISOString().split('T')[0];
-
-        // Set `min` for start-date and end-date
-        const today = formatToInputDate(bangkokDate);
-        startDateInput.min = today; // Start date cannot be in the past
-        endDateInput.min = formatToInputDate(tomorrow); // End date must be tomorrow or later
-
-        // Set start-date value to today (optional, if you want a default value)
+        // Set default start date and minimum values
         startDateInput.value = today;
+        startDateInput.min = today;
+        endDateInput.value = formatToInputDate(tomorrow);
+        endDateInput.min = formatToInputDate(tomorrow);
+        
+        // Update minimum values dynamically based on start date selection
+        startDateInput.addEventListener('change', function () {
+            const selectedStartDate = new Date(startDateInput.value);
+            
+            // Ensure the selected start date is not in the past
+            if (selectedStartDate < bangkokDate) {
+                startDateInput.value = today;
+            }
+
+            // Adjust end date min based on new start date
+            const newMinEndDate = new Date(startDateInput.value);
+            newMinEndDate.setDate(newMinEndDate.getDate() + 1);
+            endDateInput.min = formatToInputDate(newMinEndDate);
+
+            // If the current end date is before the new min, reset it
+            if (new Date(endDateInput.value) < newMinEndDate) {
+                endDateInput.value = formatToInputDate(newMinEndDate);
+            }
+        });
+
+        endDateInput.addEventListener('change', function () {
+            const selectedEndDate = new Date(endDateInput.value);
+            const minEndDate = new Date(endDateInput.min);
+
+            // Ensure the selected end date is not earlier than the min end date
+            if (selectedEndDate < minEndDate) {
+                endDateInput.value = endDateInput.min;
+            }
+        });
 
         
-
         function formatDateToDDMMYY(dateString) {
             if (!dateString) return "";
             const [year, month, day] = dateString.split("-");
