@@ -632,7 +632,7 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         ]
 
         # Actual savings
-        actual_saving = get_all_saving_specific_goal()
+        actual_saving = get_all_saving_specific_goal(goal.title)
         logging.debug(f"actual saving: {actual_saving}")
 
         # Aggregate and align actual savings

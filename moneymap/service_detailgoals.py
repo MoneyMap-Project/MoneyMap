@@ -228,19 +228,38 @@ def get_total_today_saving():
     )
     return saving_today
 
-def get_all_saving_specific_goal():
+# def get_all_saving_specific_goal():
+#     """Get all saving records for a specific goal based on the goal_id.
+#
+#     Returns:
+#         QuerySet: A list of IncomeExpense objects for the given user and goal.
+#     """
+#     goal_name = get_goal_title_from_IncomeExpense_table()
+#     saving_records = IncomeExpense.objects.filter(
+#         type='saving',
+#         goal__title=goal_name
+#     ).values('date', __amount=F('amount'))  # Get date and amount as dictionary fields
+#
+#     return saving_records
+
+def get_all_saving_specific_goal(goal_title):
     """Get all saving records for a specific goal.
 
+    Args:
+        goal_title (str): The title of the goal to match.
+
     Returns:
-        QuerySet: A list of IncomeExpense objects for the given user and goal.
+        QuerySet: A list of IncomeExpense objects for the goal.
     """
-    goal_name = get_goal_title_from_IncomeExpense_table()
-    saving_records = IncomeExpense.objects.filter(
+    savings = IncomeExpense.objects.filter(
         type='saving',
-        goal__title=goal_name
+        description=f"Saving money to {goal_title}"
     ).values('date', __amount=F('amount'))  # Get date and amount as dictionary fields
 
-    return saving_records
+    logging.debug(f"Fetched savings for goal '{goal_title}': {list(savings)}")
+    return savings
+
+
 
 def get_goal_title_from_IncomeExpense_table():
     goal_name = (
