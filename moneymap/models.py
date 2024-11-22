@@ -43,8 +43,6 @@ class Tag(models.Model):
         return self.name
 
 
-
-
 class IncomeExpense(models.Model):
     IncomeExpense_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL,

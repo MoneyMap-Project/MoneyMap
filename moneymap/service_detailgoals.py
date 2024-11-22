@@ -238,8 +238,6 @@ def get_all_goals(user):
     """
     return Goal.objects.filter(user_id=user)
 
-
-
 def calculate_burndown_chart(total_points, start_date, end_date,
                              completed_points_by_date):
     """
