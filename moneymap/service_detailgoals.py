@@ -144,7 +144,7 @@ def calculate_avg_saving(user, date, goal_id):
 
         # Calculate average saving
         avg_saving = goal.current_amount / days_so_far if days_so_far > 0 else goal.current_amount
-        logging.info(f"Day so far: {days_so_far}, avg_saving: {avg_saving}, goal.current_amount: {goal.current_amount}, goal.target_amount: {goal.target_amount}")
+        # logging.info(f"Day so far: {days_so_far}, avg_saving: {avg_saving}, goal.current_amount: {goal.current_amount}, goal.target_amount: {goal.target_amount}")
 
         # 2 decimal places
         return avg_saving.quantize(Decimal('0.01'), rounding=ROUND_CEILING)
@@ -152,8 +152,6 @@ def calculate_avg_saving(user, date, goal_id):
     except Goal.DoesNotExist:
         return Decimal('0.00').quantize(Decimal('0.01'),
                                         rounding=ROUND_CEILING)  # Goal not found
-
-
 
 def update_current_amount(self, amount_saved):
     """Update current amount with a new saving input."""
@@ -195,26 +193,11 @@ def rem_amount(goal):
 def calculate_saving_shortfall(user, date, goal_id):
     """Calculate the extra daily saving needed to meet the goal."""
     try:
-        today_date = timezone.localtime(timezone.now()).date()
-        goal_name = (
-            IncomeExpense.objects.filter(
-                description__startswith="Saving money to")
-            .values_list('description', flat=True)
-            .first()
-            .replace("Saving money to ", "")
-        )
-
         min_saving = calculate_min_saving(user, date, goal_id)
-        saving_today = (
-                IncomeExpense.objects.filter(
-                    type='saving',
-                    goal__title=goal_name,
-                    date=today_date
-                )
-                .aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
-        )
 
-        logging.info(f"min_saving: {min_saving}, saving_today: {saving_today}")
+        saving_today = get_today_saving()
+
+        # logging.info(f"min_saving: {min_saving}, saving_today: {saving_today}")
 
         # Calculate shortfall "extra saving needed per day"
         shortfall = min_saving - saving_today
@@ -223,6 +206,27 @@ def calculate_saving_shortfall(user, date, goal_id):
     except Goal.DoesNotExist:
         return Decimal('0.00').quantize(Decimal('0.01'),
                                         rounding=ROUND_CEILING)  # Goal not found
+
+
+def get_today_saving():
+    """Get the total saving amount of today saving."""
+    today_date = timezone.localtime(timezone.now()).date()
+    goal_name = (
+        IncomeExpense.objects.filter(
+            description__startswith="Saving money to")
+        .values_list('description', flat=True)
+        .first()
+        .replace("Saving money to ", "")
+    )
+    saving_today = (
+            IncomeExpense.objects.filter(
+                type='saving',
+                goal__title=goal_name,
+                date=today_date
+            )
+            .aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+    )
+    return saving_today
 
 
 def get_all_goals(user):
