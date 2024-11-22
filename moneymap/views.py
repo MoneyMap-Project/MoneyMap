@@ -42,11 +42,10 @@ from .service_detailgoals import (
     calculate_days_remaining,
     calculate_trend,
     calculate_saving_progress,
-    calculate_burndown_chart,
     calculate_avg_saving,
     calculate_min_saving,
     calculate_saving_shortfall,
-    get_all_goals
+    get_all_goals, get_all_saving_specific_goal
 )
 from .models import IncomeExpense, Goal, Tag
 
@@ -606,6 +605,7 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         trend_status = trend_for_goal[
             'trend'] if trend_for_goal else "No trend data"
 
+        # -- For the goal progress CARD --
         current_amount = goal.current_amount
         target_amount = goal.target_amount
         saving_progress = calculate_saving_progress(goal)
@@ -614,6 +614,7 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         min_saving = calculate_min_saving(user, current_date, goal.goal_id)
         saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
 
+        # -- For the burndown chart --
         start_date = goal.start_date
         end_date = goal.end_date
 
@@ -631,17 +632,22 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         ]
 
         # Actual savings
-        actual_savings = [float(current_amount)]
-        for i in range(1, total_days + 1):
-            actual_savings.append(
-                float(actual_savings[i - 1]) - float(avg_saving)
-            )
+        actual_saving = get_all_saving_specific_goal()
+        logging.debug(f"actual saving: {actual_saving}")
 
-        logging.debug(f"i savings: {[float(x) for x in ideal_savings]}")
-        logging.debug(f"a savings: {[float(x) for x in actual_savings]}")
+        # Aggregate and align actual savings
+        aggregated_savings = aggregate_savings_by_date(actual_saving)  # Aggregate by date
+        aligned_actual_savings = align_savings_with_labels(date_labels, aggregated_savings)  # Align with labels
 
+        # logging.debug(f"Aggregated savings: {aligned_actual_savings}")
+        # if save day, amount is combine all together
+
+        # Convert data to floats for JSON serialization
         ideal_but_float = [float(x) for x in ideal_savings]
-        actual_but_float = [float(x) for x in actual_savings]
+        actual_but_float = aligned_actual_savings
+
+        # logging.debug(f"i savings: {[float(x) for x in ideal_savings]}")
+        # logging.debug(f"a savings: {[float(x) for x in actual_savings]}")
 
         context['start_date'] = goal.start_date.strftime("%-d %B %Y")
         context['end_date'] = goal.end_date.strftime("%-d %B %Y")
@@ -662,6 +668,29 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
 
         return context
 
+
+def aggregate_savings_by_date(actual_saving):
+    # Create a dictionary to store total savings for each date
+    savings_by_date = {}
+
+    for entry in actual_saving:
+        date = entry['date']
+        amount = entry['__amount']
+        if date in savings_by_date:
+            savings_by_date[date] += amount
+        else:
+            savings_by_date[date] = amount
+
+    return savings_by_date
+
+def align_savings_with_labels(chart_labels, savings_by_date):
+    aligned_savings = []
+
+    for label in chart_labels:
+        date = datetime.strptime(label, "%Y-%m-%d").date()
+        aligned_savings.append(float(savings_by_date.get(date, Decimal('0.00'))))  # Default to 0 if no data
+
+    return aligned_savings
 
 @login_required
 def delete_goal(request, goal_id):

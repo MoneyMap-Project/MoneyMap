@@ -13,7 +13,8 @@ import logging
 from datetime import datetime, timedelta
 
 
-def calculate_days_remaining(user, date, goal_id):   #TODO: We also have `days_remaining` method in the Goal model.
+def calculate_days_remaining(user, date,
+                             goal_id):  # TODO: We also have `days_remaining` method in the Goal model.
     """
     Calculate the days remaining to reach a specific goal for a user.
 
@@ -58,7 +59,8 @@ def calculate_trend(user, date):
             end_date__gte=date)
 
         if not goals.exists():
-            logging.warning(f"No active goals found for user {user.id} on {date}")
+            logging.warning(
+                f"No active goals found for user {user.id} on {date}")
             return []
 
         trends = []
@@ -87,7 +89,8 @@ def calculate_trend(user, date):
                     daily_target = Decimal(
                         goal.target_amount) / total_days if total_days > 0 else 0
                 except (ZeroDivisionError, InvalidOperation):
-                    logging.error(f"Invalid calculation for goal {goal.goal_id}")
+                    logging.error(
+                        f"Invalid calculation for goal {goal.goal_id}")
                     continue
                 expected_amount = daily_target * min(days_elapsed, total_days)
 
@@ -126,11 +129,13 @@ def calculate_saving_progress(goal: Goal) -> Decimal:
     return progress_percentage.quantize(Decimal('0.01'),
                                         rounding=ROUND_CEILING)
 
+
 def calculate_days_elapsed(date, goal):
     """ Calculate how many days have passed since the goal started"""
     days_elapsed = max(0, (
-                date - goal.start_date).days)  # max to avoid negative days
+            date - goal.start_date).days)  # max to avoid negative days
     return days_elapsed
+
 
 def calculate_avg_saving(user, date, goal_id):
     """
@@ -153,13 +158,16 @@ def calculate_avg_saving(user, date, goal_id):
         return Decimal('0.00').quantize(Decimal('0.01'),
                                         rounding=ROUND_CEILING)  # Goal not found
 
+
 def update_current_amount(self, amount_saved):
     """Update current amount with a new saving input."""
     self.current_amount += Decimal(amount_saved)
     self.save()
 
+
 def __str__(self):
     return f"{self.description}"
+
 
 def calculate_min_saving(user, date, goal_id):
     """Calculate the minimum daily saving needed to reach the target amount."""
@@ -173,7 +181,8 @@ def calculate_min_saving(user, date, goal_id):
             return Decimal('0.00').quantize(Decimal('0.01'),
                                             rounding=ROUND_CEILING)  # Goal time has expired
 
-        min_saving = goal.target_amount / total_days_left if total_days_left > 0 else Decimal('0.00')
+        min_saving = goal.target_amount / total_days_left if total_days_left > 0 else Decimal(
+            '0.00')
         return min_saving.quantize(Decimal('0.01'),
                                    rounding=ROUND_CEILING)  # Round up to 2 decimal places
 
@@ -208,13 +217,7 @@ def calculate_saving_shortfall(user, date, goal_id):
 def get_total_today_saving():
     """Get the total saving amount of today saving."""
     today_date = timezone.localtime(timezone.now()).date()
-    goal_name = (
-        IncomeExpense.objects.filter(
-            description__startswith="Saving money to")
-        .values_list('description', flat=True)
-        .first()
-        .replace("Saving money to ", "")
-    )
+    goal_name = get_goal_title_from_IncomeExpense_table()
     saving_today = (
             IncomeExpense.objects.filter(
                 type='saving',
@@ -224,6 +227,30 @@ def get_total_today_saving():
             .aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
     )
     return saving_today
+
+def get_all_saving_specific_goal():
+    """Get all saving records for a specific goal.
+
+    Returns:
+        QuerySet: A list of IncomeExpense objects for the given user and goal.
+    """
+    goal_name = get_goal_title_from_IncomeExpense_table()
+    saving_records = IncomeExpense.objects.filter(
+        type='saving',
+        goal__title=goal_name
+    ).values('date', __amount=F('amount'))  # Get date and amount as dictionary fields
+
+    return saving_records
+
+def get_goal_title_from_IncomeExpense_table():
+    goal_name = (
+        IncomeExpense.objects.filter(
+            description__startswith="Saving money to")
+        .values_list('description', flat=True)
+        .first()
+        .replace("Saving money to ", "")
+    )
+    return goal_name
 
 
 def get_all_goals(user):
@@ -237,42 +264,3 @@ def get_all_goals(user):
         QuerySet: A list of Goal objects for the given user.
     """
     return Goal.objects.filter(user_id=user)
-
-def calculate_burndown_chart(total_points, start_date, end_date,
-                             completed_points_by_date):
-    """
-    Calculate burndown chart data using pandas.
-
-    Args:
-        total_points (float): Total story points at start
-        start_date (datetime): Sprint start date
-        end_date (datetime): Sprint end date
-        completed_points_by_date (dict): Dictionary with dates as keys and completed points as values
-            e.g. {'2024-01-01': 5, '2024-01-02': 3, ...}
-
-    Returns:
-        pandas.DataFrame: DataFrame with dates, ideal, and actual burndown lines
-    """
-    pass
-    # # Create date range
-    # date_range = pd.date_range(start=start_date, end=end_date, freq='D')
-    #
-    # # Create DataFrame
-    # df = pd.DataFrame(index=date_range)
-    #
-    # # Calculate ideal burndown line
-    # total_days = len(date_range)
-    # df['ideal'] = np.linspace(100, 0, total_days)
-    #
-    # # Calculate actual burndown
-    # # df['completed'] = pd.Series(completed_points_by_date)
-    # # df['completed'] = df['completed'].fillna(0).cumsum()
-    # df['completed'] = pd.Series(completed_points_by_date).reindex(date_range, fill_value=0).cumsum()
-    # df['remaining'] = 100 - df['completed']
-    #
-    # # Add formatted date column
-    # df['date'] = df.index.strftime('%Y-%m-%d')
-    #
-    # # return df
-    # return df[['date', 'ideal', 'remaining']].to_dict('records')
-

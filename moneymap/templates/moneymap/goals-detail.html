@@ -195,8 +195,8 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         console.error('Failed to select canvas');
     }
-    
-    
+
+
     // Data from Django context
     const labels = {{ chart_labels|safe }};
     const idealData = {{ chart_ideal_data|safe }};
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize Chart
     try {
-        
+
         new Chart(ctx, {
             type: 'line',
             data: {
