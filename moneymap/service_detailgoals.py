@@ -3,7 +3,7 @@
 from datetime import timedelta, datetime
 from django.db.models import Sum, F
 from django.utils import timezone
-from .models import Goal
+from .models import Goal, IncomeExpense
 from decimal import Decimal, ROUND_CEILING, InvalidOperation
 from django.db.models import Avg, Min
 
@@ -195,12 +195,29 @@ def rem_amount(goal):
 def calculate_saving_shortfall(user, date, goal_id):
     """Calculate the extra daily saving needed to meet the goal."""
     try:
-        avg_saving = calculate_avg_saving(user, date, goal_id)
+        today_date = timezone.localtime(timezone.now()).date()
+        goal_name = (
+            IncomeExpense.objects.filter(
+                description__startswith="Saving money to")
+            .values_list('description', flat=True)
+            .first()
+            .replace("Saving money to ", "")
+        )
+
         min_saving = calculate_min_saving(user, date, goal_id)
+        saving_today = (
+                IncomeExpense.objects.filter(
+                    type='saving',
+                    goal__title=goal_name,
+                    date=today_date
+                )
+                .aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        )
+
+        logging.info(f"min_saving: {min_saving}, saving_today: {saving_today}")
 
         # Calculate shortfall "extra saving needed per day"
-        # saving_today =
-        shortfall = min_saving - avg_saving
+        shortfall = min_saving - saving_today
         return max(Decimal('0.00'), shortfall).quantize(Decimal('0.01'),
                                                         rounding=ROUND_CEILING)  # Return 0 if no shortfall
     except Goal.DoesNotExist:

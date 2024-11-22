@@ -475,13 +475,13 @@ class AddGoals(LoginRequiredMixin, TemplateView):
             return render(request, 'moneymap/add_goals.html', {'error': 'An unexpected error occurred.'})
 
 
-
 class BaseTagView(View):
     """
     A base view for handling tag-related functionality, such as saving form data
     in the session for later use.
     """
-    def save_session_data(self, request):
+    @staticmethod
+    def save_session_data(request):
         """
         Helper method to save and return form data (description, amount, money_type)
         in the session.
