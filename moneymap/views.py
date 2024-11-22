@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.views.generic import TemplateView, DetailView, CreateView
 from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .service_addgoals import get_goals_data
@@ -34,6 +35,16 @@ from .service import (
     sum_expense_by_month,
     calculate_income_expense_percentage,
     get_income_expense_by_day,
+)
+from .service_detailgoals import (
+    calculate_days_remaining,
+    calculate_trend,
+    calculate_saving_progress,
+    calculate_burndown_chart,
+    calculate_avg_saving,
+    calculate_min_saving,
+    calculate_saving_shortfall,
+    get_all_goals
 )
 from .models import IncomeExpense, Goal, Tag
 
@@ -464,9 +475,6 @@ class AddGoals(LoginRequiredMixin, TemplateView):
             return render(request, 'moneymap/add_goals.html', {'error': 'An unexpected error occurred.'})
 
 
-class GoalsDetail(TemplateView):
-    template_name = 'moneymap/goals-detail.html'
-
 
 class BaseTagView(View):
     """
@@ -557,3 +565,79 @@ class DeleteTagView(BaseTagView):
             Tag.objects.filter(id=tag_id).delete()
 
         return redirect('moneymap:money-flow')
+
+
+class GoalsDetailView(LoginRequiredMixin, DetailView):
+    """Goal Report for a specific date."""
+    model = Goal
+    template_name = 'moneymap/goals-detail.html'
+    context_object_name = 'goal'
+
+    def get(self, request, *args, **kwargs):
+        goal_id = kwargs.get('pk')
+        selected_goal = get_object_or_404(self.get_queryset(), pk=goal_id)
+
+        # Set the object for use in the template
+        self.object = selected_goal
+        context = self.get_context_data(goal=self.object, user=request.user)  # Pass the single goal instance
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('login')
+
+        context = super().get_context_data(**kwargs)
+        goal = self.object  # `self.object` is set by DetailView
+
+        user = self.request.user
+        current_date = timezone.localtime(timezone.now()).date()  # Get today's date
+
+        # Calculate the remaining days for the goal
+        remaining_days = calculate_days_remaining(user, current_date, goal.goal_id)
+
+        # Calculate the saving trends
+        trends = calculate_trend(user, current_date)
+        # only show the trend for the current goal
+        trend_for_goal = next(
+            (trend for trend in trends if trend['goal_id'] == goal.goal_id),
+            None)
+        trend_status = trend_for_goal[
+            'trend'] if trend_for_goal else "No trend data"
+
+        current_amount = goal.current_amount
+        target_amount = goal.target_amount
+        saving_progress = calculate_saving_progress(goal)
+
+        avg_saving = calculate_avg_saving(user, current_date, goal.goal_id)
+        min_saving = calculate_min_saving(user, current_date, goal.goal_id)
+        saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
+
+        context['start_date'] = goal.start_date.strftime("%-d %B %Y")
+        context['end_date'] = goal.end_date.strftime("%-d %B %Y")
+        context['remaining_day'] = remaining_days if remaining_days is not None else "Goal not found"
+        context['trends'] = trend_status
+        context['current_amount'] = current_amount
+        context['target_amount'] = target_amount
+        context['saving_progress'] = saving_progress
+        context['avg_saving'] = avg_saving
+        context['min_saving'] = min_saving
+        context['saving_shortfall'] = saving_shortfall
+        context['goal'] = self.get_object()
+        context['goal_id'] = goal.goal_id
+
+        return context
+
+
+@login_required
+def delete_goal(request, goal_id):
+    """Delete a goal object."""
+    if request.method == 'POST':
+        goal = get_object_or_404(Goal, goal_id=goal_id)
+        # delete all transactions related to that goal
+        IncomeExpense.objects.filter(description__contains=goal.title).delete()
+        # delete the goal
+        goal.delete()
+        messages.success(request, 'Goal successfully deleted.')
+        # Redirect to the goals page
+        return redirect('moneymap:goals')
+    return HttpResponseForbidden('Invalid request method.')

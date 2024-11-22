@@ -57,6 +57,7 @@
         </div>
         {% for goal in goals_data %}
         <div class="w-full sm:w-1/2 lg:w-1/3 xl:w-1/3 2xl:w-1/3 p-4 flex justify-center">
+            <a href="{% url 'moneymap:goal-detail' goal.id %}">
             <!-- Card for the financial goal -->
             <div class="w-[449.28px] h-[355.65px] relative flex justify-center items-center group">
                 <div class="relative flex justify-center items-center">
@@ -110,6 +111,7 @@
                     </div>
                 </div>
             </div>
+            </a>
         </div>
         {% endfor %}
     </div>
