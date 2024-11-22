@@ -3,7 +3,7 @@ Views for the MoneyMap application.
 This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import logging
 from decimal import Decimal
 
@@ -16,6 +16,8 @@ from django.views.generic import TemplateView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.safestring import mark_safe
+import json
 
 from .service_addgoals import get_goals_data
 from .service_addsavingmoney import (
@@ -612,6 +614,35 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         min_saving = calculate_min_saving(user, current_date, goal.goal_id)
         saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
 
+        start_date = goal.start_date
+        end_date = goal.end_date
+
+        # Generate dates for the burndown chart
+        total_days = (end_date - start_date).days # Total days between start and end date
+        date_labels = [(start_date + timedelta(days=i)).strftime("%Y-%m-%d")
+                       for i in range(total_days + 1)]
+
+        # logging.debug(f"Date labels: {date_labels}")
+
+        # Ideal savings calculation
+        ideal_savings = [
+            goal.target_amount * (Decimal('1') - Decimal(i) / Decimal(total_days))
+            for i in range(total_days + 1)
+        ]
+
+        # Actual savings
+        actual_savings = [float(current_amount)]
+        for i in range(1, total_days + 1):
+            actual_savings.append(
+                float(actual_savings[i - 1]) - float(avg_saving)
+            )
+
+        logging.debug(f"i savings: {[float(x) for x in ideal_savings]}")
+        logging.debug(f"a savings: {[float(x) for x in actual_savings]}")
+
+        ideal_but_float = [float(x) for x in ideal_savings]
+        actual_but_float = [float(x) for x in actual_savings]
+
         context['start_date'] = goal.start_date.strftime("%-d %B %Y")
         context['end_date'] = goal.end_date.strftime("%-d %B %Y")
         context['remaining_day'] = remaining_days if remaining_days is not None else "Goal not found"
@@ -624,6 +655,10 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         context['saving_shortfall'] = saving_shortfall
         context['goal'] = self.get_object()
         context['goal_id'] = goal.goal_id
+
+        context["chart_labels"] = json.dumps(date_labels)
+        context["chart_ideal_data"] = ideal_but_float
+        context["chart_actual_data"] = actual_but_float
 
         return context
 

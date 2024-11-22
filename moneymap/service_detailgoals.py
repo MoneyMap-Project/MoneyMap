@@ -192,7 +192,7 @@ def calculate_saving_shortfall(user, date, goal_id):
     try:
         min_saving = calculate_min_saving(user, date, goal_id)
 
-        saving_today = get_today_saving()
+        saving_today = get_total_today_saving()
 
         # logging.info(f"min_saving: {min_saving}, saving_today: {saving_today}")
 
@@ -205,7 +205,7 @@ def calculate_saving_shortfall(user, date, goal_id):
                                         rounding=ROUND_CEILING)  # Goal not found
 
 
-def get_today_saving():
+def get_total_today_saving():
     """Get the total saving amount of today saving."""
     today_date = timezone.localtime(timezone.now()).date()
     goal_name = (

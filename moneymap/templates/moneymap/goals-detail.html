@@ -195,17 +195,29 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         console.error('Failed to select canvas');
     }
+    
+    
+    // Data from Django context
+    const labels = {{ chart_labels|safe }};
+    const idealData = {{ chart_ideal_data|safe }};
+    const actualData = {{ chart_actual_data|safe }};
+    {##}
+    {#const labels = ["2024-11-21", "2024-11-22", "2024-11-23"];#}
+    {#const idealData = [100, 90, 80];#}
+    {#const actualData = [100, 95, 85];#}
+
 
     // Initialize Chart
     try {
+        
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Day 1', 'Day 10', 'Day 20', 'Day 30', 'Day 40', 'Day 50', 'Day 60', 'Day 70', 'Day 80', 'Day 85'],
+                labels: labels,
                 datasets: [
                     {
                         label: 'Target Savings',
-                        data: [60700, 54600, 48500, 42400, 36300, 30200, 24100, 18000, 12000, 0],
+                        data: idealData,
                         borderColor: '#05a99d',
                         borderWidth: 2,
                         fill: false,
@@ -213,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     {
                         label: 'Actual Savings',
-                        data: [60700, 58000, 52000, 50000, 45000, 40000],
+                        data: actualData,
                         borderColor: '#1b283f',
                         borderWidth: 2,
                         fill: false,
