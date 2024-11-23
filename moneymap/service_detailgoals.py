@@ -81,28 +81,28 @@ def calculate_trend(user, date):
             days_elapsed = calculate_days_elapsed(date, goal)
 
             # Special handling for day 0 (goal creation day)
-            if days_elapsed == 0:
-                trend_value = 0  # No progress expected on the first day
-                trend = 'Neutral'
-            else:
-                try:
-                    daily_target = Decimal(
-                        goal.target_amount) / total_days if total_days > 0 else 0
-                except (ZeroDivisionError, InvalidOperation):
-                    logging.error(
-                        f"Invalid calculation for goal {goal.goal_id}")
-                    continue
-                expected_amount = daily_target * min(days_elapsed, total_days)
+            # if days_elapsed == 0:
+            #     trend_value = 0  # No progress expected on the first day
+            #     trend = 'Neutral'
+            # else:
+            try:
+                daily_target = Decimal(
+                    goal.target_amount) / total_days if total_days > 0 else 0
+            except (ZeroDivisionError, InvalidOperation):
+                logging.error(
+                    f"Invalid calculation for goal {goal.goal_id}")
+                continue
+            expected_amount = daily_target * min(days_elapsed, total_days)
 
-                try:
-                    actual_amount = Decimal(goal.current_amount)
-                except (TypeError, ValueError):
-                    logging.error(
-                        f"Invalid current_amount for goal {goal.goal_id}")
-                    actual_amount = Decimal('0')
+            try:
+                actual_amount = Decimal(goal.current_amount)
+            except (TypeError, ValueError):
+                logging.error(
+                    f"Invalid current_amount for goal {goal.goal_id}")
+                actual_amount = Decimal('0')
 
-                trend_value = actual_amount - expected_amount
-                trend = 'Positive' if trend_value >= 0 else 'Negative'
+            trend_value = actual_amount - expected_amount
+            trend = 'Positive' if trend_value >= 0 else 'Negative'
 
             # logging.info(f"Goal {goal.goal_id} trend: {trend} ({trend_value})")
             trends.append({'goal_id': goal.goal_id,
