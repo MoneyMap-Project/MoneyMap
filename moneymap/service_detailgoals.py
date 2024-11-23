@@ -41,6 +41,7 @@ def calculate_days_remaining(user, date,
 
 
 def calculate_trend(user, date):
+    #TODO: Still need to be fixed. Average Saving > Min Saving is Positive, otherwise Negative.
     """
     Calculate the trend for the goal.
 
@@ -141,7 +142,7 @@ def calculate_avg_saving(user, date, goal_id):
     """
     Calculate the average daily saving been saved so far
     for the specified goal.
-    #TODO: Average is now average saving per day. (So far) -- Not match goal view.
+    #TODO: Average is now average saving per day. (So far) -- Not match goal view. -> current_amount / current_total_days
     """
     try:
         goal = Goal.objects.get(goal_id=goal_id, user_id=user)
