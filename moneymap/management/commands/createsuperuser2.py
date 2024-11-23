@@ -27,7 +27,8 @@ class Command(createsuperuser.Command):
         database = options.get("database")
 
         if password and not username:
-            raise CommandError("--username is required if specifying --password")
+            raise CommandError(
+                "--username is required if specifying --password")
 
         if username and options.get("preserve"):
             exists = (
@@ -36,14 +37,22 @@ class Command(createsuperuser.Command):
                 .exists()
             )
             if exists:
-                self.stdout.write("User exists, exiting normally due to --preserve")
+                self.stdout.write(
+                    "User exists, exiting normally due to --preserve")
                 return
 
+        # Call the parent handle method to create the user
         super(Command, self).handle(*args, **options)
 
-        if password:
+        # Try to retrieve and set the password for the created user
+        try:
             user = self.UserModel._default_manager.db_manager(database).get(
                 username=username
             )
-            user.set_password(password)
-            user.save()
+            if password:
+                user.set_password(password)
+                user.save()
+        except self.UserModel.DoesNotExist:
+            raise CommandError(
+                f"Superuser with username '{username}' was not created.")
+
