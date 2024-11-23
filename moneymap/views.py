@@ -648,9 +648,8 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
 
         # logging.debug(f"i savings: {[float(x) for x in ideal_savings]}")
         # logging.debug(f"a savings: {[float(x) for x in actual_savings]}")
-
-        context['start_date'] = goal.start_date.strftime("%-d %B %Y")
-        context['end_date'] = goal.end_date.strftime("%-d %B %Y")
+        context['start_date'] = goal.start_date.strftime("%d %B %Y").lstrip("0")
+        context['end_date'] = goal.end_date.strftime("%d %B %Y").lstrip("0")
         context['remaining_day'] = remaining_days if remaining_days is not None else "Goal not found"
         context['trends'] = trend_status
         context['current_amount'] = current_amount
