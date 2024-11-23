@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 from decouple import Config, Csv
 from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv(".env")
 
@@ -27,12 +28,12 @@ config = Config(os.path.join(BASE_DIR, '.env'))
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gz6j!yfbq=28&#1n)j1u9-mmu&o!bcx5e&5oc@a3i_t%iwu=xu'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(" ")
 
 
 # Application definition
@@ -118,6 +119,8 @@ DATABASES = {
     }
 }
 
+database_url = os.environ.get('DATABASE_URL')
+DATABASES['default'] = dj_database_url.config(default=database_url, conn_max_age=600, ssl_require=True)
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
