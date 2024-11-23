@@ -10,6 +10,3 @@ python manage.py collectstatic --no-input
 
 # Apply any outstanding database migrations
 python manage.py migrate
-
-# Creating a custom management command
-python manage.py createsuperuser2 --username "${username}" --password "${password}"
