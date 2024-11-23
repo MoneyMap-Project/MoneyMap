@@ -12,4 +12,4 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 # Creating a custom management command
-python manage.py createsuperuser2 --username admin2 --password mysecretadminpassword
+python manage.py createsuperuser2 --username "${username}" --password "${password}"
