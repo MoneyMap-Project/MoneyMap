@@ -3,17 +3,31 @@ Views for the MoneyMap application.
 This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
-from datetime import date
+from datetime import date, datetime, timedelta
 import logging
+from decimal import Decimal
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, CreateView
+from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.safestring import mark_safe
+import json
 
 from .service_addgoals import get_goals_data
+from .service_addsavingmoney import (
+    validate_goal_end_dates,
+    validate_amount,
+    get_goals,
+    check_goals_availability,
+    distribute_savings,
+    handle_goal_error,
+)
 from .service import (
     calculate_balance,
     calculate_balance_last_7_days,
@@ -24,7 +38,16 @@ from .service import (
     calculate_income_expense_percentage,
     get_income_expense_by_day,
 )
-from .models import IncomeExpense, Goal
+from .service_detailgoals import (
+    calculate_days_remaining,
+    calculate_trend,
+    calculate_saving_progress,
+    calculate_avg_saving,
+    calculate_min_saving,
+    calculate_saving_shortfall,
+    get_all_goals, get_all_saving_specific_goal
+)
+from .models import IncomeExpense, Goal, Tag
 
 # logger
 
@@ -50,6 +73,7 @@ class IncomeAndExpensesView(TemplateView):
             # Retrieve income/expense records for today
             income_expenses_today = IncomeExpense.objects.filter(
                 user_id=self.request.user,
+                saved_to_income_expense=True,
                 date=today
             ).order_by('date')
 
@@ -76,14 +100,29 @@ class IncomeAndExpensesView(TemplateView):
 
 @login_required
 def delete_income_expense(request, income_expense_id):
-    """For delete an IncomeExpense object"""
+    """Delete an IncomeExpense object and update the related goal if necessary."""
 
     # Retrieve the IncomeExpense object or return 404 if not found
     income_expense = get_object_or_404(IncomeExpense,
                                        IncomeExpense_id=income_expense_id,
                                        user_id=request.user)
 
-    # Delete the object
+    # Check if the record type is 'saving'
+    if income_expense.type == 'saving':
+        # Retrieve the related goal
+        goal = Goal.objects.filter(
+            user_id=request.user,
+            title=income_expense.description.split(" to ")[-1]  # the description follows the format "Saving money to <goal_title>"
+        ).first()
+
+        # Update the goal's current amount
+        if goal:
+            goal.current_amount -= Decimal(income_expense.amount)
+            if goal.current_amount < 0:
+                goal.current_amount = Decimal('0.00')  # Ensure the amount does not go below zero
+            goal.save()
+
+    # Delete the IncomeExpense object
     income_expense.delete()
 
     # Add a success message
@@ -92,8 +131,7 @@ def delete_income_expense(request, income_expense_id):
     # Redirect back to the income and expenses view
     return redirect('moneymap:income-expenses')
 
-
-class GoalView(TemplateView):
+class GoalView(LoginRequiredMixin, TemplateView):
     """View for the goals page."""
     template_name = 'moneymap/goals.html'
 
@@ -115,27 +153,68 @@ class GoalView(TemplateView):
 
         return context
 
+
 class MoneyFlowView(LoginRequiredMixin, View):
     """
-    After clicking the `Income and Expense` button,
-    this view will be called.
-    """
+    View to handle the Money Flow page functionality.
 
+    This view provides methods to display the money flow form (GET request) and
+    handle form submissions (POST request). It supports managing session data
+    for temporary input storage, creating IncomeExpense objects, and associating
+    tags with the created records.
+    """
     def get(self, request):
-        """Render the money flow form."""
-        return render(request, 'moneymap/money-flow.html')
+        """
+        Handle GET requests for the money flow form.
+
+        This method retrieves user-specific tags and any previously saved
+        session data (description, amount, and money type). It renders the
+        money flow form with the retrieved context.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            HttpResponse: Rendered money flow form with context data.
+        """
+        tags = Tag.objects.filter(user_id=request.user)
+
+        description = request.session.get('description', '')
+        amount = request.session.get('amount', '')
+        money_type = request.session.get('money_type', '')
+
+        return render(request, 'moneymap/money-flow.html',
+                      context={
+                          "tags": tags,
+                          "description": description,
+                          "amount": amount,
+                          "money_type": money_type
+                      })
 
     def post(self, request):
-        """Handle the submitted form data."""
+        """
+        Handle POST requests to process the money flow form.
+
+        This method processes the form data submitted by the user. It validates
+        the input, creates an `IncomeExpense` object, associates selected tags,
+        and clears session data upon successful form submission. If errors
+        occur, it re-renders the form with the entered data and tags.
+
+        Args:
+            request (HttpRequest): The HTTP request object containing form data.
+
+        Returns:
+            HttpResponse: A redirect to the income-expenses page on success,
+                          or re-renders the form with errors otherwise.
+        """
         selected_type = request.POST.get('money_type')
         amount = request.POST.get('amount')
         description = request.POST.get('description')
 
         try:
             amount_decimal = float(amount)
-            print(f"Converted amount: {amount_decimal}")
 
-            # Create and save a new IncomeExpense object
+            # Create and save the IncomeExpense object
             new_income_expense = IncomeExpense.objects.create(
                 user_id=request.user,
                 saved_to_income_expense=True,
@@ -144,16 +223,34 @@ class MoneyFlowView(LoginRequiredMixin, View):
                 date=timezone.now(),
                 description=description,
             )
-            print(f"New IncomeExpense object created: {new_income_expense}")
-            # logger.debug(request, 'Income/Expense recorded successfully!')
+
+            selected_tag_id = request.POST.get('selected_tag')
+            if selected_tag_id:
+                try:
+                    tag = Tag.objects.get(id=selected_tag_id, user_id=request.user)
+                    new_income_expense.tags.add(tag)
+                except Tag.DoesNotExist:
+                    logging.warning(f"Selected tag {selected_tag_id} does not exist or doesn't belong to user")
+
+            # Clear session data
+            request.session.pop('description', None)
+            request.session.pop('amount', None)
+            request.session.pop('money_type', None)
+
             return redirect('moneymap:income-expenses')
+
         except ValueError:
             logging.error("Invalid amount entered. Please enter a valid number.")
         except Exception as specific_error:
             logging.exception("An unexpected error occurred: %s", specific_error)
 
-        # Render the form again with any errors (optional)
-        return render(request, 'moneymap/money-flow.html')
+        tags = Tag.objects.filter(user_id=request.user)
+        return render(request, 'moneymap/money-flow.html', {
+            "tags": tags,
+            "description": description,
+            "amount": amount,
+            "money_type": selected_type
+        })
 
 
 class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
@@ -172,6 +269,7 @@ class IncomeAndExpensesDetailView(LoginRequiredMixin, TemplateView):
         # Retrieve IncomeExpense records for the selected date and the logged-in user
         income_expenses = IncomeExpense.objects.filter(
             user_id=request.user,
+            saved_to_income_expense=True,
             date=selected_date
         ).order_by('date')
 
@@ -271,11 +369,74 @@ class HistoryView(LoginRequiredMixin, View):
         })
 
 
-class AddMoney(TemplateView):
+class AddSavingMoney(LoginRequiredMixin, TemplateView):
+    """View to add saving records associated with goals that user want."""
     template_name = 'moneymap/add-money-goals.html'
 
+    def get(self, request):
+        """Render the Add Money form with the user's goals."""
+        if request.user.is_authenticated:
+            # Retrieve the user's goals
+            user_goals = Goal.objects.filter(user_id=request.user)
+            return render(request, self.template_name, {'goals': user_goals})
+        else:
+            # Redirect to login if the user is not authenticated
+            return redirect('login')
 
-class AddGoals(TemplateView):
+    def post(self, request):
+        """Handle the submitted form data for adding money."""
+        local_time = timezone.localtime(timezone.now())
+
+        amount = request.POST.get('goal_amount')
+        date = str(local_time.date())
+        distribute_evenly = request.POST.get('distribute_evenly')
+        select_custom_goals = request.POST.get('select_custom_goals')
+        selected_goals = request.POST.getlist('selected_goals[]')
+        add_to_income_expense = request.POST.get('add_income_expense')
+
+        try:
+            # Validate amount
+            amount_decimal = validate_amount(amount, request)
+
+            # Validate and parse date
+            if not date:
+                raise ValueError("Date is required.")
+            parsed_date = datetime.strptime(date, '%Y-%m-%d').date()
+
+            goals = get_goals(request.user, distribute_evenly, selected_goals, select_custom_goals)
+
+            if not goals.exists():
+                return handle_goal_error(request, "No goals selected or you have no goals.",
+                                         'moneymap:add_money_goals',
+                                         'no_goals_error')
+
+            # Validate goal end dates
+            redirect_url = validate_goal_end_dates(goals, request)
+            if redirect_url:
+                return redirect_url
+
+            # Check if the saving amount exceeds the available space for the selected goals
+            redirect_url = check_goals_availability(goals, amount_decimal, request)
+            if redirect_url:
+                return redirect_url
+
+            # Distribute savings to goals
+            redirect_url = distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date, request.user, request)
+            if redirect_url:
+                return redirect_url
+
+            # Redirect to the goals or income-expenses page
+            return redirect('moneymap:goals')
+
+        except ValueError as e:
+            logging.error(str(e))
+            return render(request, self.template_name, {'error': str(e)})
+        except Exception as specific_error:
+            logging.exception("An unexpected error occurred: %s", specific_error)
+            return render(request, self.template_name, {'error': 'An unexpected error occurred.'})
+
+
+class AddGoals(LoginRequiredMixin, TemplateView):
     template_name = 'moneymap/add_goals.html'
 
     def get(self, request):
@@ -315,5 +476,231 @@ class AddGoals(TemplateView):
             return render(request, 'moneymap/add_goals.html', {'error': 'An unexpected error occurred.'})
 
 
-class GoalsDetail(TemplateView):
+class BaseTagView(View):
+    """
+    A base view for handling tag-related functionality, such as saving form data
+    in the session for later use.
+    """
+    @staticmethod
+    def save_session_data(request):
+        """
+        Helper method to save and return form data (description, amount, money_type)
+        in the session.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object.
+
+        Returns:
+            tuple: A tuple containing the description, amount, and money_type.
+        """
+        description = request.POST.get('description', '')
+        amount = request.POST.get('amount', '')
+        money_type = request.POST.get('money_type', '')
+
+        request.session['description'] = description
+        request.session['amount'] = amount
+        request.session['money_type'] = money_type
+
+        return description, amount, money_type
+
+
+class AddTagView(BaseTagView):
+    """
+    A view for adding a new tag. It handles the POST request to create a new tag
+    and validates the tag name before saving it.
+    """
+
+    def post(self, request):
+        """
+        Handles the POST request to create a new tag. It validates the tag name
+        (ensuring it's not empty, not too long, and does not already exist)
+        and saves it to the database. Displays appropriate messages to the user
+        for success or errors.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object.
+
+        Returns:
+            HttpResponse: A redirect to the 'money-flow' page after processing the request.
+        """
+        tag_name = request.POST.get('tag_name').strip()
+        self.save_session_data(request)
+
+        if not tag_name:
+            messages.error(request, "Tag name cannot be empty.")
+        elif len(tag_name) > 100:
+            messages.error(request, "Tag name cannot be longer than 100 characters.")
+        elif Tag.objects.filter(name=tag_name, user_id=request.user).exists():
+            messages.error(request, "Tag name already exists.")
+        else:
+            new_tag = Tag.objects.create(
+                name=tag_name,
+                user_id=request.user
+            )
+            new_tag.save()
+            messages.success(request, "Tag added successfully.")
+
+        return redirect('moneymap:money-flow')
+
+
+class DeleteTagView(BaseTagView):
+    """
+    A view for deleting an existing tag. It handles the POST request to remove
+    a tag by its ID from the database.
+    """
+    def post(self, request):
+        """
+        Handles the POST request to delete a tag. It deletes the tag with the
+        provided ID from the database.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object.
+
+        Returns:
+            HttpResponse: A redirect to the 'money-flow' page after deleting the tag.
+        """
+        tag_id = request.POST.get('tag_id')
+        self.save_session_data(request)
+
+        if tag_id:
+            Tag.objects.filter(id=tag_id).delete()
+
+        return redirect('moneymap:money-flow')
+
+
+class GoalsDetailView(LoginRequiredMixin, DetailView):
+    """Goal Report for a specific date."""
+    model = Goal
     template_name = 'moneymap/goals-detail.html'
+    context_object_name = 'goal'
+
+    def get(self, request, *args, **kwargs):
+        goal_id = kwargs.get('pk')
+        selected_goal = get_object_or_404(self.get_queryset(), pk=goal_id)
+
+        # Set the object for use in the template
+        self.object = selected_goal
+        context = self.get_context_data(goal=self.object, user=request.user)  # Pass the single goal instance
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('login')
+
+        context = super().get_context_data(**kwargs)
+        goal = self.object  # `self.object` is set by DetailView
+
+        user = self.request.user
+        current_date = timezone.localtime(timezone.now()).date()  # Get today's date
+
+        # Calculate the remaining days for the goal
+        remaining_days = calculate_days_remaining(user, current_date, goal.goal_id)
+
+        # Calculate the saving trends
+        trends = calculate_trend(user, current_date)
+        # only show the trend for the current goal
+        trend_for_goal = next(
+            (trend for trend in trends if trend['goal_id'] == goal.goal_id),
+            None)
+        trend_status = trend_for_goal[
+            'trend'] if trend_for_goal else "No trend data"
+
+        # -- For the goal progress CARD --
+        current_amount = goal.current_amount
+        target_amount = goal.target_amount
+        saving_progress = calculate_saving_progress(goal)
+
+        avg_saving = calculate_avg_saving(user, current_date, goal.goal_id)
+        min_saving = calculate_min_saving(user, current_date, goal.goal_id)
+        saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
+
+        # -- For the burndown chart --
+        start_date = goal.start_date
+        end_date = goal.end_date
+
+        # Generate dates for the burndown chart
+        total_days = (end_date - start_date).days # Total days between start and end date
+        date_labels = [(start_date + timedelta(days=i)).strftime("%Y-%m-%d")
+                       for i in range(total_days + 1)]
+
+        # logging.debug(f"Date labels: {date_labels}")
+
+        # Ideal savings calculation
+        ideal_savings = [
+            goal.target_amount * (Decimal('1') - Decimal(i) / Decimal(total_days))
+            for i in range(total_days + 1)
+        ]
+
+        # Actual savings
+        actual_saving = get_all_saving_specific_goal(goal.title)
+        logging.debug(f"actual saving: {actual_saving}")
+
+        # Aggregate and align actual savings
+        aggregated_savings = aggregate_savings_by_date(actual_saving)  # Aggregate by date
+        aligned_actual_savings = align_savings_with_labels(date_labels, aggregated_savings)  # Align with labels
+
+        # logging.debug(f"Aggregated savings: {aligned_actual_savings}")
+        # if save day, amount is combine all together
+
+        # Convert data to floats for JSON serialization
+        ideal_but_float = [float(x) for x in ideal_savings]
+        actual_but_float = aligned_actual_savings
+
+        # logging.debug(f"i savings: {[float(x) for x in ideal_savings]}")
+        # logging.debug(f"a savings: {[float(x) for x in actual_savings]}")
+        context['start_date'] = goal.start_date.strftime("%d %B %Y").lstrip("0")
+        context['end_date'] = goal.end_date.strftime("%d %B %Y").lstrip("0")
+        context['remaining_day'] = remaining_days if remaining_days is not None else "Goal not found"
+        context['trends'] = trend_status
+        context['current_amount'] = current_amount
+        context['target_amount'] = target_amount
+        context['saving_progress'] = saving_progress
+        context['avg_saving'] = avg_saving
+        context['min_saving'] = min_saving
+        context['saving_shortfall'] = saving_shortfall
+        context['goal'] = self.get_object()
+        context['goal_id'] = goal.goal_id
+
+        context["chart_labels"] = json.dumps(date_labels)
+        context["chart_ideal_data"] = ideal_but_float
+        context["chart_actual_data"] = actual_but_float
+
+        return context
+
+
+def aggregate_savings_by_date(actual_saving):
+    # Create a dictionary to store total savings for each date
+    savings_by_date = {}
+
+    for entry in actual_saving:
+        date = entry['date']
+        amount = entry['__amount']
+        if date in savings_by_date:
+            savings_by_date[date] += amount
+        else:
+            savings_by_date[date] = amount
+
+    return savings_by_date
+
+def align_savings_with_labels(chart_labels, savings_by_date):
+    aligned_savings = []
+
+    for label in chart_labels:
+        date = datetime.strptime(label, "%Y-%m-%d").date()
+        aligned_savings.append(float(savings_by_date.get(date, Decimal('0.00'))))  # Default to 0 if no data
+
+    return aligned_savings
+
+@login_required
+def delete_goal(request, goal_id):
+    """Delete a goal object."""
+    if request.method == 'POST':
+        goal = get_object_or_404(Goal, goal_id=goal_id)
+        # delete all transactions related to that goal
+        IncomeExpense.objects.filter(description__contains=goal.title).delete()
+        # delete the goal
+        goal.delete()
+        messages.success(request, 'Goal successfully deleted.')
+        # Redirect to the goals page
+        return redirect('moneymap:goals')
+    return HttpResponseForbidden('Invalid request method.')

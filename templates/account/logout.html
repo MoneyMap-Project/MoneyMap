@@ -10,7 +10,29 @@
     <title>MoneyMap - Sign Out</title>
     {% load static %}
 </head>
-
+{% if messages %}
+<div id="messages-container" class="fixed z-50 flex flex-col w-3/4 max-w-96 top-10 right-10 space-y-4">
+    {% for message in messages %}
+    <div class="w-full bg-white p-4 rounded-lg shadow-lg flex items-start space-x-4 relative">
+        <div class="w-full">
+            <p class="text-base font-semibold font-['Poppins']
+                {% if message.tags == 'error' %} text-red-500 {% else %} text-[#05a99d] {% endif %} capitalize">
+                {{ message.tags|capfirst }}
+            </p>
+            <p class="text-zinc-400 text-base font-normal font-['Poppins'] leading-5 break-all max-h-10 overflow-hidden">
+                {{ message }}
+            </p>
+        </div>
+        <!-- Close Button -->
+        <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 focus:outline-none" onclick="this.parentElement.style.display='none'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 <body class="h-full w-full m-0 p-0">
     <div class="flex h-screen w-screen overflow-hidden">
         <!-- Left section (Menu and account info) -->

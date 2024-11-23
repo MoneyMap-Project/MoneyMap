@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.db import models
 from django.conf import settings
 
+
 class Goal(models.Model):
     """Model for a goal."""
     # goal id as a primary key from database
@@ -31,12 +32,23 @@ class Goal(models.Model):
         return (self.end_date - self.start_date).days
 
 
+class Tag(models.Model):
+    """Model to store tag names independently."""
+    name = models.CharField(max_length=100, unique=True)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                on_delete=models.CASCADE,
+                                related_name='tag')
+
+    def __str__(self):
+        return self.name
+
+
 class IncomeExpense(models.Model):
-    """Model for the income expense."""
     IncomeExpense_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE,
                                 related_name='income_expenses')
+    tags = models.ManyToManyField(Tag, blank=True)
 
     expense_type = (
         ('income', 'Income'),
@@ -52,18 +64,9 @@ class IncomeExpense(models.Model):
     description = models.CharField(max_length=255)
     saved_to_income_expense = models.BooleanField(default=False)
 
+    goal = models.ManyToManyField('Goal', blank=True)
+
     # currency_id = pass will be added later
 
     def __str__(self):
         return f"{self.description}"
-
-
-class SavingEntry(models.Model):
-    """ Model for saving entries."""
-    saving_id = models.AutoField(primary_key=True)
-    goal_id = models.ForeignKey('Goal', on_delete=models.CASCADE)
-    date = models.DateField()
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return f"{self.amount} saved on {self.date} at {self.goal_id}"

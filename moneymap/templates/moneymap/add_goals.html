@@ -4,9 +4,8 @@
 {% block content %}
 <form id="add-goals-form" action="{% url 'moneymap:add_goals' %}" method="POST">
     {% csrf_token %}
-    <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
+    <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10 px-4 sm:px-6 lg:px-0">
         <h1 class="text-[#1b283f] text-4xl font-semibold leading-[64px]">Add new goal</h1>
-
         <div class="w-full flex flex-col lg:flex-row justify-start items-start gap-5">
             <!-- Left Column -->
             <div class="w-full lg:w-2/3 p-6 border border-[#aec2c0] rounded-lg flex flex-col gap-7">
@@ -101,9 +100,57 @@
         const summaryAmount = document.getElementById('summary-amount');
 
         const bangkokOffset = 7 * 60;
-        const bangkokDate = new Date(new Date().getTime() + (bangkokOffset - new Date().getTimezoneOffset()) * 60000);
+        // const bangkokDate = new Date(new Date().getTime() + (bangkokOffset - new Date().getTimezoneOffset()) * 60000);
+        const bangkokDate = new Date(
+            new Date().toLocaleString("en-US", { timeZone: "Asia/Bangkok" })
+        );
         startDateInput.value = bangkokDate.toISOString().split('T')[0];
 
+        // Format date to YYYY-MM-DD for input fields
+        const formatToInputDate = (date) => date.toISOString().split('T')[0];
+        
+        // Initialize today and tomorrow for validation
+        const today = formatToInputDate(bangkokDate);
+        const tomorrow = new Date(bangkokDate);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        // Set default start date and minimum values
+        startDateInput.value = today;
+        startDateInput.min = today;
+        endDateInput.value = formatToInputDate(tomorrow);
+        endDateInput.min = formatToInputDate(tomorrow);
+        
+        // Update minimum values dynamically based on start date selection
+        startDateInput.addEventListener('change', function () {
+            const selectedStartDate = new Date(startDateInput.value);
+            
+            // Ensure the selected start date is not in the past
+            if (selectedStartDate < bangkokDate) {
+                startDateInput.value = today;
+            }
+
+            // Adjust end date min based on new start date
+            const newMinEndDate = new Date(startDateInput.value);
+            newMinEndDate.setDate(newMinEndDate.getDate() + 1);
+            endDateInput.min = formatToInputDate(newMinEndDate);
+
+            // If the current end date is before the new min, reset it
+            if (new Date(endDateInput.value) < newMinEndDate) {
+                endDateInput.value = formatToInputDate(newMinEndDate);
+            }
+        });
+
+        endDateInput.addEventListener('change', function () {
+            const selectedEndDate = new Date(endDateInput.value);
+            const minEndDate = new Date(endDateInput.min);
+
+            // Ensure the selected end date is not earlier than the min end date
+            if (selectedEndDate < minEndDate) {
+                endDateInput.value = endDateInput.min;
+            }
+        });
+
+        
         function formatDateToDDMMYY(dateString) {
             if (!dateString) return "";
             const [year, month, day] = dateString.split("-");
