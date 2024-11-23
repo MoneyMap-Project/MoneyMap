@@ -3,7 +3,7 @@ django >= 3.0
 django-tailwind >= 2.2.19
 django-allauth >= 64.0.0
 requests >= 2.32.3
-PyJWT-1.7.1
+PyJWT==1.7.1
 gunicorn >= 23.0.0
 dj-database-url >= 2.3.0
 uvicorn
