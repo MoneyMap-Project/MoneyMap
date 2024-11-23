@@ -1,16 +1,11 @@
 """Service functions for the MoneyMap goal page."""
 
-from datetime import timedelta, datetime
 from django.db.models import Sum, F
 from django.utils import timezone
 from .models import Goal, IncomeExpense
 from decimal import Decimal, ROUND_CEILING, InvalidOperation
-from django.db.models import Avg, Min
 
-import pandas as pd
-import numpy as np
 import logging
-from datetime import datetime, timedelta
 
 
 def calculate_days_remaining(user, date,

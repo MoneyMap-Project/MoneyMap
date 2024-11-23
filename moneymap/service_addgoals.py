@@ -1,7 +1,4 @@
-from datetime import date
 from django.utils import timezone
-from .models import Goal
-from .service_detailgoals import calculate_avg_saving
 
 
 #TODO: Since these mostly similar to the service_detailgoals.py, you can combine them into one file. (Refactor).

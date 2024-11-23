@@ -12,11 +12,9 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from django.views.generic import TemplateView, DetailView, CreateView
-from django.urls import reverse_lazy
-from django.http import JsonResponse, HttpResponseForbidden
+from django.views.generic import TemplateView, DetailView
+from django.http import HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils.safestring import mark_safe
 import json
 
 from .service_addgoals import get_goals_data
