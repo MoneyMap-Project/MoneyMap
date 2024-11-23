@@ -3,7 +3,7 @@ Views for the MoneyMap application.
 This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import logging
 from decimal import Decimal
 
@@ -14,7 +14,10 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.views.generic import TemplateView, DetailView, CreateView
 from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.safestring import mark_safe
+import json
 
 from .service_addgoals import get_goals_data
 from .service_addsavingmoney import (
@@ -34,6 +37,15 @@ from .service import (
     sum_expense_by_month,
     calculate_income_expense_percentage,
     get_income_expense_by_day,
+)
+from .service_detailgoals import (
+    calculate_days_remaining,
+    calculate_trend,
+    calculate_saving_progress,
+    calculate_avg_saving,
+    calculate_min_saving,
+    calculate_saving_shortfall,
+    get_all_goals, get_all_saving_specific_goal
 )
 from .models import IncomeExpense, Goal, Tag
 
@@ -464,16 +476,13 @@ class AddGoals(LoginRequiredMixin, TemplateView):
             return render(request, 'moneymap/add_goals.html', {'error': 'An unexpected error occurred.'})
 
 
-class GoalsDetail(TemplateView):
-    template_name = 'moneymap/goals-detail.html'
-
-
 class BaseTagView(View):
     """
     A base view for handling tag-related functionality, such as saving form data
     in the session for later use.
     """
-    def save_session_data(self, request):
+    @staticmethod
+    def save_session_data(request):
         """
         Helper method to save and return form data (description, amount, money_type)
         in the session.
@@ -557,3 +566,141 @@ class DeleteTagView(BaseTagView):
             Tag.objects.filter(id=tag_id).delete()
 
         return redirect('moneymap:money-flow')
+
+
+class GoalsDetailView(LoginRequiredMixin, DetailView):
+    """Goal Report for a specific date."""
+    model = Goal
+    template_name = 'moneymap/goals-detail.html'
+    context_object_name = 'goal'
+
+    def get(self, request, *args, **kwargs):
+        goal_id = kwargs.get('pk')
+        selected_goal = get_object_or_404(self.get_queryset(), pk=goal_id)
+
+        # Set the object for use in the template
+        self.object = selected_goal
+        context = self.get_context_data(goal=self.object, user=request.user)  # Pass the single goal instance
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('login')
+
+        context = super().get_context_data(**kwargs)
+        goal = self.object  # `self.object` is set by DetailView
+
+        user = self.request.user
+        current_date = timezone.localtime(timezone.now()).date()  # Get today's date
+
+        # Calculate the remaining days for the goal
+        remaining_days = calculate_days_remaining(user, current_date, goal.goal_id)
+
+        # Calculate the saving trends
+        trends = calculate_trend(user, current_date)
+        # only show the trend for the current goal
+        trend_for_goal = next(
+            (trend for trend in trends if trend['goal_id'] == goal.goal_id),
+            None)
+        trend_status = trend_for_goal[
+            'trend'] if trend_for_goal else "No trend data"
+
+        # -- For the goal progress CARD --
+        current_amount = goal.current_amount
+        target_amount = goal.target_amount
+        saving_progress = calculate_saving_progress(goal)
+
+        avg_saving = calculate_avg_saving(user, current_date, goal.goal_id)
+        min_saving = calculate_min_saving(user, current_date, goal.goal_id)
+        saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
+
+        # -- For the burndown chart --
+        start_date = goal.start_date
+        end_date = goal.end_date
+
+        # Generate dates for the burndown chart
+        total_days = (end_date - start_date).days # Total days between start and end date
+        date_labels = [(start_date + timedelta(days=i)).strftime("%Y-%m-%d")
+                       for i in range(total_days + 1)]
+
+        # logging.debug(f"Date labels: {date_labels}")
+
+        # Ideal savings calculation
+        ideal_savings = [
+            goal.target_amount * (Decimal('1') - Decimal(i) / Decimal(total_days))
+            for i in range(total_days + 1)
+        ]
+
+        # Actual savings
+        actual_saving = get_all_saving_specific_goal(goal.title)
+        logging.debug(f"actual saving: {actual_saving}")
+
+        # Aggregate and align actual savings
+        aggregated_savings = aggregate_savings_by_date(actual_saving)  # Aggregate by date
+        aligned_actual_savings = align_savings_with_labels(date_labels, aggregated_savings)  # Align with labels
+
+        # logging.debug(f"Aggregated savings: {aligned_actual_savings}")
+        # if save day, amount is combine all together
+
+        # Convert data to floats for JSON serialization
+        ideal_but_float = [float(x) for x in ideal_savings]
+        actual_but_float = aligned_actual_savings
+
+        # logging.debug(f"i savings: {[float(x) for x in ideal_savings]}")
+        # logging.debug(f"a savings: {[float(x) for x in actual_savings]}")
+        context['start_date'] = goal.start_date.strftime("%d %B %Y").lstrip("0")
+        context['end_date'] = goal.end_date.strftime("%d %B %Y").lstrip("0")
+        context['remaining_day'] = remaining_days if remaining_days is not None else "Goal not found"
+        context['trends'] = trend_status
+        context['current_amount'] = current_amount
+        context['target_amount'] = target_amount
+        context['saving_progress'] = saving_progress
+        context['avg_saving'] = avg_saving
+        context['min_saving'] = min_saving
+        context['saving_shortfall'] = saving_shortfall
+        context['goal'] = self.get_object()
+        context['goal_id'] = goal.goal_id
+
+        context["chart_labels"] = json.dumps(date_labels)
+        context["chart_ideal_data"] = ideal_but_float
+        context["chart_actual_data"] = actual_but_float
+
+        return context
+
+
+def aggregate_savings_by_date(actual_saving):
+    # Create a dictionary to store total savings for each date
+    savings_by_date = {}
+
+    for entry in actual_saving:
+        date = entry['date']
+        amount = entry['__amount']
+        if date in savings_by_date:
+            savings_by_date[date] += amount
+        else:
+            savings_by_date[date] = amount
+
+    return savings_by_date
+
+def align_savings_with_labels(chart_labels, savings_by_date):
+    aligned_savings = []
+
+    for label in chart_labels:
+        date = datetime.strptime(label, "%Y-%m-%d").date()
+        aligned_savings.append(float(savings_by_date.get(date, Decimal('0.00'))))  # Default to 0 if no data
+
+    return aligned_savings
+
+@login_required
+def delete_goal(request, goal_id):
+    """Delete a goal object."""
+    if request.method == 'POST':
+        goal = get_object_or_404(Goal, goal_id=goal_id)
+        # delete all transactions related to that goal
+        IncomeExpense.objects.filter(description__contains=goal.title).delete()
+        # delete the goal
+        goal.delete()
+        messages.success(request, 'Goal successfully deleted.')
+        # Redirect to the goals page
+        return redirect('moneymap:goals')
+    return HttpResponseForbidden('Invalid request method.')
