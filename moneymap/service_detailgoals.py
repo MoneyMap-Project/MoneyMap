@@ -260,15 +260,32 @@ def get_all_saving_specific_goal(goal_title):
     return savings
 
 
-
+# def get_goal_title_from_IncomeExpense_table():
+#     goal_name = (
+#         IncomeExpense.objects.filter(
+#             description__startswith="Saving money to")
+#         .values_list('description', flat=True)
+#         .first()
+#         .replace("Saving money to ", "")
+#     )
+#     return goal_name
 def get_goal_title_from_IncomeExpense_table():
-    goal_name = (
-        IncomeExpense.objects.filter(
-            description__startswith="Saving money to")
-        .values_list('description', flat=True)
-        .first()
-        .replace("Saving money to ", "")
-    )
+    try:
+        goal_name = (
+            IncomeExpense.objects.filter(
+                description__startswith="Saving money to")
+            .values_list('description', flat=True)
+            .first()
+        )
+        # Ensure goal_name is not None before calling replace
+        if goal_name:
+            goal_name = goal_name.replace("Saving money to ", "")
+        else:
+            goal_name = "No goal set"  # Provide a fallback value
+    except Exception as e:
+        # Log the exception if necessary
+        print(f"Error fetching goal title: {e}")
+        goal_name = "Error fetching goal"  # Another fallback value
     return goal_name
 
 
