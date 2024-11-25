@@ -13,14 +13,14 @@
                     <!-- Title Field -->
                     <div class="flex flex-col gap-2">
                         <label for="goal-title" class="text-black text-lg font-normal capitalize">Title</label>
-                        <input type="text" id="goal-title" name="goal_title" placeholder="Title of your goal"
+                        <input type="text" id="goal-title" name="goal_title" placeholder="Title of your goal" maxlength="225"
                                class="w-full p-3 border border-[#1b283f] rounded-lg text-[#1b283f] font-normal focus:border-[#05a99d] focus:outline-none transition duration-200" required />
                     </div>
 
                     <!-- Description Field -->
                     <div class="flex flex-col gap-2">
                         <label for="goal-description" class="text-black text-lg font-normal capitalize">Description</label>
-                        <input type="text" id="goal-description" name="goal_description" placeholder="Description about your goal"
+                        <input type="text" id="goal-description" name="goal_description" placeholder="Description about your goal" maxlength="225"
                                class="w-full p-3 border border-[#1b283f] rounded-lg text-[#1b283f] font-normal focus:border-[#05a99d] focus:outline-none transition duration-200" required />
                     </div>
 
@@ -188,6 +188,13 @@
 
 
 <style>
+
+    #summary-title, #summary-description, #summary-start-date, #summary-end-date, #summary-amount {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 1024px) {
         .lg\:w-2\/3 {

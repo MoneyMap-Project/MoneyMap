@@ -14,7 +14,7 @@
                     <!-- Description Section -->
                     <div class="w-full flex flex-col gap-3">
                         <label for="description" class="text-black text-lg font-normal font-['Poppins'] capitalize">Description</label>
-                        <input type="text" id="description" name="description" placeholder="Description about your money flow"
+                        <input type="text" id="description" name="description" placeholder="Description about your money flow" maxlength="225"
                                class="w-full p-2.5 rounded-[10px] border border-[#1b283f] text-[#1b283f] text-lg font-normal font-['Poppins'] focus:outline-none focus:border-[#05a99d]"
                                value="{{ description }}" required />
                     </div>
@@ -182,6 +182,12 @@
 
     .bg-light-green {
         background-color: #c7f3e1;
+    }
+
+    #summary-description, #summary-amount {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
 </style>
