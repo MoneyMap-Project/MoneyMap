@@ -111,7 +111,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
+                <button id="money-flow-submit" type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
                     <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add new money flow</div>
                 </button>
             </div>
@@ -346,6 +346,23 @@
                 input.value = input.value.slice(0, -1);
             }
     });
+
+    document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('money-flow-form');
+            const submitButton = document.getElementById('money-flow-submit');
+
+            form.addEventListener('submit', function (event) {
+                if (submitButton.disabled) {
+                    // Prevent multiple submissions
+                    event.preventDefault();
+                    return;
+                }
+                // Disable the button to prevent multiple clicks
+                submitButton.disabled = true;
+                submitButton.style.cursor = 'not-allowed';
+                submitButton.style.opacity = '0.6';
+            });
+        });
 </script>
 
 {% endblock %}

@@ -65,7 +65,7 @@
                     <div class="w-[423px] h-80 absolute rotate-[-4deg] group-hover:rotate-0 transition-transform duration-300 bg-[#e8e8e8] rounded-[10px] -z-10"></div>
                     <div class="w-[423px] h-80 p-[30px] bg-[#f2f2f2] rounded-[10px] flex flex-col gap-4 items-start relative z-10">
                         <!-- Card Title -->
-                        <div class="text-[#1b283f] text-3xl font-semibold font-['Poppins'] capitalize">
+                        <div class="text-[#1b283f] text-3xl font-semibold font-['Poppins'] capitalize card-title" >
                             {{ goal.title }}
                         </div>
                         <!-- Status badge -->
@@ -117,4 +117,17 @@
     </div>
 </div>
 
+<style>
+.card-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%; /* Ensures it respects the card width */
+}
+
+</style>
+
 {% endblock %}
+
+

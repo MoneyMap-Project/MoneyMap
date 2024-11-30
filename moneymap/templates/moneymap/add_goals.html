@@ -78,7 +78,7 @@
                     <div id="summary-amount" class="text-[#05a99d] text-lg font-bold capitalize">Amount: $0.00</div>
                 </div>
 
-                <button type="submit" class="w-full p-4 bg-[#05a99d] rounded-lg flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
+                <button id="add-goal-submit" type="submit"  class="w-full p-4 bg-[#05a99d] rounded-lg flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
                     <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add New Goal</div>
                 </button>
             </div>
@@ -198,6 +198,30 @@
             }
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('add-goals-form');
+            const submitButton = document.getElementById('add-goal-submit');
+
+            form.addEventListener('submit', function (event) {
+                if (submitButton.disabled) {
+                    // Prevent multiple submissions
+                    event.preventDefault();
+                    return;
+                }
+                // Disable the button to prevent multiple clicks
+                submitButton.disabled = true;
+                submitButton.style.cursor = 'not-allowed';
+                submitButton.style.opacity = '0.6';
+            });
+        });
+        
+    function restrictInput(event) {
+            const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', '.'];
+            if (event.key >= 0 && event.key <= 9 || allowedKeys.includes(event.key)) {
+                return true;
+            }
+            return false;
+        }
 
 </script>
 
