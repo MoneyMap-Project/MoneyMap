@@ -152,7 +152,7 @@ class GoalView(LoginRequiredMixin, TemplateView):
         user_goals = Goal.objects.filter(user_id=self.request.user)
 
         # Get the processed goals data from the service function
-        context['goals_data'] = get_goals_data(user_goals)
+        context['goals_data'] = get_goals_data(user_goals, date.today())
 
         return context
 
@@ -600,7 +600,7 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         remaining_days = calculate_days_remaining(goal.end_date)
 
         # Calculate the saving trends
-        trends = calculate_trend(goal.goal_id)
+        trends = calculate_trend(user, current_date)
         # only show the trend for the current goal
         trend_for_goal = next(
             (trend for trend in trends if trend['goal_id'] == goal.goal_id),
@@ -614,9 +614,11 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         saving_progress = calculate_saving_progress(goal)
         current_total_days = get_current_total_days(goal, current_date)
 
+        # avg_saving = calculate_avg_saving(user, current_date, goal.goal_id)
         avg_saving = calculate_average_saving(goal.current_amount, current_total_days)
+        # min_saving = calculate_min_saving(user, current_date, goal.goal_id)
         min_saving = round(calculate_minimum_saving(goal.target_amount, goal.current_amount, remaining_days), 2)
-        saving_shortfall = calculate_saving_shortfall(goal.goal_id)
+        saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
 
         # -- For the burndown chart --
         start_date = goal.start_date
