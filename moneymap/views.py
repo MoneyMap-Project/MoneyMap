@@ -17,7 +17,12 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 
-from .service_addgoals import get_goals_data
+from .service_addgoals import (
+    calculate_days_remaining,
+    calculate_average_saving,
+    calculate_minimum_saving,
+    get_goals_data
+)
 from .service_addsavingmoney import (
     validate_goal_end_dates,
     validate_amount,
@@ -37,13 +42,13 @@ from .service import (
     get_income_expense_by_day,
 )
 from .service_detailgoals import (
-    calculate_days_remaining,
+    # calculate_days_remaining,
     calculate_trend,
     calculate_saving_progress,
-    calculate_avg_saving,
-    calculate_min_saving,
+    # calculate_avg_saving,
+    # calculate_min_saving,
     calculate_saving_shortfall,
-    get_all_goals, get_all_saving_specific_goal
+    get_all_goals, get_all_saving_specific_goal, get_current_total_days
 )
 from .models import IncomeExpense, Goal, Tag
 
@@ -592,7 +597,7 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         current_date = timezone.localtime(timezone.now()).date()  # Get today's date
 
         # Calculate the remaining days for the goal
-        remaining_days = calculate_days_remaining(user, current_date, goal.goal_id)
+        remaining_days = calculate_days_remaining(goal.end_date)
 
         # Calculate the saving trends
         trends = calculate_trend(user, current_date)
@@ -607,9 +612,12 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         current_amount = goal.current_amount
         target_amount = goal.target_amount
         saving_progress = calculate_saving_progress(goal)
+        current_total_days = get_current_total_days(goal, current_date)
 
-        avg_saving = calculate_avg_saving(user, current_date, goal.goal_id)
-        min_saving = calculate_min_saving(user, current_date, goal.goal_id)
+        # avg_saving = calculate_avg_saving(user, current_date, goal.goal_id)
+        avg_saving = calculate_average_saving(goal.current_amount, current_total_days)
+        # min_saving = calculate_min_saving(user, current_date, goal.goal_id)
+        min_saving = round(calculate_minimum_saving(goal.target_amount, goal.current_amount, remaining_days), 2)
         saving_shortfall = calculate_saving_shortfall(user, current_date, goal.goal_id)
 
         # -- For the burndown chart --
@@ -631,7 +639,7 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
 
         # Actual savings
         actual_saving = get_all_saving_specific_goal(goal.title)
-        logging.debug(f"actual saving: {actual_saving}")
+        # logging.debug(f"actual saving: {actual_saving}")
 
         # Aggregate and align actual savings
         aggregated_savings = aggregate_savings_by_date(actual_saving)  # Aggregate by date
