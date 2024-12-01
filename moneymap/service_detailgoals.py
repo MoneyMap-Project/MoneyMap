@@ -194,12 +194,12 @@ def rem_amount(goal):
 
 def calculate_saving_shortfall(user, date, goal_id):
     """Calculate the extra daily saving needed to meet the goal."""
+    # target_amount / days_remaining - income saving date=localtime.date.today
+
     try:
         min_saving = calculate_min_saving(user, date, goal_id)
 
-        saving_today = get_total_today_saving()
-
-        # logging.info(f"min_saving: {min_saving}, saving_today: {saving_today}")
+        saving_today = get_total_today_saving(goal_id)
 
         # Calculate shortfall "extra saving needed per day"
         shortfall = min_saving - saving_today
@@ -210,18 +210,19 @@ def calculate_saving_shortfall(user, date, goal_id):
                                         rounding=ROUND_CEILING)  # Goal not found
 
 
-def get_total_today_saving():
+def get_total_today_saving(goal_id):
     """Get the total saving amount of today saving."""
     today_date = timezone.localtime(timezone.now()).date()
-    goal_name = get_goal_title_from_IncomeExpense_table()
+    # goal_name = get_goal_title_from_IncomeExpense_table()
     saving_today = (
             IncomeExpense.objects.filter(
                 type='saving',
-                goal__title=goal_name,
+                goal__goal_id=goal_id,
                 date=today_date
             )
             .aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
     )
+    # logging.debug(f"Total saving today: {saving_today}")
     return saving_today
 
 # def get_all_saving_specific_goal():
@@ -252,7 +253,7 @@ def get_all_saving_specific_goal(goal_title):
         description=f"Saving money to {goal_title}"
     ).values('date', __amount=F('amount'))  # Get date and amount as dictionary fields
 
-    logging.debug(f"Fetched savings for goal '{goal_title}': {list(savings)}")
+    # logging.debug(f"Fetched savings for goal '{goal_title}': {list(savings)}")
     return savings
 
 
@@ -296,3 +297,7 @@ def get_all_goals(user):
         QuerySet: A list of Goal objects for the given user.
     """
     return Goal.objects.filter(user_id=user)
+
+def get_current_total_days(goal, date):
+    """Calculate the total days between the start date and the current date."""
+    return (date - goal.start_date).days + 1
