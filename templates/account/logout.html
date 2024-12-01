@@ -19,7 +19,7 @@
                 {% if message.tags == 'error' %} text-red-500 {% else %} text-[#05a99d] {% endif %} capitalize">
                 {{ message.tags|capfirst }}
             </p>
-            <p class="text-zinc-400 text-base font-normal font-['Poppins'] leading-5 break-all max-h-10 overflow-hidden">
+            <p class="text-zinc-400 text-base font-normal font-['Poppins'] leading-5 break-words max-h-full overflow-visible">
                 {{ message }}
             </p>
         </div>
@@ -66,5 +66,14 @@
         </div>
     </div>
 </body>
-
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const messagesContainer = document.getElementById("messages-container");
+        if (messagesContainer) {
+            setTimeout(() => {
+                messagesContainer.style.display = "none";
+            }, 5000);
+        }
+    });
+</script>
 </html>
