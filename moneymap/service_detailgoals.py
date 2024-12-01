@@ -3,40 +3,17 @@
 from django.db.models import Sum, F
 from django.utils import timezone
 from .models import Goal, IncomeExpense
+# from .service_addgoals import calculate_days_remaining
 from decimal import Decimal, ROUND_CEILING, InvalidOperation
 
 import logging
 
-
-def calculate_days_remaining(user, date,
-                             goal_id):  # TODO: We also have `days_remaining` method in the Goal model.
-    """
-    Calculate the days remaining to reach a specific goal for a user.
-
-    Args:
-        user: The user for whom to retrieve the records.
-        date: The specific date for which to calculate the remaining days. [must be current date]
-        goal_id: The ID of the specific goal for which to calculate remaining days.
-
-    Returns:
-        int: The number of days remaining to reach the specified goal, or None if the goal is not found or 0 if already past.
-    """
-    try:
-        goal = Goal.objects.get(user_id=user, goal_id=goal_id)
-
-        # Check if the goal's end date is in the future
-        if goal.end_date >= date:
-            days_remaining = (goal.end_date - date).days
-            return days_remaining
-        else:
-            return 0  # Goal is already past
-
-    except Goal.DoesNotExist:
-        return None  # Goal not found
+def calculate_days_remaining(end_date):
+    """Calculate the days remaining until the goal deadline."""
+    return max((end_date - timezone.now().date()).days, 0)
 
 
-def calculate_trend(user, date):
-    #TODO: Still need to be fixed. Average Saving > Min Saving is Positive, otherwise Negative.
+def calculate_trend(goal_id):
     """
     Calculate the trend for the goal.
 
@@ -47,72 +24,13 @@ def calculate_trend(user, date):
     Returns:
         list: A list of dictionaries containing goal_id and their respective trends.
     """
-    # logging.info(f"Calculating trend for user {user.id} on date {date}")
-    try:
-        goals = Goal.objects.filter(
-            user_id=user,
-            start_date__lte=date,
-            end_date__gte=date)
+    # if shortfall >= 0, trend is positive, otherwise negative
 
-        if not goals.exists():
-            logging.warning(
-                f"No active goals found for user {user.id} on {date}")
-            return []
-
-        trends = []
-
-        for goal in goals:
-
-            if goal.start_date > goal.end_date:
-                logging.warning(f"Invalid date range for goal {goal.goal_id}")
-                continue
-
-            # logging.info(f"Processing goal: {goal.goal_id}")
-
-            total_days = (goal.end_date - goal.start_date).days  # total days
-
-            if total_days <= 0:
-                continue  # Skip goals with invalid or zero duration
-
-            days_elapsed = calculate_days_elapsed(date, goal)
-
-            # Special handling for day 0 (goal creation day)
-            # if days_elapsed == 0:
-            #     trend_value = 0  # No progress expected on the first day
-            #     trend = 'Neutral'
-            # else:
-            try:
-                daily_target = Decimal(
-                    goal.target_amount) / total_days if total_days > 0 else 0
-            except (ZeroDivisionError, InvalidOperation):
-                logging.error(
-                    f"Invalid calculation for goal {goal.goal_id}")
-                continue
-            expected_amount = daily_target * min(days_elapsed, total_days)
-
-            try:
-                actual_amount = Decimal(goal.current_amount)
-            except (TypeError, ValueError):
-                logging.error(
-                    f"Invalid current_amount for goal {goal.goal_id}")
-                actual_amount = Decimal('0')
-
-            trend_value = actual_amount - expected_amount
-            trend = 'Positive' if trend_value >= 0 else 'Negative'
-
-            # logging.info(f"Goal {goal.goal_id} trend: {trend} ({trend_value})")
-            trends.append({'goal_id': goal.goal_id,
-                           'trend': trend,
-                           'trend_value': float(trend_value)
-                           })
-
-        # logging.info(f"Total trends calculated: {len(trends)}")
-        return trends
-
-    except Goal.DoesNotExist:
-        # logging.error(f"Goal not found for user {user.id}")
-        return []
-
+    if calculate_saving_shortfall(goal_id) <= 0:
+        trend = 'Positive'
+    else:
+        trend = 'Negative'
+    return [{'goal_id': goal_id, 'trend': trend}]
 
 def calculate_saving_progress(goal: Goal) -> Decimal:
     """Calculate the saving progress as a percentage of the current amount towards the target amount."""
@@ -137,7 +55,6 @@ def calculate_avg_saving(user, date, goal_id):
     """
     Calculate the average daily saving been saved so far
     for the specified goal.
-    #TODO: Average is now average saving per day. (So far) -- Not match goal view. -> current_amount / current_total_days
     """
     try:
         goal = Goal.objects.get(goal_id=goal_id, user_id=user)
@@ -148,7 +65,7 @@ def calculate_avg_saving(user, date, goal_id):
         # logging.info(f"Day so far: {days_so_far}, avg_saving: {avg_saving}, goal.current_amount: {goal.current_amount}, goal.target_amount: {goal.target_amount}")
 
         # 2 decimal places
-        return avg_saving.quantize(Decimal('0.01'), rounding=ROUND_CEILING)
+        return round(avg_saving, 2)
 
     except Goal.DoesNotExist:
         return Decimal('0.00').quantize(Decimal('0.01'),
@@ -165,13 +82,13 @@ def __str__(self):
     return f"{self.description}"
 
 
-def calculate_min_saving(user, date, goal_id):
+def calculate_min_saving(user, goal_id):
     """Calculate the minimum daily saving needed to reach the target amount."""
     try:
         goal = Goal.objects.get(goal_id=goal_id, user_id=user)
 
         # Calculate total days left until the end date
-        total_days_left = calculate_days_remaining(user, date, goal_id)
+        total_days_left = calculate_days_remaining(goal.end_date)
 
         if total_days_left <= 0:
             return Decimal('0.00').quantize(Decimal('0.01'),
@@ -192,22 +109,23 @@ def rem_amount(goal):
     return max(Decimal('0.00'), goal.target_amount - goal.current_amount)
 
 
-def calculate_saving_shortfall(user, date, goal_id):
+def calculate_saving_shortfall(goal_id):
     """Calculate the extra daily saving needed to meet the goal."""
     # target_amount / days_remaining - income saving date=localtime.date.today
 
     try:
-        min_saving = calculate_min_saving(user, date, goal_id)
-
         saving_today = get_total_today_saving(goal_id)
+        target_amount = Goal.objects.get(goal_id=goal_id).target_amount
+        days_remaining = calculate_days_remaining(Goal.objects.get(goal_id=goal_id).end_date)
+
+        logging.debug(f"Saving today: {saving_today}, Target amount: {target_amount}, Days remaining: {days_remaining}")
 
         # Calculate shortfall "extra saving needed per day"
-        shortfall = min_saving - saving_today
-        return max(Decimal('0.00'), shortfall).quantize(Decimal('0.01'),
-                                                        rounding=ROUND_CEILING)  # Return 0 if no shortfall
+        shortfall = (target_amount / days_remaining) - saving_today
+        logging.debug(f"Shortfall: {shortfall}")
+        return round(max(Decimal('0.00'), shortfall), 2)  # Return 0 if no shortfall
     except Goal.DoesNotExist:
-        return Decimal('0.00').quantize(Decimal('0.01'),
-                                        rounding=ROUND_CEILING)  # Goal not found
+        return 0.00  # Goal not found
 
 
 def get_total_today_saving(goal_id):
@@ -224,20 +142,6 @@ def get_total_today_saving(goal_id):
     )
     # logging.debug(f"Total saving today: {saving_today}")
     return saving_today
-
-# def get_all_saving_specific_goal():
-#     """Get all saving records for a specific goal based on the goal_id.
-#
-#     Returns:
-#         QuerySet: A list of IncomeExpense objects for the given user and goal.
-#     """
-#     goal_name = get_goal_title_from_IncomeExpense_table()
-#     saving_records = IncomeExpense.objects.filter(
-#         type='saving',
-#         goal__title=goal_name
-#     ).values('date', __amount=F('amount'))  # Get date and amount as dictionary fields
-#
-#     return saving_records
 
 def get_all_saving_specific_goal(goal_title):
     """Get all saving records for a specific goal.
@@ -256,16 +160,6 @@ def get_all_saving_specific_goal(goal_title):
     # logging.debug(f"Fetched savings for goal '{goal_title}': {list(savings)}")
     return savings
 
-
-# def get_goal_title_from_IncomeExpense_table():
-#     goal_name = (
-#         IncomeExpense.objects.filter(
-#             description__startswith="Saving money to")
-#         .values_list('description', flat=True)
-#         .first()
-#         .replace("Saving money to ", "")
-#     )
-#     return goal_name
 def get_goal_title_from_IncomeExpense_table():
     try:
         goal_name = (
