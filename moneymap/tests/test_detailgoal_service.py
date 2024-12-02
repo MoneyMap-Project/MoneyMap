@@ -1,6 +1,6 @@
 """Unit tests for related services using in GoalsDetailView."""
 
-from datetime import date, timedelta, timezone
+from datetime import date, timedelta
 from decimal import Decimal
 from django.utils import timezone
 
