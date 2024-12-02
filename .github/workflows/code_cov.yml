@@ -54,7 +54,7 @@ jobs:
         run: python manage.py migrate
 
       - name: Run tests
-        run: pytest --cov --ignore=tests/selenium_tests
+        run: pytest --cov --ignore=moneymap/tests/selenium_tests/
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
