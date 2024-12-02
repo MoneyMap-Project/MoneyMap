@@ -1,12 +1,12 @@
 """Service functions for the MoneyMap goal page."""
 
+from decimal import Decimal, ROUND_CEILING
+import logging
 from django.db.models import Sum, F
 from django.utils import timezone
 from .models import Goal, IncomeExpense
 # from .service_addgoals import calculate_days_remaining
-from decimal import Decimal, ROUND_CEILING, InvalidOperation
 
-import logging
 
 def calculate_days_remaining(end_date):
     """Calculate the days remaining until the goal deadline."""
@@ -37,11 +37,11 @@ def calculate_saving_progress(goal: Goal) -> Decimal:
     if goal.target_amount <= 0:
         return Decimal('0.00')  # Avoid division by zero
 
-    progress_percentage = (goal.current_amount / goal.target_amount) * Decimal(
-        '100.00')
+    progress_percentage = (goal.current_amount / goal.target_amount) * 100
     # 2 decimal places
-    return progress_percentage.quantize(Decimal('0.01'),
-                                        rounding=ROUND_CEILING)
+    # return progress_percentage.quantize(Decimal('0.01'),
+    #                                     rounding=ROUND_CEILING)
+    return round(progress_percentage, 2)
 
 
 def calculate_days_elapsed(date, goal):
@@ -71,44 +71,6 @@ def calculate_avg_saving(user, date, goal_id):
         return Decimal('0.00').quantize(Decimal('0.01'),
                                         rounding=ROUND_CEILING)  # Goal not found
 
-
-def update_current_amount(self, amount_saved):
-    """Update current amount with a new saving input."""
-    self.current_amount += Decimal(amount_saved)
-    self.save()
-
-
-def __str__(self):
-    return f"{self.description}"
-
-
-def calculate_min_saving(user, goal_id):
-    """Calculate the minimum daily saving needed to reach the target amount."""
-    try:
-        goal = Goal.objects.get(goal_id=goal_id, user_id=user)
-
-        # Calculate total days left until the end date
-        total_days_left = calculate_days_remaining(goal.end_date)
-
-        if total_days_left <= 0:
-            return Decimal('0.00').quantize(Decimal('0.01'),
-                                            rounding=ROUND_CEILING)  # Goal time has expired
-
-        min_saving = goal.target_amount / total_days_left if total_days_left > 0 else Decimal(
-            '0.00')
-        return min_saving.quantize(Decimal('0.01'),
-                                   rounding=ROUND_CEILING)  # Round up to 2 decimal places
-
-    except Goal.DoesNotExist:
-        return Decimal('0.00').quantize(Decimal('0.01'),
-                                        rounding=ROUND_CEILING)  # Goal not found
-
-
-def rem_amount(goal):
-    """Calculate remaining amount to reach target."""
-    return max(Decimal('0.00'), goal.target_amount - goal.current_amount)
-
-
 def calculate_saving_shortfall(goal_id):
     """Calculate the extra daily saving needed to meet the goal."""
     # target_amount / days_remaining - income saving date=localtime.date.today
@@ -117,12 +79,11 @@ def calculate_saving_shortfall(goal_id):
         saving_today = get_total_today_saving(goal_id)
         target_amount = Goal.objects.get(goal_id=goal_id).target_amount
         days_remaining = calculate_days_remaining(Goal.objects.get(goal_id=goal_id).end_date)
-
-        logging.debug(f"Saving today: {saving_today}, Target amount: {target_amount}, Days remaining: {days_remaining}")
+        # logging.debug(f"Saving today: {saving_today}, Target amount: {target_amount}, Days remaining: {days_remaining}")
 
         # Calculate shortfall "extra saving needed per day"
         shortfall = (target_amount / days_remaining) - saving_today
-        logging.debug(f"Shortfall: {shortfall}")
+        # logging.debug(f"Shortfall: {shortfall}")
         return round(max(Decimal('0.00'), shortfall), 2)  # Return 0 if no shortfall
     except Goal.DoesNotExist:
         return 0.00  # Goal not found
@@ -159,26 +120,6 @@ def get_all_saving_specific_goal(goal_title):
 
     # logging.debug(f"Fetched savings for goal '{goal_title}': {list(savings)}")
     return savings
-
-def get_goal_title_from_IncomeExpense_table():
-    try:
-        goal_name = (
-            IncomeExpense.objects.filter(
-                description__startswith="Saving money to")
-            .values_list('description', flat=True)
-            .first()
-        )
-        # Ensure goal_name is not None before calling replace
-        if goal_name:
-            goal_name = goal_name.replace("Saving money to ", "")
-        else:
-            goal_name = "No goal set"  # Provide a fallback value
-    except Exception as e:
-        # Log the exception if necessary
-        print(f"Error fetching goal title: {e}")
-        goal_name = "Error fetching goal"  # Another fallback value
-    return goal_name
-
 
 def get_all_goals(user):
     """

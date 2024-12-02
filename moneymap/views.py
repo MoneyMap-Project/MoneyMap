@@ -459,7 +459,7 @@ class AddGoals(LoginRequiredMixin, TemplateView):
 
         try:
             target_amount_decimal = float(target_amount)
-            print(f"Converted target amount: {target_amount_decimal}")
+            # print(f"Converted target amount: {target_amount_decimal}")
 
             # Create and save a new Goal object
             new_goal = Goal.objects.create(
@@ -471,7 +471,7 @@ class AddGoals(LoginRequiredMixin, TemplateView):
                 target_amount=target_amount_decimal,
                 current_amount=0,
             )
-            print(f"New Goal object created: {new_goal}")
+            # print(f"New Goal object created: {new_goal}")
             # logger.debug(request, 'Income/Expense recorded successfully!')
             return redirect('moneymap:goals')
         except ValueError:

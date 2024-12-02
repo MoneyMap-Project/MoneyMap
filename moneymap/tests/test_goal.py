@@ -39,7 +39,6 @@ class GoalModelTests(TestCase):
         self.assertTrue(isinstance(self.sample_goal.start_date, date))
         self.assertTrue(isinstance(self.sample_goal.end_date, date))
 
-
 class GoalServiceTests(TestCase):
     """Test the goal-related service functions."""
 
@@ -94,29 +93,23 @@ class GoalServiceTests(TestCase):
         self.assertEqual(active_goal_data['progress_percentage'],
                          25)  # 250/1000 * 100
         self.assertEqual(active_goal_data['days_remaining'], 25)
-        self.assertEqual(active_goal_data['minimum_saving'],
-                         30)  # (1000 - 250) / 25 days = 30
+        self.assertEqual(active_goal_data['minimum_saving'], 30)  
         self.assertTrue(active_goal_data['trend'], 'Negative')
 
         # Test completed goal calculations
         completed_goal_data = next(
             g for g in goals_data if g['title'] == 'Completed Goal')
         self.assertEqual(completed_goal_data['progress_percentage'], 100)
-        self.assertEqual(completed_goal_data['minimum_saving'],
-                         0)  # No remaining amount to save
-        self.assertEqual(completed_goal_data['trend'],
-                         'Negative')  # Trend is positive as it's already completed
+
+        self.assertEqual(completed_goal_data['minimum_saving'], 0)  
+        self.assertEqual(completed_goal_data['trend'], 'Negative') 
 
         # Test future goal calculations
         future_goal_data = next(
             g for g in goals_data if g['title'] == 'Future Goal')
         self.assertEqual(future_goal_data['progress_percentage'], 0)
-        self.assertAlmostEqual(round(future_goal_data['minimum_saving'], 2),
-                               round(Decimal(57.14),
-                                     2))  # (2000 - 0) / 35 days = 57.14
-        self.assertEqual(future_goal_data['trend'],
-                         'Negative')  # Based on trend_value = daily_target - total_saving_today
-
+        self.assertAlmostEqual(round(future_goal_data['minimum_saving'], 2), round(Decimal(57.14), 2))  
+        self.assertEqual(future_goal_data['trend'], 'Negative')  
 
 class GoalViewTests(TestCase):
     """Test the goal-related views."""

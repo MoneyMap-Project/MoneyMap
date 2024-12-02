@@ -85,8 +85,10 @@
                                 <div class="w-[5px] h-full rounded-full
                                     {% if item.type == 'Expenses' %}
                                         bg-[#ff0000]
-                                    {% else %}
+                                    {% elif item.type == 'Income' %}
                                         bg-[#05a99d]
+                                    {% else %}
+                                        bg-[#ffbb56]
                                     {% endif %}">
                                 </div>
                             </div>
@@ -111,8 +113,18 @@
                             <!-- Amount -->
                             <div class="flex-1 py-2.5 flex justify-center items-center">
                                 <span class="text-lg font-normal font-['Poppins']">
-                                    <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
-                                        {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
+                                    <span class="
+                                        {% if item.type == 'Income' %}
+                                            text-[#05a99d]
+                                        {% else %}
+                                            text-[#ff0000]
+                                        {% endif %}">
+
+                                        {% if item.type == 'Income' %}
+                                            +
+                                        {% else %}
+                                            -
+                                        {% endif %}
                                     </span>
                                     <span class="text-[#1b283f]">{{ item.amount|intcomma }}</span>
                                 </span>
@@ -189,8 +201,10 @@
                                 <div class="w-[5px] h-full rounded-full
                                     {% if item.type == 'Expenses' %}
                                         bg-[#ff0000]
-                                    {% else %}
+                                    {% elif item.type == 'Income' %}
                                         bg-[#05a99d]
+                                    {% else %}
+                                        bg-[#ffbb56]
                                     {% endif %}">
                                 </div>
                             </div>
@@ -204,7 +218,11 @@
                             <div class="flex-1 py-2.5 flex justify-center items-center">
                                 <span class="text-base font-normal font-['Poppins']">
                                     <span class="{% if item.type == 'Expenses' %} text-[#ff0000] {% else %} text-[#05a99d] {% endif %}">
-                                        {% if item.type == 'Expenses' %}–{% else %}+{% endif %}
+                                        {% if item.type == 'Income' %}
+                                            +
+                                        {% else %}
+                                            -
+                                        {% endif %}
                                     </span>
                                     <span class="text-[#1b283f]">{{ item.amount|intcomma }}</span>
                                 </span>
@@ -214,7 +232,11 @@
                             <div class="flex-1 py-2.5 flex justify-center items-center">
                                 <span class="text-base font-normal font-['Poppins']">
                                     <span class="{% if item.check > 0 %} text-[#05a99d] {% elif item.check < 0 %} text-[#ff0000] {% endif %}">
-                                        {% if item.check > 0 %}+{% elif item.check < 0 %}–{% endif %}
+                                        {% if item.check > 0 %}
+                                            +
+                                        {% elif item.check < 0 %}
+                                            –
+                                        {% endif %}
                                     </span>
                                     <span class="text-[#1b283f]">{{ item.balance|intcomma }}</span>
                                 </span>
