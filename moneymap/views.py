@@ -186,12 +186,15 @@ class MoneyFlowView(LoginRequiredMixin, View):
         amount = request.session.get('amount', '')
         money_type = request.session.get('money_type', '')
 
+        moneytype = request.GET.get('moneytype', 'income')
+
         return render(request, 'moneymap/money-flow.html',
                       context={
                           "tags": tags,
                           "description": description,
                           "amount": amount,
-                          "money_type": money_type
+                          "money_type": money_type,
+                          "moneytype": moneytype
                       })
 
     def post(self, request):
