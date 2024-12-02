@@ -1,5 +1,5 @@
 [run]
 omit =
-    selenium_add_goal_test.py
-    selenium_login_test.py
-    selenium_money_flow_test.py
+    tests/selenium_add_goal_test.py
+    tests/selenium_login_test.py
+    tests/selenium_money_flow_test.py
