@@ -9,7 +9,6 @@ dj-database-url >= 2.3.0
 uvicorn
 whitenoise[brotli]
 cryptography
-# decouple
 python-decouple
 python-dotenv
 psycopg
