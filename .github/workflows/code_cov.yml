@@ -48,7 +48,7 @@ jobs:
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          psql -h localhost -U ${{ secrets.DB_USER }} -p ${{ secrets.DB_PORT }} -c "CREATE DATABASE ${DB_NAME};"
+          psql -h localhost -U ${{ secrets.DB_USER }} -p ${{ secrets.DB_PORT }} -c "CREATE DATABASE ${{secrets.DB_NAME}};"
 
       - name: Apply migrations
         run: python manage.py migrate
