@@ -64,6 +64,14 @@
                         <!-- Description -->
                         <div class="flex-1 py-2.5 flex justify-center items-center">
                             <span class="text-[#1b283f] text-base font-normal font-['Poppins']">{{ item.description }}</span>
+                             <!-- Tags -->
+                            <div class="flex flex-wrap ml-2">
+                                  {% for tag in item.tags %}
+                                      <div class="px-2 py-0.5 rounded-full bg-white border border-[#90acaa]">
+                                          <span class="text-[#90acaa] text-sm font-normal font-['Poppins']">{{ tag.name }}</span>
+                                       </div>
+                                 {% endfor %}
+                             </div>
                         </div>
 
                         <!-- Amount -->

@@ -1,8 +1,8 @@
+from decimal import Decimal
 from django.utils import timezone
+from django.db.models import Sum, F
 from .service_detailgoals import get_total_today_saving
 from .models import Goal, IncomeExpense
-from django.db.models import Sum, F
-from decimal import Decimal
 
 
 def calculate_days_remaining(end_date):

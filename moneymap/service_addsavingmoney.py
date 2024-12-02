@@ -1,6 +1,6 @@
+from decimal import Decimal
 from django.utils import timezone
 from django.contrib import messages
-from decimal import Decimal
 from django.shortcuts import redirect
 from .models import Goal, IncomeExpense
 
@@ -45,12 +45,11 @@ def get_goals(user, distribute_evenly, selected_goals, select_custom_goals):
     if distribute_evenly == 'on' and select_custom_goals is None:
         # Retrieve all goals for the user
         return Goal.objects.filter(user_id=user)
-    elif distribute_evenly is None and select_custom_goals == 'on':
+    if distribute_evenly is None and select_custom_goals == 'on':
         # Retrieve selected goals
         return Goal.objects.filter(goal_id__in=selected_goals, user_id=user)
-    else:
-        # Return no goals if neither condition is met
-        return Goal.objects.none()
+    # Return no goals if neither condition is met
+    return Goal.objects.none()
 
 def check_goals_availability(goals, amount_decimal, request):
     """Check if there is enough space in the selected goals for the saving amount."""
@@ -70,7 +69,7 @@ def check_goals_availability(goals, amount_decimal, request):
     return None  # Return None if everything is fine
 
 
-def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date, user, request):
+def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date, user, request): # pylint: disable=R0917
     """Distribute the saving amount evenly among selected goals."""
     amount_per_goal = amount_decimal / len(goals)
 

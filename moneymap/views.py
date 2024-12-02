@@ -3,10 +3,10 @@ Views for the MoneyMap application.
 This module contains views related to managing income and expenses,
 displaying financial reports, and handling user interactions.
 """
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 import logging
 from decimal import Decimal
-
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
@@ -15,7 +15,6 @@ from django.views import View
 from django.views.generic import TemplateView, DetailView
 from django.http import HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
-import json
 
 from .service_addgoals import (
     calculate_days_remaining,
@@ -186,12 +185,15 @@ class MoneyFlowView(LoginRequiredMixin, View):
         amount = request.session.get('amount', '')
         money_type = request.session.get('money_type', '')
 
+        moneytype = request.GET.get('moneytype', 'income')
+
         return render(request, 'moneymap/money-flow.html',
                       context={
                           "tags": tags,
                           "description": description,
                           "amount": amount,
-                          "money_type": money_type
+                          "money_type": money_type,
+                          "moneytype": moneytype
                       })
 
     def post(self, request):
@@ -233,7 +235,7 @@ class MoneyFlowView(LoginRequiredMixin, View):
                     tag = Tag.objects.get(id=selected_tag_id, user_id=request.user)
                     new_income_expense.tags.add(tag)
                 except Tag.DoesNotExist:
-                    logging.warning(f"Selected tag {selected_tag_id} does not exist or doesn't belong to user")
+                    logging.warning("Selected tag %s does not exist or doesn't belong to user", selected_tag_id)
 
             # Clear session data
             request.session.pop('description', None)
@@ -382,9 +384,8 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
             # Retrieve the user's goals
             user_goals = Goal.objects.filter(user_id=request.user)
             return render(request, self.template_name, {'goals': user_goals})
-        else:
-            # Redirect to login if the user is not authenticated
-            return redirect('login')
+        # Redirect to login if the user is not authenticated
+        return redirect('login')
 
     def post(self, request):
         """Handle the submitted form data for adding money."""
@@ -456,10 +457,10 @@ class AddGoals(LoginRequiredMixin, TemplateView):
 
         try:
             target_amount_decimal = float(target_amount)
-            print(f"Converted target amount: {target_amount_decimal}")
+            # print(f"Converted target amount: {target_amount_decimal}")
 
             # Create and save a new Goal object
-            new_goal = Goal.objects.create(
+            Goal.objects.create(
                 user_id=request.user,
                 title=title,
                 description=description,
@@ -468,8 +469,7 @@ class AddGoals(LoginRequiredMixin, TemplateView):
                 target_amount=target_amount_decimal,
                 current_amount=0,
             )
-            print(f"New Goal object created: {new_goal}")
-            # logger.debug(request, 'Income/Expense recorded successfully!')
+            logger.debug(request, 'Income/Expense recorded successfully!')
             return redirect('moneymap:goals')
         except ValueError:
             logging.error("Invalid target amount entered. Please enter a valid number.")
@@ -593,7 +593,7 @@ class GoalsDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         goal = self.object  # `self.object` is set by DetailView
 
-        user = self.request.user
+        # user = self.request.user
         current_date = timezone.localtime(timezone.now()).date()  # Get today's date
 
         # Calculate the remaining days for the goal

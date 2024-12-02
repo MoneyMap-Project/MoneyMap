@@ -164,7 +164,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TAILWIND_APP_NAME = 'theme'
 
-LOGIN_REDIRECT_URL = '/' 
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
@@ -188,6 +188,6 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         "AUTH_PARAMS" :{
             'access_type': 'offline',
-        }        
+        }
     }
 }
