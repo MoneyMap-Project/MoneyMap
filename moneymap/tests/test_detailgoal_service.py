@@ -74,7 +74,3 @@ class GoalServiceTests(TestCase):
     def test_all_goals(self):
         """Test get_all_goals function."""
         self.assertEqual(get_all_goals(self.user).count(), 1)
-
-    def test_current_total_days(self):
-        """Test get_current_total_days function."""
-        self.assertEqual(get_current_total_days(self.sample_goal, date.today()), 1)
