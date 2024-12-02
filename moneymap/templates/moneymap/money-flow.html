@@ -15,7 +15,7 @@
                     <!-- Description Section -->
                     <div class="w-full flex flex-col gap-3">
                         <label for="description" class="text-black text-lg font-normal font-['Poppins'] capitalize">Description</label>
-                        <input type="text" id="description" name="description" placeholder="Description about your money flow" maxlength="225"
+                        <input type="text" id="description" name="description" placeholder="Description about your money flow"
                                class="w-full p-2.5 rounded-[10px] border border-[#1b283f] text-[#1b283f] text-lg font-normal font-['Poppins'] focus:outline-none focus:border-[#05a99d]"
                                value="{{ description }}" required />
                     </div>
@@ -27,7 +27,7 @@
                             <input type="number" id="amount" name="amount" placeholder="Enter amount"
                                    class="w-full focus:outline-none text-[#1b283f] text-lg font-normal font-['Poppins'] amount-input"
                                    value="{{ amount }}" oninput="formatBaht()" onkeydown="return restrictInput(event)"
-                                   min="0" max="9999999999.99" step="0.01" required />
+                                   min="0" step="any" required />
                             <span id="currency-label" class="ml-2 text-[#1b283f] text-lg font-normal font-['Poppins']">baht</span>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button id="money-flow-submit" type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
+                <button type="submit" class="w-full p-3 bg-[#05a99d] rounded-[10px] flex justify-center items-center transition duration-200 ease-in-out hover:bg-[#009b86] cursor-pointer">
                     <div class="text-white text-lg font-bold font-['Poppins'] uppercase">Add new money flow</div>
                 </button>
             </div>
@@ -184,12 +184,6 @@
 
     .bg-light-green {
         background-color: #c7f3e1;
-    }
-
-    #summary-description, #summary-amount {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
     }
 
 </style>
@@ -348,36 +342,6 @@
             updateSummary();
         });
     });
-
-    document.getElementById('amount').addEventListener('input', function (e) {
-            const input = e.target;
-            const value = input.value;
-
-            // Regex to match up to 10 digits before decimal and 2 digits after
-            const validAmountPattern = /^\d{0,10}(\.\d{0,2})?$/;
-
-            if (!validAmountPattern.test(value)) {
-                // Revert to the last valid value
-                input.value = input.value.slice(0, -1);
-            }
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('money-flow-form');
-            const submitButton = document.getElementById('money-flow-submit');
-
-            form.addEventListener('submit', function (event) {
-                if (submitButton.disabled) {
-                    // Prevent multiple submissions
-                    event.preventDefault();
-                    return;
-                }
-                // Disable the button to prevent multiple clicks
-                submitButton.disabled = true;
-                submitButton.style.cursor = 'not-allowed';
-                submitButton.style.opacity = '0.6';
-            });
-        });
 </script>
 
 {% endblock %}

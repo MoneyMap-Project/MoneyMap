@@ -55,23 +55,14 @@
                 </div>
             </div>
         </div>
-<div class="flex items-center w-full sm:w-[438px] h-[100px] p-5
-    {% if trends == 'Positive' %} bg-[#07d4c5]/20 {% else %} bg-[#ff5757]/20 {% endif %} rounded-lg">
-    <img src="{% static 'goal-detail/' %}{% if trends == 'Positive' %}positive.png{% else %}negative.png{% endif %}"
-         alt="{{ trends }} Trend" class="w-12 h-12 mr-5">
-    <div>
-        <h2 class="text-xl font-bold capitalize text-[#1b283f]">
-            {{ trends }} Trend
-        </h2>
-        <p class="text-lg text-[#90acaa]">
-            {% if trends == 'Positive' %}
-                You’ll reach your goal!
-            {% else %}
-                You might miss your goal!
-            {% endif %}
-        </p>
-    </div>
-</div>
+        <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#07d4c5]/20 rounded-lg">
+            <img src="{% static 'goal-detail/positive.png' %}" alt="Positive Trend" class="w-12 h-12 mr-5">
+            <div>
+                <h2 class="text-[#1b283f] text-xl font-bold capitalize">
+                    {{ trends }} Trend</h2>
+                <p class="text-[#90acaa] text-lg">You’ll reach your goal!</p>  <!--#TODO: Negative Trend-->
+            </div>
+        </div>
         <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#f2f2f2] rounded-lg">
             <img src="{% static 'goal-detail/progress.png' %}" alt="Progress" class="w-13 h-12 mr-5">
             <div>
@@ -98,9 +89,10 @@
     <div class="flex flex-wrap gap-5 w-full items-center justify-center">
         <!-- Chart Section -->
         <div class="flex flex-col w-full lg:w-[893px] items-center justify-center">
-            <div class="h-[460px] mt-5 p-5 bg-white rounded-lg flex justify-center items-center">
+{#            <h2 class="text-[#1b283f] text-xl font-bold capitalize mt-7">Burndown Chart</h2>#}
+            <div class="h-[400px] mt-5 p-5 bg-white rounded-lg flex justify-center items-center">
                 <!-- Canvas for Chart.js -->
-                <canvas id="burndownChart" class="w-full h-full"></canvas>
+                <canvas id="burndownChart" class="w-full h-full max-h-[350px]"></canvas>
             </div>
         </div>
         <!-- Statistics Section -->

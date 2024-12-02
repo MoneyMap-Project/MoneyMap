@@ -53,7 +53,7 @@
                         {% for goal in goals %}
                         <div onclick="toggleSelection(this, '{{ goal.goal_id }}')"
                              class="w-[185px] p-2.5 bg-[#f2f2f2] rounded-[10px] flex-col flex gap-[5px] border border-[#aec2c0] cursor-pointer selectable-item">
-                            <label class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize goal-tag">
+                            <label class="text-[#1b283f] text-base font-normal font-['Poppins'] capitalize">
                                 {{ goal.title }}
                             </label>
                         </div>
@@ -323,14 +323,6 @@
 
 .error-message.hidden {
     display: none;
-}
-
-.goal-tag {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    display: block;
-    max-width: 100%; /* Ensures it respects the card width */
 }
 
 </style>
