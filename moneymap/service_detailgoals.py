@@ -1,12 +1,12 @@
 """Service functions for the MoneyMap goal page."""
 
+from decimal import Decimal, ROUND_CEILING
+import logging
 from django.db.models import Sum, F
 from django.utils import timezone
 from .models import Goal, IncomeExpense
 # from .service_addgoals import calculate_days_remaining
-from decimal import Decimal, ROUND_CEILING, InvalidOperation
 
-import logging
 
 def calculate_days_remaining(end_date):
     """Calculate the days remaining until the goal deadline."""
