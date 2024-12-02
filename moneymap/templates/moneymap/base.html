@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
     <title>MoneyMap</title>
+    <link rel="icon" type="image/png" href="{% static 'base/logo-square.png' %}">
     {% load static %}
     <style>
         html,
@@ -132,16 +134,9 @@
                 {{ message }}
             </p>
         </div>
-        <!-- Close Button -->
-        <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 focus:outline-none" onclick="this.parentElement.style.display='none'">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
-{% endif %}
+    {% endif %}
     <main>
         {% block content %}
         {% endblock %}
@@ -155,7 +150,6 @@
             dropdownMenu.classList.toggle('hidden');
         });
 
-        // Close dropdown when clicking outside
         window.addEventListener('click', (event) => {
             if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
                 dropdownMenu.classList.add('hidden');
@@ -175,6 +169,16 @@
         </div>
     </footer>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const messagesContainer = document.getElementById("messages-container");
+        if (messagesContainer) {
+            setTimeout(() => {
+                messagesContainer.style.display = "none";
+            }, 5000);
+        }
+    });
+</script>
 
 </html>
 

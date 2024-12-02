@@ -3,14 +3,18 @@
 
 {% block content %}
 
+
 <div class="w-full max-w-[1352px] h-auto flex flex-col justify-start items-start gap-[30px] mx-auto mt-10 mb-10">
     <!-- Header Section -->
     <div class="w-full p-2.5 flex items-center justify-between">
-        <h1 class="text-[#1b283f] text-4xl font-semibold capitalize leading-tight">Tuition Fee Overview</h1>
-        <!-- Delete Goal Button -->
-        <button id="deleteGoalButton" class="text-[#ff4d4d] text-lg font-base bg-transparent border-2 border-[#ff4d4d] px-4 py-2 rounded-lg hover:bg-[#ff4d4d] hover:text-white transition-colors">
+        <h1 class="text-[#1b283f] text-4xl font-semibold capitalize leading-tight">{{ goal.title }}'s Overview</h1>
+        <form method="POST" action="{% url 'moneymap:delete_goal' goal.goal_id %}">
+            {% csrf_token %}
+            <button type="submit" class="text-[#ff4d4d] text-lg font-base bg-transparent border-2 border-[#ff4d4d] px-4 py-2 rounded-lg hover:bg-[#ff4d4d] hover:text-white transition-colors">
             Delete Goal
         </button>
+        </form>
+    </div>
     </div>
 
     <!-- Overlay Section -->
@@ -20,7 +24,7 @@
                   style="font-family: 'Gochi Hand', cursive; margin-top: 10px;">
                 Are you sure?
             </span>
-            <div class="text-center text-[#1b283f] text-base font-normal font-['Poppins'] mt-4">This means the information will be permanently deleted</div>
+            <div class="text-center text-[#1b283f] text-base font-normal font-['Poppins'] mt-4">This means the information will be permanently deleted.</div>
             <div class="w-[376px] h-[50px] mt-6 flex justify-between">
             <button id="cancelButton" class="w-[158px] h-[50px] rounded-[40px] border-2 border-[#AEC2C0] text-center text-[#1B283F] text-sm font-medium font-['Poppins'] transition duration-300 ease-in-out transform hover:bg-[#f4f4f4] hover:text-[#1B283F] hover:scale-105 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[#05a99d] focus:ring-offset-2">
                 CANCEL
@@ -33,46 +37,56 @@
     </div>
 
     <!-- Summary Section -->
-    <div class="flex flex-col sm:flex-row w-full gap-5">
+    <div class="flex flex-col sm:flex-row w-full gap-5 items-center justify-center">
         <div class="flex flex-col w-full sm:w-[437px] h-[100px] p-5 bg-[#f2f2f2] rounded-lg">
             <div class="flex items-center">
                 <img src="{% static 'goal-detail/calendar.png' %}" alt="Calendar" class="w-11 h-12 mr-5">
                 <div>
                     <h2 class="text-[#1b283f] text-xl font-bold capitalize">
-                        1 January 2025   <!-- Date -->
+                        {{ end_date }} <!-- Date: deadline -->
                     </h2>
                     <p class="text-[#90acaa] text-lg capitalize">
                         <span>Remaining</span>
                         <span class="mx-1">
-                            82   <!-- Remaining days -->
+                            {{ remaining_day }}  <!-- Remaining days -->
                         </span>
                         <span>days</span>
                     </p>
                 </div>
             </div>
         </div>
-        <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#07d4c5]/20 rounded-lg">
-            <img src="{% static 'goal-detail/positive.png' %}" alt="Positive Trend" class="w-12 h-12 mr-5">
-            <div>
-                <h2 class="text-[#1b283f] text-xl font-bold capitalize">Positive Trend</h2>
-                <p class="text-[#90acaa] text-lg">You’ll reach your goal!</p>
-            </div>
-        </div>
+<div class="flex items-center w-full sm:w-[438px] h-[100px] p-5
+    {% if trends == 'Positive' %} bg-[#07d4c5]/20 {% else %} bg-[#ff5757]/20 {% endif %} rounded-lg">
+    <img src="{% static 'goal-detail/' %}{% if trends == 'Positive' %}positive.png{% else %}negative.png{% endif %}"
+         alt="{{ trends }} Trend" class="w-12 h-12 mr-5">
+    <div>
+        <h2 class="text-xl font-bold capitalize text-[#1b283f]">
+            {{ trends }} Trend
+        </h2>
+        <p class="text-lg text-[#90acaa]">
+            {% if trends == 'Positive' %}
+                You’ll reach your goal!
+            {% else %}
+                You might miss your goal!
+            {% endif %}
+        </p>
+    </div>
+</div>
         <div class="flex items-center w-full sm:w-[438px] h-[100px] p-5 bg-[#f2f2f2] rounded-lg">
             <img src="{% static 'goal-detail/progress.png' %}" alt="Progress" class="w-13 h-12 mr-5">
             <div>
                 <h2 class="text-[#1b283f] text-xl font-bold capitalize">Progress</h2>
                 <p class="text-[#05a99d] text-lg font-bold">
                     <span>
-                        24378   <!-- Progress -->
+                        {{ current_amount }}   <!-- (current_amount) Progress -->
                     </span>
                     <span class="mx-1">/</span>
                     <span>
-                        60700   <!-- Progress -->
+                        {{ target_amount }}   <!-- (target_amount) Progress -->
                     </span>
                     <span>(</span>
                     <span>
-                        40   <!-- Progress -->
+                        {{ saving_progress }}   <!-- (percentage) Progress -->
                     </span>
                     <span>%)</span>
                 </p>
@@ -81,13 +95,12 @@
     </div>
 
     <!-- Chart and Data Overview -->
-    <div class="flex flex-wrap gap-5 w-full">
+    <div class="flex flex-wrap gap-5 w-full items-center justify-center">
         <!-- Chart Section -->
-        <div class="flex flex-col w-full lg:w-[893px]">
-            <h2 class="text-[#1b283f] text-xl font-bold capitalize">Burndown Chart</h2>
-            <div class="h-[400px] mt-5 p-5 bg-white rounded-lg flex justify-center items-center">
+        <div class="flex flex-col w-full lg:w-[893px] items-center justify-center">
+            <div class="h-[460px] mt-5 p-5 bg-white rounded-lg flex justify-center items-center">
                 <!-- Canvas for Chart.js -->
-                <canvas id="burndownChart" class="w-full h-full max-h-[350px]"></canvas>
+                <canvas id="burndownChart" class="w-full h-full"></canvas>
             </div>
         </div>
         <!-- Statistics Section -->
@@ -97,7 +110,7 @@
                 <p class="text-[#90acaa] text-lg capitalize">Average daily collection rate</p>
                 <p class="text-[#05a99d] text-xl font-bold capitalize">
                     <span class="text-xl">
-                        284 <!-- Average Saving -->
+                        {{ avg_saving }} <!-- Average Saving -->
                     </span> bath/day
                 </p>
             </div>
@@ -106,39 +119,20 @@
                 <p class="text-[#90acaa] text-lg">Amount you should save per day</p>
                 <p class="text-[#05a99d] text-xl font-bold capitalize">
                     <span class="text-xl">
-                        243 <!-- Minimum Saving -->
+                        {{ min_saving }} <!-- Minimum Saving -->
                     </span> bath/day
                 </p>
             </div>
             <div class="p-5 bg-[#f2f2f2] rounded-lg">
                 <h2 class="text-[#1b283f] text-xl font-bold capitalize">Savings Shortfall</h2>
-                <p class="text-[#90acaa] text-lg">Extra needed daily to meet goal</p>
+                <p class="text-[#90acaa] text-lg">Additional today's saving required to meet the goal</p> <!--difference from minimum saving-->
                 <p class="text-[#05a99d] text-xl font-bold capitalize">
                     <span class="text-xl">
-                        -41 <!-- Savings Shortfall-->
+                        {{ saving_shortfall }} <!-- Savings Shortfall-->
                     </span> bath/day
                 </p>
             </div>
         </div>
-    </div>
-
-    <!-- Transactions Table -->
-    <div class="w-full">
-        <div class="w-full bg-[#f2f2f2] rounded-t-lg flex">
-            <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[15%] text-center">#</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[35%] text-left">Description</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[25%] text-left">Amount</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg capitalize w-[25%] text-left">Goal's Balance</div>
-        </div>
-        {% for i in '012' %}
-        <!-- Transaction Rows -->
-        <div class="w-full border-t border-[#DAE0EB] flex">
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[15%] text-center">{{ forloop.counter }}</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[35%] text-left">Pocket Money</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">2000</div>
-            <div class="px-6 py-2 text-[#1b283f] text-lg w-[25%] text-left">2000</div>
-        </div>
-        {% endfor %}
     </div>
 </div>
 
@@ -160,11 +154,33 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.classList.add('hidden');
     });
 
-    // Handle the "Accept" button click (e.g., delete the goal)
+    // Handle the "DELETE" button click (delete the goal)
     acceptButton.addEventListener('click', function() {
-        // Here you can add the functionality to delete the goal.
-        // For now, it's just a console log simulating goal deletion.
+        // console.log('Goal Deleted');
+        const goalId = deleteGoalButton.dataset.goalId; // Get dynamic goal ID
+
+        fetch(`/moneymap/goals/${goalId}/delete`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+    }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
         console.log('Goal Deleted');
+            window.location.href = '/moneymap/goals';
+        } else {
+            console.error('Error:', data);
+            alert('Failed to delete goal. Try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Fetch Error:', error);
+        alert('An error occurred while deleting the goal.');
+    });
+
         overlay.classList.add('hidden');  // Hide the overlay after the action
     });
 });
@@ -187,16 +203,28 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Failed to select canvas');
     }
 
+
+    // Data from Django context
+    const labels = {{ chart_labels|safe }};
+    const idealData = {{ chart_ideal_data|safe }};
+    const actualData = {{ chart_actual_data|safe }};
+    {##}
+    {#const labels = ["2024-11-21", "2024-11-22", "2024-11-23"];#}
+    {#const idealData = [100, 90, 80];#}
+    {#const actualData = [100, 95, 85];#}
+
+
     // Initialize Chart
     try {
+
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Day 1', 'Day 10', 'Day 20', 'Day 30', 'Day 40', 'Day 50', 'Day 60', 'Day 70', 'Day 80', 'Day 85'],
+                labels: labels,
                 datasets: [
                     {
                         label: 'Target Savings',
-                        data: [60700, 54600, 48500, 42400, 36300, 30200, 24100, 18000, 12000, 0],
+                        data: idealData,
                         borderColor: '#05a99d',
                         borderWidth: 2,
                         fill: false,
@@ -204,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     {
                         label: 'Actual Savings',
-                        data: [60700, 58000, 52000, 50000, 45000, 40000],
+                        data: actualData,
                         borderColor: '#1b283f',
                         borderWidth: 2,
                         fill: false,
