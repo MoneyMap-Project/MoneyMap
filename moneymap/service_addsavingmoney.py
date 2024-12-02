@@ -69,7 +69,7 @@ def check_goals_availability(goals, amount_decimal, request):
     return None  # Return None if everything is fine
 
 
-def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date, user, request):
+def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date, user, request): # pylint: disable=R0917
     """Distribute the saving amount evenly among selected goals."""
     amount_per_goal = amount_decimal / len(goals)
 
