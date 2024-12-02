@@ -1,12 +1,11 @@
-from django.test import TestCase
 from unittest.mock import Mock
 from decimal import Decimal
+from django.test import TestCase
 from django.contrib.auth import get_user_model
 from moneymap.models import Goal, IncomeExpense
 from moneymap.service_addsavingmoney import (
     validate_goal_end_dates,
     validate_amount,
-    get_goals,
     check_goals_availability,
     distribute_savings,
     handle_goal_error

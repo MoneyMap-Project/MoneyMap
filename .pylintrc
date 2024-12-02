@@ -1,8 +1,8 @@
 ﻿[MASTER]
 # Discover python modules/packages in the given directory
-ignore=CVS,.git,migrations
+ignore=CVS,.git,migrations,templates,tests
 # Add any Python module names where you want to disable all warnings
-ignore-patterns=
+ignore-patterns=.*_test.py
 
 # Use multiple processes to speed up Pylint (use "0" for auto)
 jobs=0
@@ -157,3 +157,6 @@ int-import-graph=
 [EXCEPTIONS]
 # Exceptions that will emit a warning when caught
 overgeneral-exceptions=Exception
+
+[DJANGO]
+django-settings-module=config.settings
