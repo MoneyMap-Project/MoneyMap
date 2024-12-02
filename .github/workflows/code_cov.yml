@@ -11,7 +11,7 @@ env:
    SECRET_KEY: ${{ secrets.SECRET_KEY }}
    ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
    TIME_ZONE: ${{ secrets.TIME_ZONE }}
-   DATABASE_URL: postgres://$${{ secrets.DB_USER }}:$${{ secrets.DB_PASSWORD }}@$${{ secrets.DB_HOST }}:$${{ secrets.DB_PORT }}/$${{ secrets.DB_NAME }}
+   DATABASE_URL: postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
 
 jobs:
   test:
