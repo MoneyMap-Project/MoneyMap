@@ -13,3 +13,4 @@ whitenoise[brotli]
 python-decouple
 python-dotenv
 psycopg
+selenium
