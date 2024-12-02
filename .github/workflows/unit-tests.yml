@@ -31,11 +31,7 @@ jobs:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
       TIME_ZONE: ${{ secrets.TIME_ZONE }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: ${{ secrets.DB_PORT }}
+      DATABASE_URL: postgres://$${{ secrets.DB_USER }}:$${{ secrets.DB_PASSWORD }}@$${{ secrets.DB_HOST }}:$${{ secrets.DB_PORT }}/$${{ secrets.DB_NAME }}
 
     steps:
       - name: Checkout Code Repository
