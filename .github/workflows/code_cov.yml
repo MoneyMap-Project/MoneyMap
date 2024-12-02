@@ -60,3 +60,8 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+ignore:
+  - selenium_add_goal_test.py
+  - selenium_login_test.py
+  - selenium_money_flow_test.py
