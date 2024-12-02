@@ -1,4 +1,4 @@
-# reqquirements packages
+# requirements packages
 django >= 3.0
 django-tailwind >= 2.2.19
 django-allauth >= 64.0.0
