@@ -81,10 +81,13 @@ def calculate_saving_shortfall(goal_id):
         days_remaining = calculate_days_remaining(Goal.objects.get(goal_id=goal_id).end_date)
         # logging.debug(f"Saving today: {saving_today}, Target amount: {target_amount}, Days remaining: {days_remaining}")
 
-        # Calculate shortfall "extra saving needed per day"
-        shortfall = (target_amount / days_remaining) - saving_today
-        # logging.debug(f"Shortfall: {shortfall}")
-        return round(max(Decimal('0.00'), shortfall), 2)  # Return 0 if no shortfall
+        if days_remaining > 0:
+            # Calculate shortfall "extra saving needed per day"
+            shortfall = (target_amount / days_remaining) - saving_today
+            # logging.debug(f"Shortfall: {shortfall}")
+            return round(max(Decimal('0.00'), shortfall), 2)  # Return 0 if no shortfall
+        else:
+            return 0.00
     except Goal.DoesNotExist:
         return 0.00  # Goal not found
 
