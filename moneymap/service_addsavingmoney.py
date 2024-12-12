@@ -26,6 +26,7 @@ def validate_goal_end_dates(goals, request):
 
     return None  # Return None if all goals are valid
 
+
 def validate_amount(amount, request):
     """Validate the amount to ensure it is a positive number greater than zero."""
     amount_decimal = Decimal(amount)
@@ -40,6 +41,7 @@ def validate_amount(amount, request):
         return redirect('moneymap:add_money_goals')
     return amount_decimal
 
+
 def get_goals(user, distribute_evenly, selected_goals, select_custom_goals):
     """Retrieve the goals based on the user's selection."""
     if distribute_evenly == 'on' and select_custom_goals is None:
@@ -50,6 +52,7 @@ def get_goals(user, distribute_evenly, selected_goals, select_custom_goals):
         return Goal.objects.filter(goal_id__in=selected_goals, user_id=user)
     # Return no goals if neither condition is met
     return Goal.objects.none()
+
 
 def check_goals_availability(goals, amount_decimal, request):
     """Check if there is enough space in the selected goals for the saving amount."""
@@ -69,7 +72,8 @@ def check_goals_availability(goals, amount_decimal, request):
     return None  # Return None if everything is fine
 
 
-def distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date, user, request): # pylint: disable=R0917
+def distribute_savings(goals, amount_decimal, add_to_income_expense,
+                       parsed_date, user, request):  # pylint: disable=R0917
     """Distribute the saving amount evenly among selected goals."""
     amount_per_goal = amount_decimal / len(goals)
 

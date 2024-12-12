@@ -86,8 +86,7 @@ def calculate_saving_shortfall(goal_id):
             shortfall = (target_amount / days_remaining) - saving_today
             # logging.debug(f"Shortfall: {shortfall}")
             return round(max(Decimal('0.00'), shortfall), 2)  # Return 0 if no shortfall
-        else:
-            return 0.00
+        return 0.00
     except Goal.DoesNotExist:
         return 0.00  # Goal not found
 
