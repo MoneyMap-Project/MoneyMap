@@ -71,9 +71,10 @@ def check_goals_availability(goals, amount_decimal, request):
         return redirect('moneymap:add_money_goals')
     return None  # Return None if everything is fine
 
+# pylint: disable=too-many-arguments
 
 def distribute_savings(goals, amount_decimal, add_to_income_expense,
-                       parsed_date, user, request):  # pylint: disable=R0917
+                       parsed_date, user, request):
     """Distribute the saving amount evenly among selected goals."""
     amount_per_goal = amount_decimal / len(goals)
 
