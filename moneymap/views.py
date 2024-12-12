@@ -425,7 +425,15 @@ class AddSavingMoney(LoginRequiredMixin, TemplateView):
                 return redirect_url
 
             # Distribute savings to goals
-            redirect_url = distribute_savings(goals, amount_decimal, add_to_income_expense, parsed_date, request.user, request)
+            params = {
+                'goals': goals,
+                'amount_decimal': amount_decimal,
+                'add_to_income_expense': add_to_income_expense,
+                'parsed_date': parsed_date,
+                'user': request.user,
+                'request': request
+            }
+            redirect_url = distribute_savings(params)
             if redirect_url:
                 return redirect_url
 
