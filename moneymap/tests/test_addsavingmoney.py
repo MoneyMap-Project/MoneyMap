@@ -102,9 +102,16 @@ class AddSavingMoneyServiceTests(TestCase):
         parsed_date = '2023-12-01'
         add_to_income_expense = True
 
-        response = distribute_savings([self.goal], amount_decimal,
-                                      add_to_income_expense, parsed_date,
-                                      self.user, request)
+        params = {
+            'goals': [self.goal],
+            'amount_decimal': amount_decimal,
+            'add_to_income_expense': add_to_income_expense,
+            'parsed_date': parsed_date,
+            'user': self.user,
+            'request': request
+        }
+        # response = distribute_savings([self.goal], amount_decimal,add_to_income_expense, parsed_date,self.user, request)
+        response = distribute_savings(params)
         self.assertIsNone(
             response)
         self.assertEqual(self.goal.current_amount, Decimal(
